@@ -10,7 +10,7 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 # Define the database we are going to use.
 # Using SQLite for testing.
 # You may want to switch to another database management system
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'app.db')
+SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'botos_app.db')
 DATABASE_CONNECT_OPTIONS = {}
 
 # Application threads. A common general assumption is
