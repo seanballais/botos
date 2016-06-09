@@ -1,9 +1,9 @@
 click==6.6
-Flask==0.11
+Flask==0.11.1
+Flask-Login==0.3.2
+Flask-SQLAlchemy==2.1
 itsdangerous==0.24
 Jinja2==2.8
 MarkupSafe==0.23
-py==1.4.31
-pytest==2.9.2
 SQLAlchemy==1.0.13
 Werkzeug==0.11.10
