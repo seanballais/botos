@@ -1,5 +1,5 @@
 """Application initialization."""
-from flask import Flask, render_template
+from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 
 # Define the WSGI application object
