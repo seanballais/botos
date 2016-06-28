@@ -109,7 +109,7 @@ class VoterSection(Base):
         self.section_batch = section_batch
 
     def __repr__(self):
-        return '<VoterSection %r>' % section_name
+        return '<VoterSection %r>' % self.section_name
 
 
 class VoterBatch(Base):
@@ -158,9 +158,9 @@ class VoterSectionVotes(Base):
                                 )
 
     def __init__(self,
-                 votes=0,
                  section_id,
-                 candidate_id
+                 candidate_id,
+                 votes=0
                  ):
         """
         Construct a new ''VoterSectionVotes'' object.
@@ -213,9 +213,9 @@ class Candidate(Base):
                  candidate_idx,
                  first_name,
                  last_name,
-                 middle_name='',
                  position,
-                 party
+                 party,
+                 middle_name=''
                  ):
         """
         Construct a new ''Candidate'' object.
