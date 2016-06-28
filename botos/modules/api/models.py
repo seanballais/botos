@@ -76,7 +76,8 @@ class VoterSection(Base):
     __tablename__  = 'voter_section'
 
     section_name   = db.Column(db.String(16),
-                               nullable=False
+                               nullable=False,
+                               unique=True
                                )
     batch_id       = db.Column(db.Integer,
                                db.ForeignKey('batch.id')
