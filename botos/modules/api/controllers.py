@@ -542,3 +542,47 @@ class CandidatePosition:
             _position.level = _level
 
         db.session.commit()
+
+
+class CandidateParty:
+    """Handles the creation, deletion, and modification of the parties."""
+
+    @staticmethod
+    def add(party_name_list):
+        """
+        Create a new party.
+
+        :param party_name_list: The party names.
+        """
+        for _name in party_name_list:
+            db.session.add(models.CandidateParty(_name))
+
+        db.session.commit()
+
+    @staticmethod
+    def delete_party(party_name_list):
+        """
+        Delete a party.
+
+        :param party_name_list: The party name lists.
+        """
+        for _name in party_name_list:
+            models.CandidateParty.query.filter_by(name=_name).first().delete()
+
+        db.session.commit()
+
+    @staticmethod
+    def modify_name(old_party_name_list,
+                    new_party_name_list
+                    ):
+        """
+        Modify the name of a party.
+
+        :param old_party_name_list: Old party names.
+        :param new_party_name_list: The new names of the parties.
+        """
+        for _old_name, _new_name in old_party_name_list, new_party_name_list:
+            _party = models.CandidateParty.query.filter_by(name=_old_name).first()
+            _party.name = _new_name
+
+        db.session.commit()
