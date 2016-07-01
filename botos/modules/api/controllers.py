@@ -107,6 +107,15 @@ class Voter:
 
         db.session.commit()
 
+    @staticmethod
+    def get_voter(voter_id):
+        """
+        Get a Voter object.
+
+        :param voter_id: The ID of the voter.
+        """
+        return models.Voter.query.filter_by(voter_id=voter_id).first()
+
 
 class VoterSection:
     """Handles the addition, deletion, and modification of voter sections."""
@@ -182,6 +191,15 @@ class VoterSection:
 
         db.session.commit()
 
+    @staticmethod
+    def get_voter_section(section_name):
+        """
+        Get a VoterSection object.
+
+        :param section_name: The name of the section.
+        """
+        return models.VoterSection.query.filter_by(section_name=section_name).first()
+
 
 class VoterBatch:
     """Handles the addition, deletion, and modification of the batches."""
@@ -235,6 +253,15 @@ class VoterBatch:
             _batch.batch_name = _new_batch_name
 
         db.session.commit()
+
+    @staticmethod
+    def get_voter_batch(batch_name):
+        """
+        Get a VoterBatch object.
+
+        :param batch_name: The name of the batch.
+        """
+        return models.VoterBatch.query.filter_by(batch_name=batch_name).first()
 
 
 class VoterSectionVotes:
@@ -330,6 +357,14 @@ class VoterSectionVotes:
 
         db.session.commit()
 
+    @staticmethod
+    def get_voter_section_votes(section_id):
+        """
+        Get a VoterSectionVotes object.
+
+        :param section_id: The ID of a section.
+        """
+        return models.VoterSectionVotes.query.filter_by(section_id=section_id).first()
 
 class Candidate:
     """Handles the addition, deletion, and modification of candidates."""
@@ -469,6 +504,15 @@ class Candidate:
 
         db.session.commit()
 
+    @staticmethod
+    def get_candidate(candidate_id):
+        """
+        Get a Candidate object.
+
+        :param candidate_id: The ID of the candidate.
+        """
+        return models.Candidate.query.filter_by(candidate_id=candidate_id).first()
+
 
 class CandidatePosition:
     """Handles the creation, deletion, and modification of candidate positions."""
@@ -543,6 +587,15 @@ class CandidatePosition:
 
         db.session.commit()
 
+    @staticmethod
+    def get_candidate_position(position_name):
+        """
+        Get a CandidatePosition object.
+
+        :param position_name: The name of the position.
+        """
+        return models.CandidatePosition.query.filter_by(name=position_name).first()
+
 
 class CandidateParty:
     """Handles the creation, deletion, and modification of the parties."""
@@ -586,3 +639,12 @@ class CandidateParty:
             _party.name = _new_name
 
         db.session.commit()
+
+    @staticmethod
+    def get_candidate_party(party_name):
+        """
+        Get a CandidateParty object.
+
+        :param party_name: The name of the party.
+        """
+        return models.CandidateParty.query.filter_by(name=party_name).first()
