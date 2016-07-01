@@ -185,6 +185,11 @@ class Candidate(Base):
     """Represents the candidate in the database."""
     __tablename__   = 'candidate'
 
+    candidate_id    = db.Column(db.Integer,
+                                nullable=False,
+                                autoincrement=True
+                                )
+
     candidate_idx   = db.Column(db.SmallInteger,
                                 nullable=False
                                 )  # Index that will be used for the positioning in the voting page

@@ -326,6 +326,219 @@ class VoterSectionVotes:
         """
         for _section_id, _votes in section_id_list, vote_delta_list:
             _section = models.VoterSectionVotes.query.filter_by(section_id=_section_id).first()
-            _section.votes += _votes  # Brexit :/
+            _section.votes += _votes
+
+        db.session.commit()
+
+
+class Candidate:
+    """Handles the addition, deletion, and modification of candidates."""
+
+    @staticmethod
+    def add(candidate_information_list):
+        """
+        Create a new candidate.
+
+        :param candidate_information_list: Information about the candidate (Must be a list).
+        """
+        for _candidate in candidate_information_list:
+            db.session.add(models.Candidate(candidate_idx=_candidate[0],
+                                            first_name=_candidate[1],
+                                            last_name=_candidate[2],
+                                            middle_name=_candidate[3],
+                                            position=_candidate[4],
+                                            party=_candidate[5]
+                                            )
+                           )
+
+        db.session.commit()
+
+    @staticmethod
+    def delete_candidate(candidate_id_list):
+        """
+        Delete candidates or a candidate from the database.
+
+        :param candidate_id_list: The IDs of the candidates to be deleted.
+        """
+        for _id in candidate_id_list:
+            models.Candidate.query.filter_by(candidate_id=_id).first().delete()
+
+        db.session.commit()
+
+    @staticmethod
+    def delete_all():
+        """
+        Delete all candidates.
+        """
+        models.Candidate.query.delete()
+        db.session.commit()
+
+    @staticmethod
+    def modify_candidate_index(candidate_id_list,
+                               candidate_index_list
+                               ):
+        """
+        Modify the index of the candidate with respect to the position in the voting page.
+
+        :param candidate_id_list: The IDs of the candidates
+        :param candidate_index_list: The new index of the candidates.
+        """
+        for _id, _index in candidate_id_list, candidate_index_list:
+            _candidate = models.Candidate.query.filter_by(candidate_id=_id).first()
+            _candidate.candidate_idx = _index
+
+        db.session.commit()
+
+    @staticmethod
+    def modify_candidate_first_name(candidate_id_list,
+                                    candidate_first_name_list
+                                    ):
+        """
+        Modify the first name of the candidates.
+
+        :param candidate_id_list: The IDs of the candidates.
+        :param candidate_first_name_list: The new first names of the candidates.
+        """
+        for _id, _first_name in candidate_id_list, candidate_first_name_list:
+            _candidate = models.Candidate.query.filter_by(candidate_id=_id).first()
+            _candidate.first_name = _first_name
+
+        db.session.commit()
+
+    @staticmethod
+    def modify_candidate_last_name(candidate_id_list,
+                                   candidate_last_name_list
+                                   ):
+        """
+        Modify the last name of the candidates.
+
+        :param candidate_id_list: The IDs of the candidates.
+        :param candidate_last_name_list: The new last names of the candidates.
+        """
+        for _id, _last_name in candidate_id_list, candidate_last_name_list:
+            _candidate = models.Candidate.query.filter_by(candidate_id=_id).first()
+            _candidate.last_name = _last_name
+
+        db.session.commit()
+
+    @staticmethod
+    def modify_candidate_middle_name(candidate_id_list,
+                                     candidate_middle_name_list
+                                     ):
+        """
+        Modify the middle name of the candidates.
+
+        :param candidate_id_list: The IDs of the candidates.
+        :param candidate_middle_name_list: The new middle names of the candidates.
+        """
+        for _id, _middle_name in candidate_id_list, candidate_middle_name_list:
+            _candidate = models.Candidate.query.filter_by(candidate_id=_id).first()
+            _candidate.middle_name = _middle_name
+
+        db.session.commit()
+
+    @staticmethod
+    def modify_candidate_position(candidate_id_list,
+                                  candidate_position_list
+                                  ):
+        """
+        Modify the position of the candidates.
+
+        :param candidate_id_list: The IDs of the candidates.
+        :param candidate_position_list: The new positions of the candidates.
+        """
+        for _id, _position in candidate_id_list, candidate_position_list:
+            _candidate = models.Candidate.query.filter_by(candidate_id_list=_id).first()
+            _candidate.position = _position
+
+        db.session.commit()
+
+    @staticmethod
+    def modify_candidate_party(candidate_id_list,
+                               candidate_party_list
+                               ):
+        """
+        Modify the party of the candidates.
+
+        :param candidate_id_list: The IDs of the candidates.
+        :param candidate_party_list: The new parties of the candidates.
+        """
+        for _id, _party in candidate_id_list, candidate_party_list:
+            _candidate = models.Candidate.query.filter_by(candidate_id=_id).first()
+            _candidate.position = _party
+
+        db.session.commit()
+
+
+class CandidatePosition:
+    """Handles the creation, deletion, and modification of candidate positions."""
+
+    @staticmethod
+    def add(position_name_list,
+            position_level_list
+            ):
+        """
+        Create a new candidate position.
+
+        :param position_name_list: The name of the positions.
+        :param position_level_list: The level of the positions.
+        """
+        for _name, _level in position_name_list, position_level_list:
+            db.session.add(models.CandidatePosition(name=_name,
+                                                    level=_level
+                                                    )
+                           )
+
+        db.session.add()
+
+    @staticmethod
+    def delete_position(position_name_list):
+        """
+        Delete a position.
+
+        :param position_name_list: The list containing the positions to be deleted.
+        """
+        for _name in position_name_list:
+            models.CandidatePosition.query.filter_by(name=_name).first().delete()
+
+        db.session.commit()
+
+    @staticmethod
+    def delete_all():
+        """
+        Delete all positions.
+        """
+        models.CandidatePosition.query.delete()
+        db.session.commit()
+
+    @staticmethod
+    def modify_name(old_position_name_list,
+                    new_position_name_list
+                    ):
+        """
+        Modify the name of the positions.
+
+        :param old_position_name_list: The old names of the positions.
+        :param new_position_name_list: The new names of the positions.
+        """
+        for _old_name, _new_name in old_position_name_list, new_position_name_list:
+            _position = models.CandidatePosition.query.filter_by(name=_old_name).first()
+            _position.name = _new_name
+
+        db.session.commit()
+
+    @staticmethod
+    def modify_level(position_name_list,
+                     position_level_list
+                     ):
+        """
+        Modify the level of the positions.
+
+        :param position_name_list: The name of the position.
+        :param position_level_list: The new level of the position.
+        """
+        for _name, _level in position_name_list, position_level_list:
+            _position = models.CandidatePosition.query.filter_by(name=_name).first()
+            _position.level = _level
 
         db.session.commit()
