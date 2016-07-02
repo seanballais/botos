@@ -366,6 +366,7 @@ class VoterSectionVotes:
         """
         return models.VoterSectionVotes.query.filter_by(section_id=section_id).first()
 
+
 class Candidate:
     """Handles the addition, deletion, and modification of candidates."""
 
