@@ -1,4 +1,4 @@
-# botos/modules/api/models.py
+# botos/modules/api/controllers.py
 # Copyright (C) 2016 Sean Francis N. Ballais
 #
 # This module is part of Botos and is released under
@@ -10,7 +10,7 @@
 
 
 from botos import db
-from botos.modules.api import models
+from botos.modules.people_info import models
 
 
 class Voter:
