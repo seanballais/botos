@@ -31,3 +31,6 @@ CSRF_SESSION_KEY = ''
 
 # Secret key for signing cookies
 SECRET_KEY = ''
+
+# Log storage
+LOG_FILE = BASE_DIR + 'app.log'
