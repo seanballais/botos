@@ -31,23 +31,47 @@ class ActivityLogObservableTest(unittest.TestCase):
 
         self.log_observable = ActivityLogObservable.ActivityLogObservable(__name__)
 
+        print('Testing ActivityLog...', end='')
+
+    def _clear_log_file(self):
+        """
+        Clear the contents of the log file.
+        """
+        open(settings.BASE_DIR + settings.LOG_FILENAME,
+             'w'
+             ).close()
+
+    def _get_log_first_line(self):
+        """
+        Get the first line of the log file.
+
+        :return: A string of the first line of the log file.
+        """
+        with open(settings.BASE_DIR + settings.LOG_FILENAME,
+                  mode='r'
+                  ) as _log_file:
+            _log_line = _log_file.readline().strip()
+            return _log_line[_log_line.index('|') + 2:]
+
     def test_add_log(self):
         """
         Test the add log function in observable modules.
         """
-        self.log_observable.add_log(20,  # Log level severity
-                                    "Test text."
-                                    )
-
-        with open(settings.BASE_DIR + settings.LOG_FILENAME,
-                  mode='r'
-                  ) as file:
-            log_line = file.readline().strip()
-            test_text = log_line[log_line.index('|') + 2:]
-
-        self.assertEqual(test_text,
-                         "Test text."
-                         )
+        _log_levels = [
+            (10, 'DEBUG'),
+            (20, 'INFO'),
+            (30, 'WARNING'),
+            (40, 'ERROR'),
+            (50, 'CRITICAL')
+        ]
+        for _log_level in _log_levels:
+            self._clear_log_file()
+            self.log_observable.add_log(_log_level[0],  # Log level severity INFO
+                                        'Test text.'
+                                        )
+            self.assertEqual(self._get_log_first_line(),
+                             _log_level[1] + ': Test text.'
+                             )
 
     def tearDown(self):
         """
@@ -59,6 +83,8 @@ class ActivityLogObservableTest(unittest.TestCase):
             os.rename(settings.LOG_FILENAME + '.bak',
                       settings.LOG_FILENAME
                       )
+
+        print(' DONE')
 
 if __name__ == '__main__':
     unittest.main()
