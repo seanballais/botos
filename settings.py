@@ -1,11 +1,12 @@
 """Settings for Botos. This can be different per site."""
 import os
+import logging
 
 # Statement for enabling the development environment
 DEBUG = True
 
 # Define the application directory
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+BASE_DIR = os.path.abspath(os.path.dirname(__file__)) + '/'
 
 # Define the database we are going to use.
 # Using SQLite for testing.
@@ -33,4 +34,5 @@ CSRF_SESSION_KEY = ''
 SECRET_KEY = ''
 
 # Log storage
-LOG_FILE = BASE_DIR + 'app.log'
+LOG_FILENAME = 'app.log'
+LOG_LEVEL = logging.DEBUG  # Change to logging.INFO during production
