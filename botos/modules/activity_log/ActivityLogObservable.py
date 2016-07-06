@@ -1,4 +1,4 @@
-# botos/modules/logger/LogObservable.py
+# botos/modules/ActivityLog/LogObservable.py
 # Copyright (C) 2016 Sean Francis N. Ballais
 #
 # This module is part of Botos and is released under

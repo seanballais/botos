@@ -1,4 +1,4 @@
-# botos/modules/logger/LogObserver.py
+# botos/modules/ActivityLog/LogObserver.py
 # Copyright (C) 2016 Sean Francis N. Ballais
 #
 # This module is part of Botos and is released under
