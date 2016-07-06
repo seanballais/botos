@@ -49,7 +49,7 @@ coverage.xml
 *.mo
 *.pot
 
-# Django stuff:
+# Django and botos stuff:
 *.log
 
 # Sphinx documentation
@@ -60,3 +60,6 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+# PyCharm directories and files
+.idea/
