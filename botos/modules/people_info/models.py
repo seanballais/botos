@@ -1,4 +1,4 @@
-# botos/modules/api/models.py
+# botos/modules/people_info/models.py
 # Copyright (C) 2016 Sean Francis N. Ballais
 #
 # This module is part of Botos and is released under
@@ -67,50 +67,42 @@ class Voter(Base):
         self.password      = password
         self.section_id    = section_id
 
+    def is_authenticated(self):
+        """
+        Check if the voter has been authenticated already.
+
+        :return: True if the voter is already authenticated.
+        """
+        return True
+
+    def is_active(self):
+        """
+        Check if the user has already finished voting.
+
+        :return: True if the voter has not voted yet.
+        """
+        return True
+
+    def is_anonymous(self):
+        """
+        Check if the user has logged in already.
+
+        :return: False if the voter has logged in.
+        """
+        return False
+
+    def get_id(self):
+        """
+        Get the ID of the user.
+
+        :return: The ID of the user with respect to the database.
+        """
+        return str(self.id,
+                   'utf-8'
+                   )
+
     def __repr__(self):
         return '<Voter %r>' % self.voter_id
-
-
-class VoterSection(Base):
-    """Represents the sections of the voters in the database."""
-    __tablename__  = 'voter_section'
-
-    section_name   = db.Column(db.String(16),
-                               nullable=False,
-                               unique=True
-                               )
-    batch_id       = db.Column(db.Integer,
-                               db.ForeignKey('batch.id')
-                               )
-    voter_section  = db.relationship('Voter',
-                                     backref=db.backref('section',
-                                                        lazy='select'
-                                                        ),
-                                     lazy='dynamic'
-                                     )
-    section_votes  = db.relationship('VoterSectionVotes',
-                                     backref=db.backref('section',
-                                                        lazy='select'
-                                                        ),
-                                     lazy='dynamic'
-                                     )
-
-    def __init__(self,
-                 section_name,
-                 section_batch
-                 ):
-        """
-        Construct a new ''VoterSection'' object.
-
-        :param section_name: The name of the section. The section are used
-            are used to group statistical data.
-        :param section_batch: The batch the section is under.
-        """
-        self.section_name  = section_name
-        self.section_batch = section_batch
-
-    def __repr__(self):
-        return '<VoterSection %r>' % self.section_name
 
 
 class VoterBatch(Base):
@@ -166,7 +158,7 @@ class VoterSectionVotes(Base):
         """
         Construct a new ''VoterSectionVotes'' object.
 
-        :param votes: Tue number of a candidate has on a given
+        :param votes: The number of a candidate has on a given
             section.
         :param section_id: The id of the section in which a
             candidate has a vote in.
@@ -208,12 +200,6 @@ class Candidate(Base):
     party           = db.Column(db.Integer,
                                 db.ForeignKey('candidate_party.id')
                                 )
-    section_votes   = db.relationship('VoterSectionVotes',
-                                      backref=db.backref('candidate',
-                                                         lazy='select'
-                                                         ),
-                                      lazy='select'
-                                      )
 
     def __init__(self,
                  candidate_idx,
