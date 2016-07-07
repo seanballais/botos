@@ -10,7 +10,8 @@
 
 
 from botos import db
-from botos.modules.people_info import models
+
+import botos.modules.people_info.models as models
 
 
 class Voter:
@@ -262,109 +263,6 @@ class VoterBatch:
         :param batch_name: The name of the batch.
         """
         return models.VoterBatch.query.filter_by(batch_name=batch_name).first()
-
-
-class VoterSectionVotes:
-    """Handles the addition, deletion, and updating of the sections and the votes."""
-
-    @staticmethod
-    def add(section_id_list,
-            candidate_id_list
-            ):
-        """
-        Create a new section vote record to handle the votes of a section.
-
-        :param section_id_list: The IDs of the sections to be added.
-        :param candidate_id_list: The IDs of the candidates where the
-            section votes will be counted to.
-        """
-        for _section, _candidate in section_id_list, candidate_id_list:
-            db.session.add(models.VoterSectionVotes(_section,
-                                                    _candidate
-                                                    )
-                           )
-
-        db.session.add()
-
-    @staticmethod
-    def delete_record(section_id_list
-                      ):
-        """
-        Delete a voting record.
-
-        :param section_id_list: The IDs of the sections in the records that
-            will be deleted.
-        """
-        for _section in section_id_list:
-            models.VoterSectionVotes.query.filter_by(section_id=_section).delete()
-
-        db.session.commit()
-
-    @staticmethod
-    def delete_all():
-        """
-        Delete all voting records.
-        """
-        models.VoterSectionVotes.query.delete()
-        db.session.commit()
-
-    @staticmethod
-    def modify_section(old_section_id_list,
-                       new_section_id_list
-                       ):
-        """
-        Modify the sections of a given record.
-
-        :param old_section_id_list: The IDs of the section records to be modified.
-        :param new_section_id_list: The new IDs of the section records.
-        """
-        for _old_section, _new_section in old_section_id_list, new_section_id_list:
-            _section = models.VoterSectionVotes.query.filter_by(section_id=_old_section).first()
-            _section.section_id = _new_section
-
-        db.session.commit()
-
-    @staticmethod
-    def modify_section_candidate(section_id_list,
-                                 candidate_id_list
-                                 ):
-        """
-        Modify the candidates of the sections.
-
-        :param section_id_list: The IDs of the section in which the candidate will
-            be modified.
-        :param candidate_id_list: The IDs of the new candidates of the sections.
-        """
-        for _section_id, _candidate in section_id_list, candidate_id_list:
-            _section = models.VoterSectionVotes.query.filter_by(section_id=_section_id).first()
-            _section.candidate_id = _candidate
-
-        db.session.commit()
-
-    @staticmethod
-    def update_votes(section_id_list,
-                     vote_delta_list
-                     ):
-        """
-        Update votes (either decrement or increment them).
-
-        :param section_id_list: The section IDs of which the votes will be updated.
-        :param vote_delta_list: The change in the total votes.
-        """
-        for _section_id, _votes in section_id_list, vote_delta_list:
-            _section = models.VoterSectionVotes.query.filter_by(section_id=_section_id).first()
-            _section.votes += _votes
-
-        db.session.commit()
-
-    @staticmethod
-    def get_voter_section_votes(section_id):
-        """
-        Get a VoterSectionVotes object.
-
-        :param section_id: The ID of a section.
-        """
-        return models.VoterSectionVotes.query.filter_by(section_id=section_id).first()
 
 
 class Candidate:
