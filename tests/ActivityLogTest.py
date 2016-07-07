@@ -13,9 +13,10 @@
 import unittest
 import os
 
+from botos.modules.activity_log import ActivityLogObservable
+from botos.modules.activity_log import _log_levels
+
 import settings
-import botos.modules.activity_log as ActivityLog
-import botos.modules.activity_log.ActivityLogObservable as ActivityLogObservable
 
 
 class ActivityLogObservableTest(unittest.TestCase):
@@ -58,7 +59,7 @@ class ActivityLogObservableTest(unittest.TestCase):
         """
         Test the add log function in observable modules.
         """
-        for _log_level in ActivityLog._log_levels:
+        for _log_level in _log_levels:
             self._clear_log_file()
             self.log_observable.add_log(_log_level[0],  # Log level severity INFO
                                         'Test text.'

@@ -56,7 +56,9 @@ class ActivityLogObserver(object):
         _log_file_handler.setLevel(settings.LOG_LEVEL)
 
         # create a formatter and set the formatter for the handler.
-        _log_format = logging.Formatter('%(asctime)s.%(msecs)d (%(name)s) | %(levelname)s: %(message)s')
+        _log_format = logging.Formatter(
+            '%(asctime)s.%(msecs)d (%(name)s) | %(levelname)s: %(funcName)20s() - %(message)s'
+        )
         _log_file_handler.setFormatter(_log_format)
 
         self.logger.addHandler(_log_file_handler)

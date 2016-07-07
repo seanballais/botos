@@ -1,4 +1,4 @@
-# botos/modules/api/controllers.py
+# botos/modules/people_info/controllers.py
 # Copyright (C) 2016 Sean Francis N. Ballais
 #
 # This module is part of Botos and is released under
@@ -116,6 +116,19 @@ class Voter:
         :param voter_id: The ID of the voter.
         """
         return models.Voter.query.filter_by(voter_id=voter_id).first()
+
+    @staticmethod
+    def get_voter(voter_id,
+                  password):
+        """
+        Get a Voter object.
+
+        :param voter_id: The ID of the voter.
+        :param password: The password of the voter.
+        """
+        return models.Voter.query.filter_by(voter_id=voter_id,
+                                            password=password
+                                            ).first()
 
 
 class VoterSection:

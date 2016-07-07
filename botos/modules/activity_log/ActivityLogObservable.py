@@ -9,7 +9,7 @@
 """
 
 
-import botos.modules.activity_log.ActivityLogObserver as ActivityLogObserver
+from botos.modules.activity_log.ActivityLogObserver import ActivityLogObserver
 
 
 class ActivityLogObservable(object):
@@ -49,4 +49,4 @@ class ActivityLogObservable(object):
 
         :param log_observable_name: Log name of the observable.
         """
-        self.log_observer = ActivityLogObserver.ActivityLogObserver(log_observable_name)
+        self.log_observer = ActivityLogObserver(log_observable_name)
