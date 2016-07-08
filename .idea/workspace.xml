@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="94de5c49-841c-48b0-b388-90ddf42a8655" name="Default" comment="">
+    <list default="true" id="94de5c49-841c-48b0-b388-90ddf42a8655" name="Default" comment="Added an Admin controller in people_info. Added a basic login and registration functionality.">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/modules/admin/views.py" afterPath="$PROJECT_DIR$/botos/modules/admin/views.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/modules/people_info/controllers.py" afterPath="$PROJECT_DIR$/botos/modules/people_info/controllers.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/modules/voting/views.py" afterPath="$PROJECT_DIR$/botos/modules/voting/views.py" />
     </list>
     <ignored path="botos.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -42,18 +40,18 @@
       <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/botos/modules/people_info/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3094">
+            <state relative-caret-position="1656">
               <caret line="122" column="25" selection-start-line="122" selection-start-column="25" selection-end-line="122" selection-end-column="25" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="controllers.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="controllers.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/botos/modules/people_info/controllers.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="665" column="17" selection-start-line="665" selection-start-column="17" selection-end-line="665" selection-end-column="17" />
+            <state relative-caret-position="398">
+              <caret line="492" column="0" selection-start-line="492" selection-start-column="0" selection-end-line="492" selection-end-column="0" />
               <folding>
                 <element signature="e#269#289#0" expanded="true" />
               </folding>
@@ -61,11 +59,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/botos/modules/admin/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="56" column="17" selection-start-line="56" selection-start-column="17" selection-end-line="56" selection-end-column="17" />
+            <state relative-caret-position="506">
+              <caret line="120" column="54" selection-start-line="120" selection-start-column="54" selection-end-line="120" selection-end-column="54" />
               <folding>
                 <element signature="e#266#291#0" expanded="true" />
               </folding>
@@ -100,7 +98,7 @@
       <file leaf-file-name="ActivityLogObserver.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/botos/modules/activity_log/ActivityLogObserver.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1044">
+            <state relative-caret-position="560">
               <caret line="59" column="82" selection-start-line="59" selection-start-column="82" selection-end-line="59" selection-end-column="82" />
               <folding>
                 <element signature="e#261#275#0" expanded="true" />
@@ -181,8 +179,8 @@
         <option value="$PROJECT_DIR$/botos/__init__.py" />
         <option value="$PROJECT_DIR$/app.py" />
         <option value="$PROJECT_DIR$/botos/modules/voting/views.py" />
-        <option value="$PROJECT_DIR$/botos/modules/admin/views.py" />
         <option value="$PROJECT_DIR$/botos/modules/people_info/controllers.py" />
+        <option value="$PROJECT_DIR$/botos/modules/admin/views.py" />
       </list>
     </option>
   </component>
@@ -735,7 +733,14 @@
       <option name="project" value="LOCAL" />
       <updated>1467911907321</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="Added an Admin controller in people_info. Added a basic login and registration functionality.">
+      <created>1467972750101</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1467972750101</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -809,7 +814,8 @@
     <MESSAGE value="Updated the models." />
     <MESSAGE value="Removed VoterSectionVotes." />
     <MESSAGE value="Added a non-functional login functionality to the voting module." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added a non-functional login functionality to the voting module." />
+    <MESSAGE value="Added an Admin controller in people_info. Added a basic login and registration functionality." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added an Admin controller in people_info. Added a basic login and registration functionality." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -977,21 +983,29 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/botos/modules/activity_log/ActivityLogObserver.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1044">
-          <caret line="59" column="82" selection-start-line="59" selection-start-column="82" selection-end-line="59" selection-end-column="82" />
-          <folding>
-            <element signature="e#261#275#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/botos/modules/voting/controllers.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="198">
           <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/botos/modules/people_info/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1656">
+          <caret line="122" column="25" selection-start-line="122" selection-start-column="25" selection-end-line="122" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/botos/modules/people_info/controllers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="398">
+          <caret line="492" column="0" selection-start-line="492" selection-start-column="0" selection-end-line="492" selection-end-column="0" />
+          <folding>
+            <element signature="e#269#289#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1005,30 +1019,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/botos/modules/people_info/models.py">
+    <entry file="file://$PROJECT_DIR$/botos/modules/activity_log/ActivityLogObserver.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3094">
-          <caret line="122" column="25" selection-start-line="122" selection-start-column="25" selection-end-line="122" selection-end-column="25" />
-          <folding />
+        <state relative-caret-position="560">
+          <caret line="59" column="82" selection-start-line="59" selection-start-column="82" selection-end-line="59" selection-end-column="82" />
+          <folding>
+            <element signature="e#261#275#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/botos/modules/admin/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="56" column="17" selection-start-line="56" selection-start-column="17" selection-end-line="56" selection-end-column="17" />
+        <state relative-caret-position="506">
+          <caret line="120" column="54" selection-start-line="120" selection-start-column="54" selection-end-line="120" selection-end-column="54" />
           <folding>
             <element signature="e#266#291#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/botos/modules/people_info/controllers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="665" column="17" selection-start-line="665" selection-start-column="17" selection-end-line="665" selection-end-column="17" />
-          <folding>
-            <element signature="e#269#289#0" expanded="true" />
           </folding>
         </state>
       </provider>
