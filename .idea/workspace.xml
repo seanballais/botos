@@ -4,7 +4,6 @@
     <list default="true" id="94de5c49-841c-48b0-b388-90ddf42a8655" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/modules/admin/views.py" afterPath="$PROJECT_DIR$/botos/modules/admin/views.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/modules/people_info/controllers.py" afterPath="$PROJECT_DIR$/botos/modules/people_info/controllers.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/modules/voting/views.py" afterPath="$PROJECT_DIR$/botos/modules/voting/views.py" />
     </list>
     <ignored path="botos.iws" />
@@ -42,18 +41,18 @@
       <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/botos/modules/people_info/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3094">
+            <state relative-caret-position="-2626">
               <caret line="122" column="25" selection-start-line="122" selection-start-column="25" selection-end-line="122" selection-end-column="25" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="controllers.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="controllers.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/botos/modules/people_info/controllers.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="665" column="17" selection-start-line="665" selection-start-column="17" selection-end-line="665" selection-end-column="17" />
+            <state relative-caret-position="1856">
+              <caret line="492" column="0" selection-start-line="492" selection-start-column="0" selection-end-line="492" selection-end-column="0" />
               <folding>
                 <element signature="e#269#289#0" expanded="true" />
               </folding>
@@ -61,11 +60,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/botos/modules/admin/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="56" column="17" selection-start-line="56" selection-start-column="17" selection-end-line="56" selection-end-column="17" />
+            <state relative-caret-position="866">
+              <caret line="139" column="36" selection-start-line="139" selection-start-column="36" selection-end-line="139" selection-end-column="36" />
               <folding>
                 <element signature="e#266#291#0" expanded="true" />
               </folding>
@@ -76,8 +75,8 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/botos/modules/voting/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="108">
-              <caret line="52" column="39" selection-start-line="52" selection-start-column="39" selection-end-line="52" selection-end-column="39" />
+            <state relative-caret-position="1190">
+              <caret line="93" column="17" selection-start-line="93" selection-start-column="17" selection-end-line="93" selection-end-column="17" />
               <folding>
                 <element signature="e#231#256#0" expanded="true" />
               </folding>
@@ -88,7 +87,7 @@
       <file leaf-file-name="app.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="54">
+            <state relative-caret-position="72">
               <caret line="4" column="34" selection-start-line="4" selection-start-column="34" selection-end-line="4" selection-end-column="34" />
               <folding>
                 <element signature="e#25#46#0" expanded="true" />
@@ -100,7 +99,7 @@
       <file leaf-file-name="ActivityLogObserver.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/botos/modules/activity_log/ActivityLogObserver.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1044">
+            <state relative-caret-position="668">
               <caret line="59" column="82" selection-start-line="59" selection-start-column="82" selection-end-line="59" selection-end-column="82" />
               <folding>
                 <element signature="e#261#275#0" expanded="true" />
@@ -180,9 +179,9 @@
         <option value="$PROJECT_DIR$/botos/modules/activity_log/ActivityLogObserver.py" />
         <option value="$PROJECT_DIR$/botos/__init__.py" />
         <option value="$PROJECT_DIR$/app.py" />
+        <option value="$PROJECT_DIR$/botos/modules/people_info/controllers.py" />
         <option value="$PROJECT_DIR$/botos/modules/voting/views.py" />
         <option value="$PROJECT_DIR$/botos/modules/admin/views.py" />
-        <option value="$PROJECT_DIR$/botos/modules/people_info/controllers.py" />
       </list>
     </option>
   </component>
@@ -241,6 +240,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -330,7 +330,6 @@
         </subPane>
       </pane>
       <pane id="Scratches" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -735,7 +734,21 @@
       <option name="project" value="LOCAL" />
       <updated>1467911907321</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="Added an Admin controller in people_info. Added a basic login and registration functionality.">
+      <created>1467972750101</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1467972750101</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Added registration views for the voters and admins.">
+      <created>1467977781907</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1467977781907</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -756,14 +769,14 @@
     <frame x="0" y="24" width="1366" height="699" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18594436" sideWeight="0.413738" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18594436" sideWeight="0.40415335" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290735" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="true" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290735" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.18594436" sideWeight="0.49298596" order="1" side_tool="true" content_ui="tabs" x="508" y="52" width="341" height="626" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18594436" sideWeight="0.586262" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18594436" sideWeight="0.59584665" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32108626" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -809,7 +822,9 @@
     <MESSAGE value="Updated the models." />
     <MESSAGE value="Removed VoterSectionVotes." />
     <MESSAGE value="Added a non-functional login functionality to the voting module." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added a non-functional login functionality to the voting module." />
+    <MESSAGE value="Added an Admin controller in people_info. Added a basic login and registration functionality." />
+    <MESSAGE value="Added registration views for the voters and admins." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added registration views for the voters and admins." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -967,26 +982,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="54">
-          <caret line="4" column="34" selection-start-line="4" selection-start-column="34" selection-end-line="4" selection-end-column="34" />
-          <folding>
-            <element signature="e#25#46#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/botos/modules/activity_log/ActivityLogObserver.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1044">
-          <caret line="59" column="82" selection-start-line="59" selection-start-column="82" selection-end-line="59" selection-end-column="82" />
-          <folding>
-            <element signature="e#261#275#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/botos/modules/voting/controllers.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="198">
@@ -997,38 +992,58 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/botos/modules/voting/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="52" column="39" selection-start-line="52" selection-start-column="39" selection-end-line="52" selection-end-column="39" />
+        <state relative-caret-position="1190">
+          <caret line="93" column="17" selection-start-line="93" selection-start-column="17" selection-end-line="93" selection-end-column="17" />
           <folding>
             <element signature="e#231#256#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="72">
+          <caret line="4" column="34" selection-start-line="4" selection-start-column="34" selection-end-line="4" selection-end-column="34" />
+          <folding>
+            <element signature="e#25#46#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/botos/modules/activity_log/ActivityLogObserver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="668">
+          <caret line="59" column="82" selection-start-line="59" selection-start-column="82" selection-end-line="59" selection-end-column="82" />
+          <folding>
+            <element signature="e#261#275#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/botos/modules/people_info/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3094">
+        <state relative-caret-position="-2626">
           <caret line="122" column="25" selection-start-line="122" selection-start-column="25" selection-end-line="122" selection-end-column="25" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/botos/modules/admin/views.py">
+    <entry file="file://$PROJECT_DIR$/botos/modules/people_info/controllers.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="56" column="17" selection-start-line="56" selection-start-column="17" selection-end-line="56" selection-end-column="17" />
+        <state relative-caret-position="1856">
+          <caret line="492" column="0" selection-start-line="492" selection-start-column="0" selection-end-line="492" selection-end-column="0" />
           <folding>
-            <element signature="e#266#291#0" expanded="true" />
+            <element signature="e#269#289#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/botos/modules/people_info/controllers.py">
+    <entry file="file://$PROJECT_DIR$/botos/modules/admin/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="665" column="17" selection-start-line="665" selection-start-column="17" selection-end-line="665" selection-end-column="17" />
+        <state relative-caret-position="866">
+          <caret line="139" column="36" selection-start-line="139" selection-start-column="36" selection-end-line="139" selection-end-column="36" />
           <folding>
-            <element signature="e#269#289#0" expanded="true" />
+            <element signature="e#266#291#0" expanded="true" />
           </folding>
         </state>
       </provider>

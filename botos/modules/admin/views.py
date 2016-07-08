@@ -23,6 +23,9 @@ from flask_login import logout_user
 from flask_login import current_user
 from flask_login import login_required
 
+import string
+import random
+
 import settings
 
 from botos.modules.people_info import controllers
@@ -34,24 +37,17 @@ from botos.modules.activity_log import ActivityLogObservable
 logger = ActivityLogObservable.ActivityLogObservable('admin_' + __name__)
 
 
-@app.route('/admin/register/admin',
-           methods=[
-               'GET',
-               'POST'
-           ])
+# TODO: Add AJAX call support.
+
+@app.route('/admin/register/admin')
 def register_admin():
     """
     Register an admin.
 
-    :return: Load the register page in the admin for GET, reload page otherwise.
+    :return: Reload the page once creation is done.
     """
-    if request.method == 'GET':
-        logger.add_log(20,
-                       'Received GET request. Loading admin registration page.')
-        return render_template(settings.BASE_DIR + 'templates/default/voting/admin/register.html')
-
     logger.add_log(20,
-                   'Creating admin ' + request.form['username'] + '.'
+                   'Creating admin {0}.'.format(request.form['username'])
                    )
 
     controllers.Voter.add([request.form['username']],
@@ -60,9 +56,85 @@ def register_admin():
                           )
 
     logger.add_log(20,
-                   'Created user ' + request.form['username'] + ' successfully.'
+                   'Created user {0} successfully.'.format(request.form['username'])
                    )
 
-    flash('User ' + request.form['username'] + ' successfully created.')
+    flash('User {0} successfully created.'.format(request.form['username']))
 
-    return redirect(url_for('admin_register_voter'))
+    return redirect(url_for('admin_register'))
+
+
+@app.route('/admin/register/voters')
+def register_voters():
+    """
+    Register voters and generate random voter IDs and passwords.
+
+    :return: Reload the page once creation is done.
+    """
+    num_voters = request.form['num_voters']
+    section_id = request.form['section_id']
+
+    logger.add_log(20,
+                   'Creating {0} new voters.'.format(num_voters)
+                   )
+
+    alphanum_str = string.digits + string.ascii_letters
+    voter_list = []
+    password_list = []
+    for _ in xrange(num_voters):
+        voter_id = ''
+        password = ''
+        logger.add_log(20,
+                       'Generating a new voter.'
+                       )
+        for i in xrange(16):
+            if i < 8:
+                voter_id += random.choice(alphanum_str)
+
+            password += random.choice(alphanum_str)
+
+        logger.add_log(20,
+                       'Generated voter {0}'.format(voter_id)
+                       )
+
+        voter_list.append(voter_id)
+        password_list.append(password)
+
+    logger.add_log(20,
+                   'Creating the new set of randomly generated voters.'
+                   )
+
+    controllers.Voter.add(voter_list,
+                          password_list,
+                          [section_id] * num_voters
+                          )
+
+    success_msg = 'Successfully created {0} new voters.'.format(num_voters)
+    logger.add_log(20,
+                   success_msg
+                   )
+
+    flash(success_msg)
+
+    return redirect(url_for('admin_register'))
+
+
+@app.route(/admin/register/batch)
+
+
+@app.route(/admin/register/section)
+
+
+@app.route(/admin/register/candidate)
+def register_candidate():
+    """
+    Register the candidate.
+
+    :return:
+    """
+
+
+@app.route(/admin/register/party)
+
+
+@app.route(/admin/register/position)

@@ -61,7 +61,7 @@ def login():
                                                    )
     if registered_voter is None:
         logger.add_log(20,
-                       'Invalid credentials entered for voter ' + voter_id + '.'
+                       'Invalid credentials entered for voter {0}.'.format(voter_id)
                        )
         flash('Voter ID or password is invalid.',
               'error'
@@ -96,7 +96,5 @@ def logout():
     # TODO: Delete the voter as well.
 
     return redirect(url_for('index'))
-
-
 
 # TODO: Add an index page that determines what page to load.
