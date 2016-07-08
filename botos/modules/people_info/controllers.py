@@ -119,7 +119,8 @@ class Voter:
 
     @staticmethod
     def get_voter(voter_id,
-                  password):
+                  password
+                  ):
         """
         Get a Voter object.
 
@@ -560,3 +561,118 @@ class CandidateParty:
         :param party_name: The name of the party.
         """
         return models.CandidateParty.query.filter_by(name=party_name).first()
+
+
+class Admin:
+    """Handles the addition, deletion, and modification of admins."""
+
+    @staticmethod
+    def add(admin_username_list,
+            password_list,
+            access_level_list
+            ):
+        """
+        Create a new voter.
+
+        :param admin_username_list: Username of the admin.
+        :param password_list: Password of the voter. (duh!)
+        :param access_level_list: Access level of the admin
+        """
+        for _admin_username, _password, _access_level in admin_username_list, password_list, access_level_list:
+            db.session.add(models.Admin(_admin_username,
+                                        _password,
+                                        _access_level
+                                        )
+                           )
+
+        db.session.commit()
+
+    @staticmethod
+    def delete(admin_username_list
+               ):
+        """
+        Delete an admin.
+
+        :param admin_username_list: List of admin user names to be deleted.
+        """
+        for _admin_username in admin_username_list:
+            models.Admin.query.filter(models.Admin == _admin_username).delete()
+
+        db.session.commit()
+
+    @staticmethod
+    def delete_all():
+        """
+        Delete all admins.
+        """
+        models.Admin.query.delete()
+        db.session.commit()
+
+    @staticmethod
+    def modify_admin_username(old_admin_username_list,
+                              new_admin_username_list
+                              ):
+        """
+        Modify admins' ID.
+
+        :param old_admin_username_list: The user names of the admins that will be modified.
+        :param new_admin_username_list: The new IDs of the admins.
+        """
+        for _old_admin_username, _new_admin_username in old_admin_username_list, new_admin_username_list:
+            models.Voter.query.filter_by(username=_old_admin_username).first().username = _new_admin_username
+
+        db.session.commit()
+
+    @staticmethod
+    def modify_admin_password(admin_username_list,
+                              new_password_list
+                              ):
+        """
+        Modify admins' password
+
+        :param admin_username_list: The user names of the admins that will be modified.
+        :param new_password_list: The list of new passwords of each respective
+            admin.
+        """
+        for _admin_username, _password in admin_username_list, new_password_list:
+            models.Admin.query.filter_by(username=_admin_username).first().password = _password
+
+        db.session.commit()
+
+    @staticmethod
+    def modify_admin_level(admin_username_list,
+                           access_level_list
+                           ):
+        """
+        Modify admin's access level.
+
+        :param admin_username_list: The user names of the admins.
+        :param access_level_list: The list of new access levels of each admin.
+        """
+        for _admin_username, _access_level in admin_username_list, access_level_list:
+            models.Admin.query.filter_by(username=_admin_username).first().access_level = _access_level
+
+        db.session.commit()
+
+    @staticmethod
+    def get_admin(admin_username):
+        """
+        Get an Admin object.
+
+        :param admin_username: The username of the admin.
+        """
+        return models.Admin.query.filter_by(username=admin_username).first()
+
+    @staticmethod
+    def get_admin(admin_username,
+                  password
+                  ):
+        """
+        Get an Admin object.
+
+        :param admin_username: The username of the admin.
+        :param password: The password of the admin.
+        """
+        return models.Voter.query.filter_by(username=admin_username,
+                                            password=password
+                                            ).first()

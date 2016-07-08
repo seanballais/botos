@@ -33,6 +33,7 @@ from botos.modules.activity_log import ActivityLogObservable
 # Set up the logger
 logger = ActivityLogObservable.ActivityLogObservable('voting_' + __name__)
 
+
 @app.route('/login',
            methods=[
                'GET',
@@ -67,12 +68,35 @@ def login():
               )
         return redirect(url_for('login'))
 
-    login_user(registered_voter)
+    login_user(registered_voter,
+               remember=True
+               )
 
     logger.add_log(20,
                    'Voter ' + voter_id + ' logged in successfully.'
                    )
     flash('Logged in successfully.')
     return redirect(request.args.get('next') or url_for('index'))
+
+
+@app.route('/logout')
+def logout():
+    """
+    Logout the voter from the application.
+
+    :return: Redirect to the login page.
+    """
+    # TODO: Send votes to the VoteStore module.
+
+    logger.add_log(20,
+                   'Logging out user.'
+                   )
+    logout_user()
+
+    # TODO: Delete the voter as well.
+
+    return redirect(url_for('index'))
+
+
 
 # TODO: Add an index page that determines what page to load.
