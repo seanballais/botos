@@ -9,6 +9,8 @@
 """
 
 
+from sqlalchemy.sql import func
+
 from botos import db
 
 import botos.modules.people_info.models as models
@@ -423,8 +425,37 @@ class Candidate:
         Get a Candidate object.
 
         :param candidate_id: The ID of the candidate.
+        :return: Candidate object if the Candidate exists, None otherwise.
         """
         return models.Candidate.query.filter_by(candidate_id=candidate_id).first()
+
+    @staticmethod
+    def get_candidate(candidate_position,
+                      candidate_index
+                      ):
+        """
+        Get a Candidate object based on the candidate index and position.
+
+        :param candidate_position: The position of the candidate.
+        :param candidate_index: The index of the candidate with respect to the position.
+        :return: Candidate object if the candidate exists, None otherwise.
+        """
+        return models.Candidate.query.filter_by(candidate_position=candidate_position,
+                                                candidate_idx=candidate_index
+                                                ).first()
+
+    @staticmethod
+    def get_next_index(candidate_position):
+        """
+        Get the largest candidate index and increment it by one.
+
+        :return: The next largest candidate index.
+        """
+        max_index_query = db.session.query(func.max(models.Candidate.candidate_idx).label('max_index')
+                                           ).filter(models.Candidate.candidate_position == candidate_position)
+        index_response = max_index_query.one()
+
+        return index_response.max_index + 1
 
 
 class CandidatePosition:
