@@ -15,7 +15,6 @@ from flask import session
 from flask import flash
 from flask import url_for
 from flask import redirect
-from flask import render_template
 from flask import abort
 from flask import g
 from flask_login import login_user
@@ -34,21 +33,20 @@ from botos.modules.activity_log import ActivityLogObservable
 logger = ActivityLogObservable.ActivityLogObservable('voting_' + __name__)
 
 
-@app.route('/login',
-           methods=[
-               'GET',
-               'POST'
-           ])
+@app.route('/login')
 def login():
     """
     Login the voters before voting.
 
     :return: Reloads if invalid user credentials, loads the voting page otherwise.
     """
-    if request.method == 'GET':
-        logger.add_log(20,
-                       'Received GET request. Loading voter login page.')
-        return render_template(settings.BASE_DIR + 'templates/default/voting/login.html')
+    if request.method != 'POST':
+        logger.add_log(30,
+                       'User attempted to go to a non-page directory with a {0} request.'
+                       'Redirecting to the index page.'.format(request.method)
+                       )
+
+        return redirect('/')
 
     voter_id = request.form['voter_id']
     password = request.form['password']
@@ -56,9 +54,9 @@ def login():
                    'Attempting to log in voter ' + voter_id + '.'
                    )
 
-    registered_voter = controllers.Voter.get_voter(voter_id,
-                                                   password
-                                                   )
+    registered_voter = controllers.User.get_voter_pw(voter_id,
+                                                     password
+                                                     )
     if registered_voter is None:
         logger.add_log(20,
                        'Invalid credentials entered for voter {0}.'.format(voter_id)
@@ -66,7 +64,7 @@ def login():
         flash('Voter ID or password is invalid.',
               'error'
               )
-        return redirect(url_for('login'))
+        return redirect('/')
 
     login_user(registered_voter,
                remember=True
@@ -76,7 +74,7 @@ def login():
                    'Voter ' + voter_id + ' logged in successfully.'
                    )
     flash('Logged in successfully.')
-    return redirect(request.args.get('next') or url_for('index'))
+    return redirect('/')
 
 
 @app.route('/logout')
@@ -86,7 +84,13 @@ def logout():
 
     :return: Redirect to the login page.
     """
-    # TODO: Send votes to the VoteStore module.
+    if request.method != 'POST':
+        logger.add_log(30,
+                       'User attempted to go to a non-page directory with a {0} request.'
+                       'Redirecting to the index page.'.format(request.method)
+                       )
+
+        return redirect('/')
 
     logger.add_log(20,
                    'Logging out user.'
@@ -95,6 +99,42 @@ def logout():
 
     # TODO: Delete the voter as well.
 
-    return redirect(url_for('index'))
+    return redirect('/')
 
-# TODO: Add an index page that determines what page to load.
+
+@app.route('/send_vote')
+def send_vote():
+    """
+    Send the vote to the database.
+
+    :return: Redirect the user to the index page.
+    """
+    if request.method != 'POST':
+        logger.add_log(30,
+                       'User attempted to go to a non-page directory with a {0} request.'
+                       'Redirecting to the index page.'.format(request.method)
+                       )
+
+        return redirect('/')
+
+    # TODO: Send votes to VoteStore.
+
+    # Set the user inactive.
+
+
+@app.route('/')
+def index():
+    """
+    Index page of the whole app. This page will show different looks depending on the current user state.
+
+    :return: Render the appropriate template depending on the user status.
+    """
+    logger.add_log(20,
+                   'Accessing index page.'
+                   )
+    if current_user.is_authenticated():
+        logger.add_log(20,
+                       'Current user is authenticated. Displaying voting page.')
+
+    logger.add_log(20,
+                   'Current visitor is anonymous. Might need to say "Who you? You ain\'t my nigga."')

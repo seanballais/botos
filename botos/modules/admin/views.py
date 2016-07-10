@@ -18,10 +18,7 @@ from flask import redirect
 from flask import render_template
 from flask import abort
 from flask import g
-from flask_login import login_user
-from flask_login import logout_user
 from flask_login import current_user
-from flask_login import login_required
 
 import string
 import random
@@ -46,14 +43,23 @@ def register_admin():
 
     :return: Return a JSON response.
     """
+    if request.method != 'POST':
+        logger.add_log(30,
+                       'User attempted to go to a non-page directory with a {0} request.'
+                       'Redirecting to the index page.'.format(request.method)
+                       )
+
+        return redirect('/')
+
     logger.add_log(20,
                    'Creating admin {0}.'.format(request.form['username'])
                    )
 
-    controllers.Voter.add([request.form['username']],
-                          [request.form['password']],
-                          [request.form['section_id']]
-                          )
+    controllers.User.add([request.form['username']],
+                         [request.form['password']],
+                         [request.form['section_id']],
+                         ['admin']
+                         )
 
     logger.add_log(20,
                    'Created user {0} successfully.'.format(request.form['username'])
@@ -71,6 +77,14 @@ def register_voters():
 
     :return: Return a JSON response.
     """
+    if request.method != 'POST':
+        logger.add_log(30,
+                       'User attempted to go to a non-page directory with a {0} request.'
+                       'Redirecting to the index page.'.format(request.method)
+                       )
+
+        return redirect('/')
+
     num_voters = request.form['num_voters']
     section_id = request.form['section_id']
 
@@ -104,10 +118,11 @@ def register_voters():
                    'Creating the new set of randomly generated voters.'
                    )
 
-    controllers.Voter.add(voter_list,
-                          password_list,
-                          [section_id] * num_voters
-                          )
+    controllers.User.add(voter_list,
+                         password_list,
+                         [section_id] * num_voters,
+                         ['voter'] * num_voters
+                         )
 
     success_msg = 'Successfully created {0} new voters.'.format(num_voters)
     logger.add_log(20,
@@ -126,6 +141,14 @@ def register_batch():
 
     :return: Return a JSON response.
     """
+    if request.method != 'POST':
+        logger.add_log(30,
+                       'User attempted to go to a non-page directory with a {0} request.'
+                       'Redirecting to the index page.'.format(request.method)
+                       )
+
+        return redirect('/')
+
     batch_name = request.form['batch_name']
 
     logger.add_log(20,
@@ -150,6 +173,14 @@ def register_section():
 
     :return: Return a JSON response.
     """
+    if request.method != 'POST':
+        logger.add_log(30,
+                       'User attempted to go to a non-page directory with a {0} request.'
+                       'Redirecting to the index page.'.format(request.method)
+                       )
+
+        return redirect('/')
+
     section_name = request.form['section_name']
     batch_name = request.form['batch_name']
 
@@ -179,6 +210,14 @@ def register_candidate():
 
     :return: Return a JSON response.
     """
+    if request.method != 'POST':
+        logger.add_log(30,
+                       'User attempted to go to a non-page directory with a {0} request.'
+                       'Redirecting to the index page.'.format(request.method)
+                       )
+
+        return redirect('/')
+
     candidate_first_name = request.form['Candidate_first-name']
     candidate_last_name = request.form['candidate_last_name']
     candidate_middle_name = request.form['candidate_middle_name']
@@ -223,6 +262,14 @@ def register_party():
 
     :return: Return a JSON response.
     """
+    if request.method != 'POST':
+        logger.add_log(30,
+                       'User attempted to go to a non-page directory with a {0} request.'
+                       'Redirecting to the index page.'.format(request.method)
+                       )
+
+        return redirect('/')
+
     party_name = request.form['party_name']
 
     logger.add_log(20,
@@ -247,6 +294,14 @@ def register_position():
 
     :return: Return a JSON response.
     """
+    if request.method != 'POST':
+        logger.add_log(30,
+                       'User attempted to go to a non-page directory with a {0} request.'
+                       'Redirecting to the index page.'.format(request.method)
+                       )
+
+        return redirect('/')
+
     position_name = request.form['position_name']
     position_level = request.form['position_level']
 
@@ -272,3 +327,15 @@ def register_position():
           )
 
     return '{ "message": "true" }'
+
+
+@app.route('/admin/login')
+def login_admin():
+    """
+    Login the administrator. This will log out any currently logged in voters.
+
+    :return: Return a JSON response.
+    """
+    if current_user.is_authenticated():
+        logger.add_log(20,
+                       'Current user is logged in. ')

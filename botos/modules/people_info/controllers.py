@@ -16,122 +16,122 @@ from botos import db
 import botos.modules.people_info.models as models
 
 
-class Voter:
+class User:
     """Handles the addition, deletion, and modification of voters."""
 
     @staticmethod
-    def add(voter_id_list,
+    def add(username_list,
             password_list,
-            section_id_list
+            section_id_list,
+            role_list
             ):
         """
         Create a new voter.
 
-        :param voter_id_list: ID of the voter (randomly generated).
+        :param username_list: username of the voter (randomly generated for voters).
         :param password_list: Password of the voter. (duh!)
         :param section_id_list: ID of the section of the voter. (Ugh! Duh!)
+        :param role_list: Role of the user.
         """
-        for _voter_id, _password, _section_id in voter_id_list, password_list, section_id_list:
-            db.session.add(models.Voter(_voter_id,
-                                        _password,
-                                        _section_id
-                                        )
+        for _username, _password, _section_id, _role in username_list, password_list, section_id_list, role_list:
+            db.session.add(models.User(_username,
+                                       _password,
+                                       _section_id,
+                                       _role
+                                       )
                            )
 
         db.session.commit()
 
     @staticmethod
-    def delete(voter_id_list
+    def delete(username_list
                ):
         """
         Delete a voter.
 
-        :param voter_id_list: List of the voter IDs to be deleted
+        :param username_list: List of the usernames to be deleted
         """
-        for _voter_id in voter_id_list:
-            models.Voter.query.filter(models.Voter == _voter_id).delete()
+        for _username in username_list:
+            models.User.query.filter(models.User == _username).delete()
 
         db.session.commit()
 
     @staticmethod
     def delete_all():
         """
-        Delete all voters.
+        Delete all users.
         """
-        models.Voter.query.delete()
+        models.User.query.delete()
         db.session.commit()
 
     @staticmethod
-    def modify_voter_id(old_voter_id_list,
-                        new_voter_id_list
-                        ):
+    def modify_username_id(old_username_list,
+                           new_username_list
+                           ):
         """
-        Modify voters' ID.
+        Modify usernames.
 
-        :param old_voter_id_list: The IDs of the users that will be modified.
-        :param new_voter_id_list: The new IDs of the users.
+        :param old_username_list: The usernames of the users that will be modified.
+        :param new_username_list: The new usernames of the users.
         """
-        for _old_voter_id, _new_voter_id in old_voter_id_list, new_voter_id_list:
-            _voter = models.Voter.query.filter_by(voter_id=_old_voter_id).first()
-            _voter.voter_id = new_voter_id_list
+        for _old_username, _new_username in old_username_list, new_username_list:
+            models.User.query.filter_by(username=_old_username).first().username = _new_username
 
-            db.session.commit()
+        db.session.commit()
 
     @staticmethod
-    def modify_voter_password(voter_id_list,
+    def modify_voter_password(username_list,
                               new_password_list
                               ):
         """
-        Modify voters' password
+        Modify users' password
 
-        :param voter_id_list: The IDs of the users that will be modified.
+        :param username_list: The usernames of the users that will be modified.
         :param new_password_list: The list of new passwords of each respective
             user.
         """
-        for _voter_id, _password in voter_id_list, new_password_list:
-            _voter = models.Voter.query.filter_by(voter_id=_voter_id).first()
-            _voter.password = _password
+        for _username, _password in username_list, new_password_list:
+            models.User.query.filter_by(username=_username).first().password = _password
 
         db.session.commit()
 
     @staticmethod
-    def modify_voter_section(voter_id_list,
+    def modify_voter_section(username_list,
                              section_id_list
                              ):
         """
         Modify voter's section.
 
-        :param voter_id_list: The IDs of the users that will be modified.
+        :param username_list: The IDs of the users that will be modified.
         :param section_id_list: The list of new sections each user will have.
         """
-        for _voter_id, _section_id in voter_id_list, section_id_list:
-            _voter = models.Voter.query.filter_by(voter_id=_voter_id).first()
-            _voter.section_id = _section_id
+        for _username, _section_id in username_list, section_id_list:
+            models.User.query.filter_by(username=_username).first().section_id = _section_id
 
         db.session.commit()
 
     @staticmethod
-    def get_voter(voter_id):
+    def get_user(username):
         """
-        Get a Voter object.
+        Get a User object.
 
-        :param voter_id: The ID of the voter.
+        :param username: The username of the user..
         """
-        return models.Voter.query.filter_by(voter_id=voter_id).first()
+        return models.User.query.filter_by(username=username).first()
 
     @staticmethod
-    def get_voter(voter_id,
-                  password
-                  ):
+    def get_voter_pw(username,
+                     password
+                     ):
         """
         Get a Voter object.
 
-        :param voter_id: The ID of the voter.
+        :param username: The username of the voter.
         :param password: The password of the voter.
         """
-        return models.Voter.query.filter_by(voter_id=voter_id,
-                                            password=password
-                                            ).first()
+        return models.User.query.filter_by(username=username,
+                                           password=password
+                                           ).first()
 
 
 class VoterSection:
@@ -593,117 +593,9 @@ class CandidateParty:
         """
         return models.CandidateParty.query.filter_by(name=party_name).first()
 
+def generate_candidate_list():
+    """
+    Generate candidate list for the voting page proper.
 
-class Admin:
-    """Handles the addition, deletion, and modification of admins."""
-
-    @staticmethod
-    def add(admin_username_list,
-            password_list,
-            access_level_list
-            ):
-        """
-        Create a new voter.
-
-        :param admin_username_list: Username of the admin.
-        :param password_list: Password of the voter. (duh!)
-        :param access_level_list: Access level of the admin
-        """
-        for _admin_username, _password, _access_level in admin_username_list, password_list, access_level_list:
-            db.session.add(models.Admin(_admin_username,
-                                        _password,
-                                        _access_level
-                                        )
-                           )
-
-        db.session.commit()
-
-    @staticmethod
-    def delete(admin_username_list
-               ):
-        """
-        Delete an admin.
-
-        :param admin_username_list: List of admin user names to be deleted.
-        """
-        for _admin_username in admin_username_list:
-            models.Admin.query.filter(models.Admin == _admin_username).delete()
-
-        db.session.commit()
-
-    @staticmethod
-    def delete_all():
-        """
-        Delete all admins.
-        """
-        models.Admin.query.delete()
-        db.session.commit()
-
-    @staticmethod
-    def modify_admin_username(old_admin_username_list,
-                              new_admin_username_list
-                              ):
-        """
-        Modify admins' ID.
-
-        :param old_admin_username_list: The user names of the admins that will be modified.
-        :param new_admin_username_list: The new IDs of the admins.
-        """
-        for _old_admin_username, _new_admin_username in old_admin_username_list, new_admin_username_list:
-            models.Voter.query.filter_by(username=_old_admin_username).first().username = _new_admin_username
-
-        db.session.commit()
-
-    @staticmethod
-    def modify_admin_password(admin_username_list,
-                              new_password_list
-                              ):
-        """
-        Modify admins' password
-
-        :param admin_username_list: The user names of the admins that will be modified.
-        :param new_password_list: The list of new passwords of each respective
-            admin.
-        """
-        for _admin_username, _password in admin_username_list, new_password_list:
-            models.Admin.query.filter_by(username=_admin_username).first().password = _password
-
-        db.session.commit()
-
-    @staticmethod
-    def modify_admin_level(admin_username_list,
-                           access_level_list
-                           ):
-        """
-        Modify admin's access level.
-
-        :param admin_username_list: The user names of the admins.
-        :param access_level_list: The list of new access levels of each admin.
-        """
-        for _admin_username, _access_level in admin_username_list, access_level_list:
-            models.Admin.query.filter_by(username=_admin_username).first().access_level = _access_level
-
-        db.session.commit()
-
-    @staticmethod
-    def get_admin(admin_username):
-        """
-        Get an Admin object.
-
-        :param admin_username: The username of the admin.
-        """
-        return models.Admin.query.filter_by(username=admin_username).first()
-
-    @staticmethod
-    def get_admin(admin_username,
-                  password
-                  ):
-        """
-        Get an Admin object.
-
-        :param admin_username: The username of the admin.
-        :param password: The password of the admin.
-        """
-        return models.Voter.query.filter_by(username=admin_username,
-                                            password=password
-                                            ).first()
+    :return: 
+    """
