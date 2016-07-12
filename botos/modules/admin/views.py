@@ -57,10 +57,10 @@ def register_admin():
                    'Creating admin {0}.'.format(request.form['username'])
                    )
 
-    controllers.User.add([request.form['username']],
-                         [request.form['password']],
-                         [request.form['section_id']],
-                         ['admin']
+    controllers.User.add(request.form['username'],
+                         request.form['password'],
+                         request.form['section_id'],
+                         'admin'
                          )
 
     logger.add_log(20,
@@ -87,6 +87,7 @@ def register_voters():
 
         return redirect('/')
 
+    # Generate voters
     num_voters = request.form['num_voters']
     section_id = request.form['section_id']
 
@@ -95,8 +96,6 @@ def register_voters():
                    )
 
     alphanum_str = string.digits + string.ascii_letters
-    voter_list = []
-    password_list = []
     for _ in range(num_voters):
         voter_id = ''
         password = ''
@@ -109,22 +108,17 @@ def register_voters():
 
             password += random.choice(alphanum_str)
 
+            # TODO: Add hashing and salting to the passwords.
+
         logger.add_log(20,
                        'Generated voter {0}'.format(voter_id)
                        )
 
-        voter_list.append(voter_id)
-        password_list.append(password)
-
-    logger.add_log(20,
-                   'Creating the new set of randomly generated voters.'
-                   )
-
-    controllers.User.add(voter_list,
-                         password_list,
-                         [section_id] * num_voters,
-                         ['voter'] * num_voters
-                         )
+        controllers.User.add(voter_id,
+                             password,
+                             section_id,
+                             'voter'
+                             )
 
     success_msg = 'Successfully created {0} new voters.'.format(num_voters)
     logger.add_log(20,
@@ -157,7 +151,7 @@ def register_batch():
                    'Creating a batch {0}.'.format(batch_name)
                    )
 
-    controllers.VoterBatch.add([batch_name])
+    controllers.VoterBatch.add(batch_name)
 
     logger.add_log(20,
                    'Created batch {0} successfully.'.format(batch_name)
@@ -192,8 +186,8 @@ def register_section():
                                                               )
                    )
 
-    controllers.VoterSection.add([section_name],
-                                 [batch_name]
+    controllers.VoterSection.add(section_name,
+                                 batch_name
                                  )
 
     logger.add_log(20,
@@ -234,14 +228,13 @@ def register_candidate():
                                                                   )
                    )
 
-    controllers.Candidate.add([
-        candidate_index,
-        candidate_first_name,
-        candidate_last_name,
-        candidate_middle_name,
-        candidate_position,
-        candidate_party
-    ])
+    controllers.Candidate.add(candidate_index,
+                              candidate_first_name,
+                              candidate_last_name,
+                              candidate_middle_name,
+                              candidate_position,
+                              candidate_party
+                              )
 
     logger.add_log(20,
                    'Created candidate {0} {1} successfully.'.format(candidate_first_name,
@@ -250,7 +243,7 @@ def register_candidate():
                    )
 
     flash('Candidate {0} {1} created successfully.'.format(candidate_first_name,
-                                                           candidate_first_name
+                                                           candidate_last_name
                                                            )
           )
 
@@ -278,7 +271,7 @@ def register_party():
                    'Creating party {0}.'.format(party_name)
                    )
 
-    controllers.CandidateParty.add([party_name])
+    controllers.CandidateParty.add(party_name)
 
     logger.add_log(20,
                    'Created party {0} successfully.'.format(party_name)
@@ -313,8 +306,8 @@ def register_position():
                                                                           )
                    )
 
-    controllers.CandidatePosition.add([position_name],
-                                      [position_level]
+    controllers.CandidatePosition.add(position_name,
+                                      position_level
                                       )
 
     logger.add_log(20,
@@ -433,16 +426,16 @@ def index():
                            )
             return redirect('/')
         else:
-            if current_user.role== 'admin':
+            if current_user.role == 'admin':
                 logger.add_log(20,
-                               'Logged in user is an admin. Render admin panel.')
+                               'Logged in user is an admin. Render admin panel.'
+                               )
                 return render_template('templates/default/admin/index_admin.html')
             elif current_user.role == 'viewer':
                 logger.add_log(20,
                                'Logged in user is a viewer. Render the vote statistics.'
                                )
-                return render_template('templates/default/admin/index_viewer.html',
-                                       username=usernam)
+                return render_template('templates/default/admin/index_viewer.html')
 
     logger.add_log(20,
                    'Current visitor is anonymous. Might need to say "Who you? You ain\'t my nigga."'

@@ -55,8 +55,8 @@ def login():
                    )
 
     registered_user = controllers.User.get_voter_pw(username,
-                                                     password
-                                                     )
+                                                    password
+                                                    )
     if registered_user is None:
         logger.add_log(20,
                        'Invalid credentials entered for user {0}.'.format(username)
@@ -75,7 +75,7 @@ def login():
                    )
     flash('Logged in successfully.')
 
-    if current_user.role == 'admin' or current_user.role == 'viewer'
+    if current_user.role == 'admin' or current_user.role == 'viewer':
         return redirect('/admin')
 
     return redirect('/')
@@ -123,7 +123,7 @@ def send_vote():
 
     # TODO: Send votes to VoteStore.
 
-    # Set the user inactive.
+    # Delete the user
 
 
 @app.route('/')
