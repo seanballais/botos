@@ -36,3 +36,5 @@ SECRET_KEY = ''
 # Log storage
 LOG_FILENAME = 'app.log'
 LOG_LEVEL = logging.DEBUG  # Change to logging.INFO during production
+
+# TODO: Move some of the settings here to the SettingsModel.

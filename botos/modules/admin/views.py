@@ -19,6 +19,8 @@ from flask import render_template
 from flask import abort
 from flask import g
 from flask_login import current_user
+from flask_login import login_user
+from flask_login import logout_user
 
 import string
 import random
@@ -44,7 +46,7 @@ def register_admin():
     :return: Return a JSON response.
     """
     if request.method != 'POST':
-        logger.add_log(30,
+        logger.add_log(20,
                        'User attempted to go to a non-page directory with a {0} request.'
                        'Redirecting to the index page.'.format(request.method)
                        )
@@ -78,7 +80,7 @@ def register_voters():
     :return: Return a JSON response.
     """
     if request.method != 'POST':
-        logger.add_log(30,
+        logger.add_log(20,
                        'User attempted to go to a non-page directory with a {0} request.'
                        'Redirecting to the index page.'.format(request.method)
                        )
@@ -142,7 +144,7 @@ def register_batch():
     :return: Return a JSON response.
     """
     if request.method != 'POST':
-        logger.add_log(30,
+        logger.add_log(20,
                        'User attempted to go to a non-page directory with a {0} request.'
                        'Redirecting to the index page.'.format(request.method)
                        )
@@ -174,7 +176,7 @@ def register_section():
     :return: Return a JSON response.
     """
     if request.method != 'POST':
-        logger.add_log(30,
+        logger.add_log(20,
                        'User attempted to go to a non-page directory with a {0} request.'
                        'Redirecting to the index page.'.format(request.method)
                        )
@@ -211,7 +213,7 @@ def register_candidate():
     :return: Return a JSON response.
     """
     if request.method != 'POST':
-        logger.add_log(30,
+        logger.add_log(20,
                        'User attempted to go to a non-page directory with a {0} request.'
                        'Redirecting to the index page.'.format(request.method)
                        )
@@ -263,7 +265,7 @@ def register_party():
     :return: Return a JSON response.
     """
     if request.method != 'POST':
-        logger.add_log(30,
+        logger.add_log(20,
                        'User attempted to go to a non-page directory with a {0} request.'
                        'Redirecting to the index page.'.format(request.method)
                        )
@@ -295,7 +297,7 @@ def register_position():
     :return: Return a JSON response.
     """
     if request.method != 'POST':
-        logger.add_log(30,
+        logger.add_log(20,
                        'User attempted to go to a non-page directory with a {0} request.'
                        'Redirecting to the index page.'.format(request.method)
                        )
@@ -334,8 +336,117 @@ def login_admin():
     """
     Login the administrator. This will log out any currently logged in voters.
 
-    :return: Return a JSON response.
+    :return: Redirect to the index page if authenticated as a voter, reload otherwise.
     """
+    if request.method != 'POST':
+        logger.add_log(20,
+                       'User attempted to go to a non-page directory with a {0} request.'
+                       'Redirecting to the index page.'.format(request.method)
+                       )
+
+        return redirect('/')
+
+    if current_user.is_authenticated():
+        if current_user.role == 'voter':
+            logger.add_log(20,
+                           'Current user is logged in and a voter. '
+                           )
+            return redirect('/')
+        return redirect('/admin')
+
+    username = request.form['username']
+    password = request.form['password']
+    logger.add_log(20,
+                   'Attempting to log in user ' + username + '.'
+                   )
+
+    registered_user = controllers.User.get_voter_pw(username,
+                                                    password
+                                                    )
+    if registered_user is None:
+        logger.add_log(20,
+                       'Invalid credentials entered for user {0}.'.format(username)
+                       )
+        flash('Username or password is invalid.',
+              'error'
+              )
+        return redirect('/admin')
+
+    if registered_user.role == 'voter':
+        logger.add_log(30,
+                       'Voter {0} has attempted to log in to the admin panel. Not on my watch.'.format(username)
+                       )
+        return redirect('/')
+
+    login_user(registered_user,
+               remember=True
+               )
+
+    logger.add_log(20,
+                   'User {0} logged in successfully.'.format(username)
+                   )
+    flash('Logged in successfully.')
+
+    return redirect('/admin')
+
+
+@app.route('/admin/logout')
+def logout():
+    """
+    Logout the admin from the application.
+
+    :return: Redirect to the admin login page.
+    """
+    if request.method != 'POST':
+        logger.add_log(20,
+                       'User attempted to go to a non-page directory with a {0} request.'
+                       'Redirecting to the index page.'.format(request.method)
+                       )
+
+        return redirect('/')
+
+    logger.add_log(20,
+                   'Logging out user {0}.'.format(current_user.username)
+                   )
+    logout_user()
+
+    return redirect('/admin')
+
+
+@app.route('/admin')
+def index():
+    """
+    Index page for the admin. All tools will be shown here.
+
+    :return: Render a template depending on whether the user is anonymous, an admin, or a voter.
+    """
+    logger.add_log(20,
+                   'Accessing admin index page.'
+                   )
+
     if current_user.is_authenticated():
         logger.add_log(20,
-                       'Current user is logged in. ')
+                       'Current user is authenticated. Displaying voting page.')
+        if current_user.role == 'voter':
+            logger.add_log(20,
+                           'Logged in user is a voter. Redirecting to the main voting page.'
+                           )
+            return redirect('/')
+        else:
+            if current_user.role== 'admin':
+                logger.add_log(20,
+                               'Logged in user is an admin. Render admin panel.')
+                return render_template('templates/default/admin/index_admin.html')
+            elif current_user.role == 'viewer':
+                logger.add_log(20,
+                               'Logged in user is a viewer. Render the vote statistics.'
+                               )
+                return render_template('templates/default/admin/index_viewer.html',
+                                       username=usernam)
+
+    logger.add_log(20,
+                   'Current visitor is anonymous. Might need to say "Who you? You ain\'t my nigga."'
+                   )
+    return render_template(20,
+                           )
+    # TODO: Render the template for anonymous people.

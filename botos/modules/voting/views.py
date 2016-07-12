@@ -41,39 +41,43 @@ def login():
     :return: Reloads if invalid user credentials, loads the voting page otherwise.
     """
     if request.method != 'POST':
-        logger.add_log(30,
+        logger.add_log(20,
                        'User attempted to go to a non-page directory with a {0} request.'
                        'Redirecting to the index page.'.format(request.method)
                        )
 
         return redirect('/')
 
-    voter_id = request.form['voter_id']
+    username = request.form['username']
     password = request.form['password']
     logger.add_log(20,
-                   'Attempting to log in voter ' + voter_id + '.'
+                   'Attempting to log in user ' + username + '.'
                    )
 
-    registered_voter = controllers.User.get_voter_pw(voter_id,
+    registered_user = controllers.User.get_voter_pw(username,
                                                      password
                                                      )
-    if registered_voter is None:
+    if registered_user is None:
         logger.add_log(20,
-                       'Invalid credentials entered for voter {0}.'.format(voter_id)
+                       'Invalid credentials entered for user {0}.'.format(username)
                        )
-        flash('Voter ID or password is invalid.',
+        flash('Username or password is invalid.',
               'error'
               )
         return redirect('/')
 
-    login_user(registered_voter,
+    login_user(registered_user,
                remember=True
                )
 
     logger.add_log(20,
-                   'Voter ' + voter_id + ' logged in successfully.'
+                   'User {0} logged in successfully.'.format(username)
                    )
     flash('Logged in successfully.')
+
+    if current_user.role == 'admin' or current_user.role == 'viewer'
+        return redirect('/admin')
+
     return redirect('/')
 
 
@@ -85,7 +89,7 @@ def logout():
     :return: Redirect to the login page.
     """
     if request.method != 'POST':
-        logger.add_log(30,
+        logger.add_log(20,
                        'User attempted to go to a non-page directory with a {0} request.'
                        'Redirecting to the index page.'.format(request.method)
                        )
@@ -93,7 +97,7 @@ def logout():
         return redirect('/')
 
     logger.add_log(20,
-                   'Logging out user.'
+                   'Logging out user {0}.'.format(current_user.username)
                    )
     logout_user()
 
@@ -110,7 +114,7 @@ def send_vote():
     :return: Redirect the user to the index page.
     """
     if request.method != 'POST':
-        logger.add_log(30,
+        logger.add_log(20,
                        'User attempted to go to a non-page directory with a {0} request.'
                        'Redirecting to the index page.'.format(request.method)
                        )
@@ -135,6 +139,11 @@ def index():
     if current_user.is_authenticated():
         logger.add_log(20,
                        'Current user is authenticated. Displaying voting page.')
+        if current_user.role != 'voter':
+            logger.add_log(20,
+                           'Logged in user is an admin. Redirecting to the admin panel.'
+                           )
+            return redirect('/admin')
 
     logger.add_log(20,
                    'Current visitor is anonymous. Might need to say "Who you? You ain\'t my nigga."')
