@@ -18,13 +18,16 @@ logger = ActivityLogObservable.ActivityLogObservable('settings.py' + __name__)
 
 class SettingsModel(db.Model):
     """Key/value store for the settings."""
-    key   = db.Column(db.String(64),
-                      nullable=False,
-                      unique=True
-                      )
-    value = db.Column(db.String(64),
-                      nullable=False
-                      )
+
+    __table__ = 'settings'
+
+    key       = db.Column(db.String(64),
+                          nullable=False,
+                          unique=True
+                          )
+    value     = db.Column(db.String(64),
+                          nullable=False
+                          )
 
     def __init__(self,
                  key,

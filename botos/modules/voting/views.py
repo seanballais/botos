@@ -148,3 +148,5 @@ def index():
 
     logger.add_log(20,
                    'Current visitor is anonymous. Might need to say "Who you? You ain\'t my nigga."')
+
+    return "hi!"
