@@ -27,6 +27,7 @@ import settings
 from botos.modules.people_info import controllers
 from botos import app
 from botos.modules.activity_log import ActivityLogObservable
+from botos.modules.app_settings.settings import Settings
 
 
 # Set up the logger

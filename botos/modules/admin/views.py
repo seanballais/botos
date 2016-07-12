@@ -30,6 +30,7 @@ import settings
 from botos.modules.people_info import controllers
 from botos import app
 from botos.modules.activity_log import ActivityLogObservable
+from botos.modules.app_settings.settings import Settings
 
 
 # Set up the logger
@@ -430,16 +431,18 @@ def index():
                 logger.add_log(20,
                                'Logged in user is an admin. Render admin panel.'
                                )
-                return render_template('templates/default/admin/index_admin.html')
+                return render_template(
+                    'templates/{0}/admin/index_admin.html'.format(Settings.get_property_value('current_template'))
+                )
             elif current_user.role == 'viewer':
                 logger.add_log(20,
                                'Logged in user is a viewer. Render the vote statistics.'
                                )
-                return render_template('templates/default/admin/index_viewer.html')
+                return render_template(
+                    'templates/{0}/admin/index_viewer.html'.format(Settings.get_property_value('current_template'))
+                )
 
     logger.add_log(20,
-                   'Current visitor is anonymous. Might need to say "Who you? You ain\'t my nigga."'
+                   'Current visitor is anonymous. Might need to say "Who you? You ain\'t my nigga. Identify!"'
                    )
-    return render_template(20,
-                           )
-    # TODO: Render the template for anonymous people.
+    return render_template('templates/{0}/admin/login.html'.format(Settings.get_property_value('current_template')))
