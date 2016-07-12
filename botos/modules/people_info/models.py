@@ -215,9 +215,9 @@ class Candidate(Base):
                  candidate_idx,
                  first_name,
                  last_name,
+                 middle_name,
                  position,
-                 party,
-                 middle_name=''
+                 party
                  ):
         """
         Construct a new ''Candidate'' object.

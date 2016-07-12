@@ -13,7 +13,7 @@ from botos import db
 from botos.modules.activity_log import ActivityLogObservable
 
 
-logger = ActivityLogObservable.ActivityLogObservable()
+logger = ActivityLogObservable.ActivityLogObservable('settings.py' + __name__)
 
 
 class SettingsModel(db.Model):
@@ -43,22 +43,6 @@ class SettingsModel(db.Model):
 class Settings:
     """Singleton class for the settings."""
 
-    settings = Settings()
-
-    @staticmethod
-    def get_instance():
-        """
-        Get the singleton instance of the settings.
-
-        :return: Settings instance.
-        """
-
-        logger.add_log(10,
-                       'Getting Settings singleton instance.'
-                       )
-
-        return Settings.settings
-
     @staticmethod
     def set_property(settings_property,
                      value
@@ -69,7 +53,6 @@ class Settings:
         :param settings_property: A property in the settings.
         :param value: The new value of the property.
         """
-
         logger.add_log(30,
                        'Setting property {0} to a new value: {1}.'.format(settings_property,
                                                                           value
@@ -103,7 +86,7 @@ class Settings:
 
         :param settings_property: Property in the settings.
         """
-        db.session.add(SettingsModel(_property,
+        db.session.add(SettingsModel(settings_property,
                                      ''
                                      )
                        )
@@ -116,7 +99,7 @@ class Settings:
 
         :param settings_property: Property in the settings.
         """
-        SettingsModel.query.filter(key == settings_property).delete()
+        SettingsModel.query.filter_by(key=settings_property).delete()
 
         db.session.commit()
 
