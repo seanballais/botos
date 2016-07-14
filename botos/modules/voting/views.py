@@ -24,10 +24,9 @@ from flask_login import login_required
 
 import settings
 
-from botos.modules.people_info import controllers
+from botos.modules.app_data import controllers
 from botos import app
 from botos.modules.activity_log import ActivityLogObservable
-from botos.modules.app_settings.settings import Settings
 
 
 # Set up the logger
@@ -83,7 +82,7 @@ def login():
 
 
 @app.route('/logout')
-def logout():
+def logout_voter():
     """
     Logout the voter from the application.
 
@@ -128,7 +127,7 @@ def send_vote():
 
 
 @app.route('/')
-def index():
+def app_index():
     """
     Index page of the whole app. This page will show different looks depending on the current user state.
 
@@ -137,7 +136,7 @@ def index():
     logger.add_log(20,
                    'Accessing index page.'
                    )
-    if current_user.is_authenticated():
+    if current_user.is_authenticated:
         logger.add_log(20,
                        'Current user is authenticated. Displaying voting page.')
         if current_user.role != 'voter':
@@ -149,4 +148,4 @@ def index():
     logger.add_log(20,
                    'Current visitor is anonymous. Might need to say "Who you? You ain\'t my nigga."')
 
-    return "hi!"
+    return '<html><head><title>Test Elections Page</title></head><body><h1>This is where you login.</h1></body>'

@@ -12,8 +12,11 @@
 from sqlalchemy.sql import func
 
 from botos import db
+from botos.modules.activity_log import ActivityLogObservable
+import botos.modules.app_data.models as models
 
-import botos.modules.people_info.models as models
+
+logger = ActivityLogObservable.ActivityLogObservable('app_data_' + __name__)
 
 
 class User:
@@ -557,7 +560,72 @@ class CandidateParty:
         return models.CandidateParty.query.filter_by(name=party_name).first()
 
 
-def generate_candidate_list():
+class Settings:
+    """Singleton class for the settings."""
+
+    @staticmethod
+    def set_property(settings_property,
+                     value
+                     ):
+        """
+        Set a property in the settings.
+
+        :param settings_property: A property in the settings.
+        :param value: The new value of the property.
+        """
+        logger.add_log(10,
+                       'Setting property {0} to a new value: {1}.'.format(settings_property,
+                                                                          value
+                                                                          )
+                       )
+        models.SettingsModel.query.filter_by(key=settings_property).first().value = value
+
+    @staticmethod
+    def get_property_value(settings_property):
+        """
+        Get the value of a property.
+
+        :param settings_property: Property in the settings.
+        :return: The property value
+        """
+        return models.SettingsModel.query.filter_by(key=settings_property).first().value
+
+    @staticmethod
+    def property_exists(settings_property):
+        """
+        Check whether a property exists.
+
+        :param settings_property: Property in the settings.
+        :return: True if the property exists, False otherwise.
+        """
+        return models.SettingsModel.query.filter_by(key=settings_property).first() is not None
+
+    @staticmethod
+    def add_property(settings_property):
+        """
+        Add new settings property.
+
+        :param settings_property: Property in the settings.
+        """
+        db.session.add(models.SettingsModel(settings_property,
+                                            ''
+                                            )
+                       )
+        db.session.commit()
+
+    @staticmethod
+    def remove_property(settings_property):
+        """
+        Remove a settings property.
+
+        :param settings_property: Property in the settings.
+        """
+        models.SettingsModel.query.filter_by(key=settings_property).delete()
+
+        db.session.commit()
+
+
+def generate_candidate_html_list():
     """
     Generate candidate list for the voting page proper.
 

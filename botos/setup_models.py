@@ -1,5 +1,5 @@
-"""Initialize the Settings."""
-from botos.modules.app_settings.settings import Settings
+"""Set up the models."""
+from botos.modules.app_data.controllers import Settings
 
 # Generate the settings table records.
 if not Settings.property_exists('current_template'):

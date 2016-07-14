@@ -301,3 +301,34 @@ class CandidateParty(Base):
 
     def __repr__(self):
         return '<CandidateParty %r>' % self.name
+
+
+class SettingsModel(Base):
+    """Key/value store for the settings."""
+
+    __tablename__ = 'settings'
+
+    key           = db.Column(db.String(64),
+                              nullable=False,
+                              unique=True,
+                              primary_key=True
+                              )
+    value         = db.Column(db.String(64),
+                              nullable=False
+                              )
+
+    def __init__(self,
+                 key,
+                 value
+                 ):
+        """
+        Initialize the settings model.
+
+        :param key: Key of the settings property.
+        :param value: Value of the settings property.
+        """
+        self.key   = key
+        self.value = value
+
+    def __repr__(self):
+        return '<SettingsModel>'

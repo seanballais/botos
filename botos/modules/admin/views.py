@@ -27,10 +27,10 @@ import random
 
 import settings
 
-from botos.modules.people_info import controllers
+from botos.modules.app_data import controllers
 from botos import app
 from botos.modules.activity_log import ActivityLogObservable
-from botos.modules.app_settings.settings import Settings
+from botos.modules.app_data.controllers import Settings
 
 
 # Set up the logger
@@ -385,7 +385,7 @@ def login_admin():
 
 
 @app.route('/admin/logout')
-def logout():
+def logout_admin():
     """
     Logout the admin from the application.
 
@@ -418,7 +418,7 @@ def index():
                    'Accessing admin index page.'
                    )
 
-    if current_user.is_authenticated():
+    if current_user.is_authenticated:
         logger.add_log(20,
                        'Current user is authenticated. Displaying voting page.')
         if current_user.role == 'voter':
