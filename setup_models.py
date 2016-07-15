@@ -7,3 +7,9 @@ if not Settings.property_exists('current_template'):
     Settings.set_property('current_template',
                           'default'
                           )
+
+if not Settings.property_exists('title'):
+    Settings.add_property('title')
+    Settings.set_property('title',
+                          'Election System'
+                          )

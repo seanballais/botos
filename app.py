@@ -1,9 +1,25 @@
 """Run a test server."""
+from flask import send_from_directory
+
 from botos import app
 from botos import login_manager
 from botos.modules.admin import views
 from botos.modules.voting import views
+from botos.modules.app_data.controllers import Settings
+
+import settings
 
 login_manager.login_view = 'login'
 
-app.run(host='0.0.0.0', port=8080, debug=True)
+@app.route('/static/<path:filename>')
+def static_file_view(filename):
+    return send_from_directory('{0}/botos/templates/{1}'.format(app.config['BASE_DIR'],
+                                                                Settings.get_property_value('current_template')
+                                                                ),
+                               filename
+                               )
+
+app.run(host=settings.APP_HOST,
+        port=settings.APP_PORT,
+        debug=settings.DEBUG
+        )

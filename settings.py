@@ -2,7 +2,9 @@
 import os
 import logging
 
-# Statement for enabling the development environment
+# # App hosting settings
+APP_HOST = '0.0.0.0'
+APP_PORT = '8080'
 DEBUG = True
 
 # Define the application directory
@@ -24,14 +26,8 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 THREADS_PER_PAGE = 2
 
 # Enable protection against Cross-site Request Forgery (CRSF)
-CSRF_ENABLED = True
-
-# Use a secure, unique, and absolutely secret key for
-# signing the data
-CSRF_SESSION_KEY = ''
-
-# Secret key for signing cookies
-SECRET_KEY = ''
+WTF_CSRF_ENABLED = True
+SECRET_KEY = 'change-this-before-deploying'
 
 # Log storage
 LOG_FILENAME = 'app.log'

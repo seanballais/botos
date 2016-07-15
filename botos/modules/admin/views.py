@@ -408,7 +408,7 @@ def logout_admin():
 
 
 @app.route('/admin')
-def index():
+def admin_index():
     """
     Index page for the admin. All tools will be shown here.
 

@@ -27,6 +27,7 @@ import settings
 from botos.modules.app_data import controllers
 from botos import app
 from botos.modules.activity_log import ActivityLogObservable
+from botos.modules.app_data.controllers import Settings
 
 
 # Set up the logger
@@ -148,4 +149,5 @@ def app_index():
     logger.add_log(20,
                    'Current visitor is anonymous. Might need to say "Who you? You ain\'t my nigga."')
 
-    return '<html><head><title>Test Elections Page</title></head><body><h1>This is where you login.</h1></body>'
+    # TODO: Make the index template.
+    return render_template('templates/{0}/index.html'.format(Settings.get_property_value('current_template')))

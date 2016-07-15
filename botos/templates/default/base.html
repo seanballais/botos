@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        {% if title %}
+        <title>{{ title }}</title>
+        {% else %}
+        <title>Election App</title>
+        {% endif %}
+        <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    </head>
+    <body>
+        {% block content %}{% endblock %}
+    </body>
+</html>
