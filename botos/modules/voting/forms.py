@@ -14,14 +14,14 @@ from wtforms import PasswordField
 from wtforms.validators import DataRequired
 
 
-class VoterLoginForm(Form):
+class LoginForm(Form):
     """Login form for the voters."""
 
     username = StringField('username',
                            validators=[DataRequired()],
                            render_kw={
                                'id': "login-username",
-                               'placeholder': "Enter your username"
+                               'placeholder': "Enter your ID"
                            }
                            )
     password = PasswordField('password',

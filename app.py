@@ -9,7 +9,7 @@ from botos.modules.app_data.controllers import Settings
 
 import settings
 
-login_manager.login_view = 'login'
+login_manager.login_view = 'botos.modules.voting.views.app_index'
 
 @app.route('/static/<path:filename>')
 def static_file_view(filename):

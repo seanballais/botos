@@ -39,7 +39,10 @@ logger = ActivityLogObservable.ActivityLogObservable('admin_' + __name__)
 
 # TODO: Add AJAX call support.
 
-@app.route('/admin/register/admin')
+@app.route('/admin/register/admin',
+           methods=[
+               'POST'
+           ])
 def register_admin():
     """
     Register an admin.
@@ -60,7 +63,7 @@ def register_admin():
 
     controllers.User.add(request.form['username'],
                          request.form['password'],
-                         request.form['section_id'],
+                         '',
                          'admin'
                          )
 
@@ -73,7 +76,10 @@ def register_admin():
     return '{ "message": "true" }'
 
 
-@app.route('/admin/register/voters')
+@app.route('/admin/register/voters',
+           methods=[
+               'POST'
+           ])
 def register_voters():
     """
     Register voters and generate random voter IDs and passwords.
@@ -131,7 +137,10 @@ def register_voters():
     return '{ "message": "true" }'
 
 
-@app.route('/admin/register/batch')
+@app.route('/admin/register/batch',
+           methods=[
+               'POST'
+           ])
 def register_batch():
     """
     Register a voter batch.
@@ -163,7 +172,10 @@ def register_batch():
     return '{ "message": "true" }'
 
 
-@app.route('/admin/register/section')
+@app.route('/admin/register/section',
+           methods=[
+               'POST'
+           ])
 def register_section():
     """
     Register a voter section.
@@ -200,7 +212,10 @@ def register_section():
     return '{ "message": "true" }'
 
 
-@app.route('/admin/register/candidate')
+@app.route('/admin/register/candidate',
+           methods=[
+               'POST'
+           ])
 def register_candidate():
     """
     Register a candidate.
@@ -251,7 +266,10 @@ def register_candidate():
     return '{ "message": "true" }'
 
 
-@app.route('/admin/register/party')
+@app.route('/admin/register/party',
+           methods=[
+               'POST'
+           ])
 def register_party():
     """
     Register a party.
@@ -283,7 +301,10 @@ def register_party():
     return '{ "message": "true" }'
 
 
-@app.route('/admin/register/position')
+@app.route('/admin/register/position',
+           methods=[
+               'POST'
+           ])
 def register_position():
     """
     Register a position.
@@ -325,66 +346,10 @@ def register_position():
     return '{ "message": "true" }'
 
 
-@app.route('/admin/login')
-def login_admin():
-    """
-    Login the administrator. This will log out any currently logged in voters.
-
-    :return: Redirect to the index page if authenticated as a voter, reload otherwise.
-    """
-    if request.method != 'POST':
-        logger.add_log(20,
-                       'User attempted to go to a non-page directory with a {0} request.'
-                       'Redirecting to the index page.'.format(request.method)
-                       )
-
-        return redirect('/')
-
-    if current_user.is_authenticated():
-        if current_user.role == 'voter':
-            logger.add_log(20,
-                           'Current user is logged in and a voter. '
-                           )
-            return redirect('/')
-        return redirect('/admin')
-
-    username = request.form['username']
-    password = request.form['password']
-    logger.add_log(20,
-                   'Attempting to log in user ' + username + '.'
-                   )
-
-    registered_user = controllers.User.get_voter_pw(username,
-                                                    password
-                                                    )
-    if registered_user is None:
-        logger.add_log(20,
-                       'Invalid credentials entered for user {0}.'.format(username)
-                       )
-        flash('Username or password is invalid.',
-              'error'
-              )
-        return redirect('/admin')
-
-    if registered_user.role == 'voter':
-        logger.add_log(30,
-                       'Voter {0} has attempted to log in to the admin panel. Not on my watch.'.format(username)
-                       )
-        return redirect('/')
-
-    login_user(registered_user,
-               remember=True
-               )
-
-    logger.add_log(20,
-                   'User {0} logged in successfully.'.format(username)
-                   )
-    flash('Logged in successfully.')
-
-    return redirect('/admin')
-
-
-@app.route('/admin/logout')
+@app.route('/admin/logout',
+           methods=[
+               'POST'
+           ])
 def logout_admin():
     """
     Logout the admin from the application.
@@ -432,17 +397,17 @@ def admin_index():
                                'Logged in user is an admin. Render admin panel.'
                                )
                 return render_template(
-                    'templates/{0}/admin/index_admin.html'.format(Settings.get_property_value('current_template'))
+                    '{0}/admin/index_admin.html'.format(Settings.get_property_value('current_template'))
                 )
             elif current_user.role == 'viewer':
                 logger.add_log(20,
                                'Logged in user is a viewer. Render the vote statistics.'
                                )
                 return render_template(
-                    'templates/{0}/admin/index_viewer.html'.format(Settings.get_property_value('current_template'))
+                    '{0}/admin/index_viewer.html'.format(Settings.get_property_value('current_template'))
                 )
 
     logger.add_log(20,
                    'Current visitor is anonymous. Might need to say "Who you? You ain\'t my nigga. Identify!"'
                    )
-    return render_template('templates/{0}/admin/login.html'.format(Settings.get_property_value('current_template')))
+    return redirect('/')

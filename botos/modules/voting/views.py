@@ -10,31 +10,26 @@
 
 from flask import request
 from flask import render_template
-from flask import Flask
-from flask import session
 from flask import flash
-from flask import url_for
 from flask import redirect
-from flask import abort
-from flask import g
 from flask_login import login_user
 from flask_login import logout_user
 from flask_login import current_user
-from flask_login import login_required
-
-import settings
 
 from botos.modules.app_data import controllers
 from botos import app
 from botos.modules.activity_log import ActivityLogObservable
 from botos.modules.app_data.controllers import Settings
-
+from botos.modules.voting.forms import LoginForm
 
 # Set up the logger
 logger = ActivityLogObservable.ActivityLogObservable('voting_' + __name__)
 
 
-@app.route('/login')
+@app.route('/login',
+           methods=[
+               'POST'
+           ])
 def login():
     """
     Login the voters before voting.
@@ -82,7 +77,10 @@ def login():
     return redirect('/')
 
 
-@app.route('/logout')
+@app.route('/logout',
+           methods=[
+               'POST'
+           ])
 def logout_voter():
     """
     Logout the voter from the application.
@@ -107,7 +105,10 @@ def logout_voter():
     return redirect('/')
 
 
-@app.route('/send_vote')
+@app.route('/send_vote',
+           methods=[
+               'POST'
+           ])
 def send_vote():
     """
     Send the vote to the database.
@@ -134,9 +135,12 @@ def app_index():
 
     :return: Render the appropriate template depending on the user status.
     """
+    login_form = LoginForm()
+
     logger.add_log(20,
                    'Accessing index page.'
                    )
+
     if current_user.is_authenticated:
         logger.add_log(20,
                        'Current user is authenticated. Displaying voting page.')
@@ -147,7 +151,10 @@ def app_index():
             return redirect('/admin')
 
     logger.add_log(20,
-                   'Current visitor is anonymous. Might need to say "Who you? You ain\'t my nigga."')
+                   'Current visitor is anonymous. Might need to say "Who you? You ain\'t my nigga."'
+                   )
 
     # TODO: Make the index template.
-    return render_template('templates/{0}/index.html'.format(Settings.get_property_value('current_template')))
+    return render_template('{0}/index.html'.format(Settings.get_property_value('current_template')),
+                           form=login_form
+                           )

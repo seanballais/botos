@@ -19,7 +19,8 @@ class Base(db.Model):
 
     id             = db.Column(db.Integer,
                                primary_key=True,
-                               unique=True
+                               unique=True,
+                               autoincrement=True
                                )
     date_created   = db.Column(db.DateTime,
                                default=db.func.current_timestamp()
@@ -42,7 +43,7 @@ class User(Base):
                                nullable=False
                                )
     section_id     = db.Column(db.Integer,
-                               db.ForeignKey('section.id')
+                               db.ForeignKey('voter_section.id')
                                )
     role           = db.Column(db.String(8),
                                nullable=False
@@ -97,18 +98,19 @@ class User(Base):
         """
         return False
 
-    def get_user(self):
+    def get_id(self):
         """
         Get the ID of the user.
 
         :return: The username of the user with respect to the database.
         """
-        return str(self.id,
-                   'utf-8'
-                   )
+        return bytes(self.id)
 
     def __repr__(self):
         return '<Voter %r>' % self.id
+
+    # TODO: Fix Exception: No user_loader has been installed for this LoginManager.
+    # Add one with the 'LoginManager.user_loader' decorator.
 
 
 class VoterSection(Base):
@@ -120,7 +122,7 @@ class VoterSection(Base):
                                unique=True
                                )
     batch_id       = db.Column(db.Integer,
-                               db.ForeignKey('batch.id')
+                               db.ForeignKey('voter_batch.id')
                                )
     voter_section  = db.relationship('User',
                                      backref=db.backref('section',
@@ -128,12 +130,12 @@ class VoterSection(Base):
                                                         ),
                                      lazy='dynamic'
                                      )
-    section_votes  = db.relationship('VoterSectionVotes',
+    """section_votes  = db.relationship('VoterSectionVotes',
                                      backref=db.backref('section',
                                                         lazy='select'
                                                         ),
                                      lazy='dynamic'
-                                     )
+                                     )"""
 
     def __init__(self,
                  section_name,
@@ -310,8 +312,7 @@ class SettingsModel(Base):
 
     key           = db.Column(db.String(64),
                               nullable=False,
-                              unique=True,
-                              primary_key=True
+                              unique=True
                               )
     value         = db.Column(db.String(64),
                               nullable=False

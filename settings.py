@@ -4,7 +4,7 @@ import logging
 
 # # App hosting settings
 APP_HOST = '0.0.0.0'
-APP_PORT = '8080'
+APP_PORT = 8080
 DEBUG = True
 
 # Define the application directory
