@@ -2,4 +2,7 @@
 
 {% block content %}
     <h1 class="voting-splash-header">Admin!</h1>
+    <form action="/admin/logout" method="post">
+        <button name="logout" value="logout">Logout</button>
+    </form>
 {% endblock %}
