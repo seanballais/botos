@@ -18,12 +18,28 @@ from flask_login import current_user
 
 from botos.modules.app_data import controllers
 from botos import app
+from botos import login_manager
 from botos.modules.activity_log import ActivityLogObservable
 from botos.modules.app_data.controllers import Settings
+from botos.modules.app_data.models import User
 from botos.modules.voting.forms import LoginForm
 
 # Set up the logger
 logger = ActivityLogObservable.ActivityLogObservable('voting_' + __name__)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    """
+    Load the user. Callback for Flask-Login.
+
+    :param id: ID of the user.
+    :return: A User object.
+    """
+    logger.add_log(10,
+                   'Getting user by ID of {0}.'.format(user_id)
+                   )
+    return User.query.get(user_id)
 
 
 @app.route('/login',
@@ -36,43 +52,41 @@ def login():
 
     :return: Reloads if invalid user credentials, loads the voting page otherwise.
     """
-    if request.method != 'POST':
-        logger.add_log(20,
-                       'User attempted to go to a non-page directory with a {0} request.'
-                       'Redirecting to the index page.'.format(request.method)
-                       )
+    login_form = LoginForm()
 
-        return redirect('/')
-
-    username = request.form['username']
-    password = request.form['password']
+    username = login_form.username.data
+    password = login_form.password.data
     logger.add_log(20,
-                   'Attempting to log in user ' + username + '.'
+                   'Attempting to log in user {0}.'.format(username)
                    )
 
-    registered_user = controllers.User.get_voter_pw(username,
-                                                    password
-                                                    )
-    if registered_user is None:
-        logger.add_log(20,
-                       'Invalid credentials entered for user {0}.'.format(username)
-                       )
-        flash('Username or password is invalid.',
-              'error'
-              )
-        return redirect('/')
+    if login_form.validate():
+        registered_user = controllers.User.get_voter_pw(username,
+                                                        password
+                                                        )
+        if registered_user is None:
+            logger.add_log(20,
+                           'Invalid credentials entered for user {0}.'.format(username)
+                           )
+            flash('Username or password is invalid.',
+                  'error'
+                 )
+            return redirect('/')
 
-    login_user(registered_user,
-               remember=True
-               )
-
-    logger.add_log(20,
-                   'User {0} logged in successfully.'.format(username)
+        login_user(registered_user,
+                   remember=True
                    )
-    flash('Logged in successfully.')
 
-    if current_user.role == 'admin' or current_user.role == 'viewer':
-        return redirect('/admin')
+        logger.add_log(20,
+                       'User {0} logged in successfully.'.format(username)
+                       )
+        flash('Logged in successfully.')
+
+        logger.add_log(10,
+                       'Current user role: {0}'.format(current_user.role)
+                       )
+        if current_user.role == 'admin' or current_user.role == 'viewer':
+            return redirect('/admin')
 
     return redirect('/')
 

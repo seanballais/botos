@@ -48,12 +48,16 @@ class User(Base):
     role           = db.Column(db.String(8),
                                nullable=False
                                )
+    active         = db.Column(db.Boolean,
+                               nullable=False
+                               )
 
     def __init__(self,
                  username,
                  password,
                  section_id,
-                 role
+                 role,
+                 active=True
                  ):
         """
         Construct a new ''Voter'' object.
@@ -73,6 +77,7 @@ class User(Base):
         self.password      = password
         self.section_id    = section_id
         self.role          = role
+        self.active        = active
 
     def is_authenticated(self):
         """
@@ -88,7 +93,7 @@ class User(Base):
 
         :return: True if the voter has not voted yet.
         """
-        return True
+        return self.active
 
     def is_anonymous(self):
         """
@@ -104,7 +109,7 @@ class User(Base):
 
         :return: The username of the user with respect to the database.
         """
-        return bytes(self.id)
+        return str(self.id)
 
     def __repr__(self):
         return '<Voter %r>' % self.id

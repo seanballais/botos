@@ -20,7 +20,7 @@ def main():
                          'admin'
                          )
 
-    print('Admin {0} has now been created.')
+    print('Admin {0} has now been created.'.format(username))
     print('You may now log in to the app using the recently created admin credentials.')
 
 if __name__ == '__main__':

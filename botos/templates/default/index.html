@@ -3,6 +3,7 @@
 {% block content %}
     <h1 class="voting-splash-header">Election!</h1>
     <form class="login-form" action="/login" method="post" name="login">
+        {{ form.hidden_tag() }}
         <p>
             {{ form.username(size=80) }}<br>
         </p>
