@@ -78,6 +78,10 @@ class VoterCreationForm(Form):
                              })
 
 
+class VoterBatchCreationForm(Form):
+    """For for creating voter batches."""
+
+
 class VoterSectionCreationForm(Form):
     """Form for creating voter sections."""
 
