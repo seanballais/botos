@@ -25,6 +25,7 @@ from botos import app
 from botos.modules.activity_log import ActivityLogObservable
 from botos.modules.app_data.controllers import Settings
 from botos.modules.admin.forms import AdminCreationForm
+from botos.modules.admin.forms import VoterCreationForm
 from botos.modules.admin.forms import VoterSectionCreationForm
 
 

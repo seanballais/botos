@@ -45,25 +45,6 @@ class AdminCreationForm(Form):
 
 class VoterCreationForm(Form):
     """Form for creating voters."""
-    pass
-
-
-class VoterSectionCreationForm(Form):
-    """Form for creating voter sections."""
-
-    num_voters = StringField('username',
-                             validators=[DataRequired()],
-                             render_kw={
-                                 'id': "register-admin-username",
-                                 'placeholder': "Enter the username"
-                             })
-    section    = SelectField('role',
-                             choices=_get_section_list(),
-                             validators=[DataRequired()],
-                             render_kw={
-                                 'id': "register-admin-role"
-                             })
-
     def _get_section_list(self):
         """
         Get a list of all sections but only including the name and ID.
@@ -81,4 +62,24 @@ class VoterSectionCreationForm(Form):
             section_list.append(list_section_item)
 
         return section_list.sort()
+
+    num_voters = StringField('username',
+                             validators=[DataRequired()],
+                             render_kw={
+                                 'id': "register-admin-username",
+                                 'placeholder': "Enter the username"
+                             })
+
+    section    = SelectField('role',
+                             choices=_get_section_list(),
+                             validators=[DataRequired()],
+                             render_kw={
+                                 'id': "register-admin-role"
+                             })
+
+
+class VoterSectionCreationForm(Form):
+    """Form for creating voter sections."""
+
+
 
