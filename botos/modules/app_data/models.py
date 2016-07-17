@@ -147,7 +147,7 @@ class User(Base):
                                           )
 
     def __repr__(self):
-        return '<Voter %r>' % self.id
+        return '<User %r>' % self.id
 
 
 class VoterSection(Base):

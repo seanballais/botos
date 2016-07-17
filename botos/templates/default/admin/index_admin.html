@@ -22,4 +22,21 @@
             <input type="submit" value="Register admin">
         </p>
     </form>
+
+    <h2>Create a new set of voters</h2>
+    <form class="register-admin-form" action="/admin/register/admin" method="post" name="login">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.username(size=80) }}<br>
+        </p>
+        <p>
+            {{ form.password() }}<br>
+        </p>
+        <p>
+            {{ form.role() }}<br>
+        </p>
+        <p>
+            <input type="submit" value="Register admin">
+        </p>
+    </form>
 {% endblock %}

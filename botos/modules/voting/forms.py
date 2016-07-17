@@ -22,12 +22,10 @@ class LoginForm(Form):
                            render_kw={
                                'id': "login-username",
                                'placeholder': "Enter your ID"
-                           }
-                           )
+                           })
     password = PasswordField('password',
                              validators=[DataRequired()],
                              render_kw={
                                  'id': "login-password",
                                  'placeholder': "Enter your password"
-                             }
-                             )
+                             })

@@ -13,7 +13,7 @@ from sqlalchemy.sql import func
 
 from botos import db
 from botos.modules.activity_log import ActivityLogObservable
-import botos.modules.app_data.models as models
+from botos.modules.app_data import models
 
 
 logger = ActivityLogObservable.ActivityLogObservable('app_data_' + __name__)
@@ -160,7 +160,7 @@ class VoterSection:
 
     @staticmethod
     def add(section_name,
-            batch_id,
+            batch_id
             ):
         """
         Create a new section.
@@ -231,6 +231,14 @@ class VoterSection:
         """
         return models.VoterSection.query.filter_by(section_name=section_name).first()
 
+    @staticmethod
+    def get_all():
+        """
+        Get all of the voter sections.
+
+        :return: A list of all the sections and the corresponding ID.
+        """
+        return models.VoterSection.query.all()
 
 class VoterBatch:
     """Handles the addition, deletion, and modification of the batches."""
