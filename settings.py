@@ -29,6 +29,8 @@ THREADS_PER_PAGE = 2
 WTF_CSRF_ENABLED = True
 SECRET_KEY = 'change-this-before-deploying'
 
+BCRYPT_LOG_ROUNDS = 15
+
 # Log storage
 LOG_FILENAME = 'app.log'
 LOG_LEVEL = logging.DEBUG  # Change to logging.INFO during production

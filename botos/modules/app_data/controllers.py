@@ -130,6 +130,30 @@ class User:
                                            password=password
                                            ).first()
 
+    @staticmethod
+    def is_active(username):
+        """
+        Check if user is active or not.
+
+        :param username: Username of the user.
+        :return: True if the user is active. False otherwise.
+        """
+        return models.User.query.filter_by(username=username).first().is_active()
+
+    @staticmethod
+    def set_active(username,
+                   state=False
+                   ):
+        """
+        Set the active state of a user.
+
+        :param username: Username of the user.
+        :param state: New active state of the user.
+        """
+        models.User.query.filter_by(username=username).first().active = state
+
+        db.session.commit()
+
 
 class VoterSection:
     """Handles the addition, deletion, and modification of voter sections."""

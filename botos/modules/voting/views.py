@@ -33,7 +33,7 @@ def load_user(user_id):
     """
     Load the user. Callback for Flask-Login.
 
-    :param id: ID of the user.
+    :param user_id: ID of the user.
     :return: A User object.
     """
     logger.add_log(10,
@@ -60,33 +60,35 @@ def login():
                    'Attempting to log in user {0}.'.format(username)
                    )
 
-    if login_form.validate():
-        registered_user = controllers.User.get_voter_pw(username,
-                                                        password
-                                                        )
-        if registered_user is None:
+    if login_form.validate_on_submit():
+        registered_user = controllers.User.get_user(username)
+
+        if registered_user.is_password_correct(password):
+            login_user(registered_user,
+                       remember=True
+                       )
+
+            logger.add_log(20,
+                           'User {0} logged in successfully.'.format(username)
+                           )
+            flash('Logged in successfully.')
+
+            logger.add_log(10,
+                           'Current user role: {0}'.format(current_user.role)
+                           )
+            if current_user.role == 'admin' or current_user.role == 'viewer':
+                return redirect('/admin')
+
+        else:
             logger.add_log(20,
                            'Invalid credentials entered for user {0}.'.format(username)
                            )
+
             flash('Username or password is invalid.',
                   'error'
                  )
+
             return redirect('/')
-
-        login_user(registered_user,
-                   remember=True
-                   )
-
-        logger.add_log(20,
-                       'User {0} logged in successfully.'.format(username)
-                       )
-        flash('Logged in successfully.')
-
-        logger.add_log(10,
-                       'Current user role: {0}'.format(current_user.role)
-                       )
-        if current_user.role == 'admin' or current_user.role == 'viewer':
-            return redirect('/admin')
 
     return redirect('/')
 

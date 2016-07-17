@@ -8,8 +8,10 @@
 
 """
 
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from botos import db
+from botos import bcrypt
 
 
 class Base(db.Model):
@@ -39,7 +41,7 @@ class User(Base):
                                nullable=False,
                                unique=True
                                )
-    password       = db.Column(db.String(128),
+    _password      = db.Column(db.String(128),
                                nullable=False
                                )
     section_id     = db.Column(db.Integer,
@@ -79,6 +81,26 @@ class User(Base):
         self.role          = role
         self.active        = active
 
+    @hybrid_property
+    def password(self):
+        """
+        'Proxy' password for the user.
+
+        :return: Actual password of the user.
+        """
+        return self._password
+
+    @password.setter
+    def _set_password(self,
+                      plain_password
+                      ):
+        """
+        Set the user's password.
+
+        :param plain_password: Password of the user in plain text.
+        """
+        self._password = bcrypt.generate_password_hash(plain_password)
+
     def is_authenticated(self):
         """
         Check if the voter has been authenticated already.
@@ -111,11 +133,21 @@ class User(Base):
         """
         return str(self.id)
 
+    def is_password_correct(self,
+                            plain_password
+                            ):
+        """
+        Check if the password is correct.
+
+        :param plain_password: Password in plain text.
+        :return: True if the password given is correct. False otherwise.
+        """
+        return bcrypt.check_password_hash(self._password,
+                                          plain_password
+                                          )
+
     def __repr__(self):
         return '<Voter %r>' % self.id
-
-    # TODO: Fix Exception: No user_loader has been installed for this LoginManager.
-    # Add one with the 'LoginManager.user_loader' decorator.
 
 
 class VoterSection(Base):

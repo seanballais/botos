@@ -2,6 +2,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_bcrypt import Bcrypt
 
 # Define the WSGI application object
 app = Flask(__name__)
@@ -32,6 +33,9 @@ if not Settings.property_exists('title'):
     Settings.set_property('title',
                           'Election System'
                           )
+
+# Set up a Bcrypt instance
+bcrypt = Bcrypt(app)
 
 # Initialize the Flask login manager
 login_manager = LoginManager()
