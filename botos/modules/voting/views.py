@@ -63,7 +63,7 @@ def login():
     if login_form.validate_on_submit():
         registered_user = controllers.User.get_user(username)
 
-        if registered_user.is_password_correct(password):
+        if registered_user is not None and registered_user.is_password_correct(password):
             login_user(registered_user,
                        remember=True
                        )
@@ -89,6 +89,13 @@ def login():
                  )
 
             return redirect('/')
+
+    logger.add_log(20,
+                   'Username or password not entered.'
+                   )
+    flash('Something is wrong. Please enter both username and password',
+          'error'
+          )
 
     return redirect('/')
 

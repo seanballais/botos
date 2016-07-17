@@ -35,7 +35,7 @@ class Base(db.Model):
 
 class User(Base):
     """Represents the voter in the database. Voter is deleted after voting."""
-    __tablename__  = 'voter'
+    __tablename__  = 'user'
 
     username       = db.Column(db.String(8),
                                nullable=False,

@@ -5,4 +5,21 @@
     <form action="/admin/logout" method="post">
         <button name="logout" value="logout">Logout</button>
     </form>
+
+    <h2>Create a new admin</h2>
+    <form class="register-admin-form" action="/admin/register/admin" method="post" name="login">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.username(size=80) }}<br>
+        </p>
+        <p>
+            {{ form.password() }}<br>
+        </p>
+        <p>
+            {{ form.role() }}<br>
+        </p>
+        <p>
+            <input type="submit" value="Register admin">
+        </p>
+    </form>
 {% endblock %}

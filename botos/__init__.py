@@ -14,6 +14,9 @@ app.config.from_object('settings')
 # by modules and controllers
 db = SQLAlchemy(app)
 
+# Set up a Bcrypt instance
+bcrypt = Bcrypt(app)
+
 # Import the modules before creating the tables
 from botos.modules.app_data import models
 
@@ -33,9 +36,6 @@ if not Settings.property_exists('title'):
     Settings.set_property('title',
                           'Election System'
                           )
-
-# Set up a Bcrypt instance
-bcrypt = Bcrypt(app)
 
 # Initialize the Flask login manager
 login_manager = LoginManager()

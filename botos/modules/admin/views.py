@@ -24,13 +24,14 @@ from botos.modules.app_data import controllers
 from botos import app
 from botos.modules.activity_log import ActivityLogObservable
 from botos.modules.app_data.controllers import Settings
+from botos.modules.admin.forms import AdminCreationForm
 
 
 # Set up the logger
 logger = ActivityLogObservable.ActivityLogObservable('admin_' + __name__)
 
 
-# TODO: Add AJAX call support.
+# TODO: Add AJAX call support in the future.
 
 @app.route('/admin/register/admin',
            methods=[
@@ -42,31 +43,39 @@ def register_admin():
 
     :return: Return a JSON response.
     """
-    if request.method != 'POST':
-        logger.add_log(20,
-                       'User attempted to go to a non-page directory with a {0} request.'
-                       'Redirecting to the index page.'.format(request.method)
-                       )
-
-        return redirect('/')
-
+    admin_creation_form = AdminCreationForm()
     logger.add_log(20,
-                   'Creating admin {0}.'.format(request.form['username'])
+                   'Attempting to create admin {0}.'.format(request.form['username'])
                    )
 
-    controllers.User.add(request.form['username'],
-                         request.form['password'],
-                         '',
-                         'admin'
-                         )
+    username = admin_creation_form.username.data
+    password = admin_creation_form.password.data
+    role     = admin_creation_form.role.data
+    if admin_creation_form.validate_on_submit():
+        admin = controllers.User.get_user(username)
 
-    logger.add_log(20,
-                   'Created user {0} successfully.'.format(request.form['username'])
-                   )
+        if admin is None:
+            logger.add_log(20,
+                           'Created admin {0} with role {1} successfully.'.format(username,
+                                                                                  role
+                                                                                  )
+                           )
 
-    flash('User {0} successfully created.'.format(request.form['username']))
+            controllers.User.add(username,
+                                 password,
+                                 '',
+                                 role
+                                 )
 
-    return '{ "message": "true" }'
+            flash('Created admin {0} successfully.'.format(username))
+
+        else:
+            logger.add_log(20,
+                           'Admin {0} already exists.'.format(username)
+                           )
+            flash('Admin {0} already exists.'.format(username))
+
+    return redirect('/admin')
 
 
 @app.route('/admin/register/voters',
@@ -79,14 +88,6 @@ def register_voters():
 
     :return: Return a JSON response.
     """
-    if request.method != 'POST':
-        logger.add_log(20,
-                       'User attempted to go to a non-page directory with a {0} request.'
-                       'Redirecting to the index page.'.format(request.method)
-                       )
-
-        return redirect('/')
-
     # Generate voters
     num_voters = request.form['num_voters']
     section_id = request.form['section_id']
@@ -102,13 +103,30 @@ def register_voters():
         logger.add_log(20,
                        'Generating a new voter.'
                        )
-        for i in range(16):
-            if i < 8:
-                voter_id += random.choice(alphanum_str)
 
+        def _generate_username():
+            """
+            Generate an 8 character username.
+
+            :return: A generated 8 character username.
+            """
+            username = ''
+            for i in range(8):
+                username += random.choice(alphanum_str)
+
+            return username
+
+        username_exists = True
+        while username_exists:
+            temp_voter_id = _generate_username()
+            if controllers.User.get_user(temp_voter_id) is None:
+                voter_id = temp_voter_id
+                username_exists = False
+
+        for i in range(16):
             password += random.choice(alphanum_str)
 
-            # TODO: Add hashing and salting to the passwords.
+            # TODO: Store the generated voters to a PDF or CSV file.
 
         logger.add_log(20,
                        'Generated voter {0}'.format(voter_id)
@@ -372,6 +390,7 @@ def admin_index():
 
     :return: Render a template depending on whether the user is anonymous, an admin, or a voter.
     """
+    admin_creation_form = AdminCreationForm()
     logger.add_log(20,
                    'Accessing admin index page.'
                    )
@@ -390,7 +409,8 @@ def admin_index():
                                'Logged in user is an admin. Render admin panel.'
                                )
                 return render_template(
-                    '{0}/admin/index_admin.html'.format(Settings.get_property_value('current_template'))
+                    '{0}/admin/index_admin.html'.format(Settings.get_property_value('current_template')),
+                    form=admin_creation_form
                 )
             elif current_user.role == 'viewer':
                 logger.add_log(20,

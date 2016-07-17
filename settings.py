@@ -29,7 +29,7 @@ THREADS_PER_PAGE = 2
 WTF_CSRF_ENABLED = True
 SECRET_KEY = 'change-this-before-deploying'
 
-BCRYPT_LOG_ROUNDS = 15
+BCRYPT_LOG_ROUNDS = 12
 
 # Log storage
 LOG_FILENAME = 'app.log'
