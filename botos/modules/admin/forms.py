@@ -86,4 +86,15 @@ class VoterSectionCreationForm(Form):
     """Form for creating voter sections."""
 
 
+class CandidateCreationForm(Form):
+    """From for creating candidates."""
+
+
+class CandidatePartyCreationForm(Form):
+    """Form for creating candidate parties."""
+
+
+class CandidatePositionCreationForm(Form):
+    """Form for creating candidate positions."""
+
 

@@ -228,8 +228,19 @@ class VoterSection:
         Get a VoterSection object.
 
         :param section_name: The name of the section.
+        :return: A VoterSection object.
         """
         return models.VoterSection.query.filter_by(section_name=section_name).first()
+
+    @staticmethod
+    def get_voter_section_by_id(section_id):
+        """
+        Get a VoterSection object.
+
+        :param section_id: The table ID of the section.
+        :return: A VoterSection object.
+        """
+        return models.VoterSection.query.filter_by(id=section_id).first()
 
     @staticmethod
     def get_all():
@@ -239,6 +250,7 @@ class VoterSection:
         :return: A list of all the sections and the corresponding ID.
         """
         return models.VoterSection.query.all()
+
 
 class VoterBatch:
     """Handles the addition, deletion, and modification of the batches."""
