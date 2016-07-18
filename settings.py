@@ -35,4 +35,16 @@ BCRYPT_LOG_ROUNDS = 12
 LOG_FILENAME = 'app.log'
 LOG_LEVEL = logging.DEBUG  # Change to logging.INFO during production
 
+# Location to store generated files.
+PDF_DIRECTORY = BASE_DIR + 'botos/content'
+
+# Time to add some memes.
+election_closing_text = [
+    'Make America Gre..Wait. Wrong election.',
+    'May the odds be ever in your favor. Or not.',
+    'You do know that is election is screwed when the power\'s out, right?',
+    'I can\'t think of additional funny text.',
+    'The admin can rig the votes. Just saying.'
+]
+
 # TODO: Move some of the settings here to the SettingsModel.

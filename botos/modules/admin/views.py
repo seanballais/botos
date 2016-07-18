@@ -15,15 +15,13 @@ from flask import render_template
 from flask_login import current_user
 from flask_login import logout_user
 
-import string
-import random
-
 import settings
 
 from botos.modules.app_data import controllers
 from botos import app
 from botos.modules.activity_log import ActivityLogObservable
 from botos.modules.app_data.controllers import Settings
+from botos.modules.admin import controllers
 from botos.modules.admin.forms import AdminCreationForm
 from botos.modules.admin.forms import VoterCreationForm
 from botos.modules.admin.forms import VoterSectionCreationForm
@@ -98,47 +96,17 @@ def register_voters():
                    'Creating {0} new voters.'.format(num_voters)
                    )
 
-    alphanum_str = string.digits + string.ascii_letters
-    for _ in range(num_voters):
-        voter_id = ''
-        password = ''
-        logger.add_log(20,
-                       'Generating a new voter.'
-                       )
-
-        def _generate_username():
-            """
-            Generate an 8 character username.
-
-            :return: A generated 8 character username.
-            """
-            username = ''
-            for i in range(8):
-                username += random.choice(alphanum_str)
-
-            return username
-
-        username_exists = True
-        while username_exists:
-            temp_voter_id = _generate_username()
-            if controllers.User.get_user(temp_voter_id) is None:
-                voter_id = temp_voter_id
-                username_exists = False
-
-        for i in range(16):
-            password += random.choice(alphanum_str)
-
-            # TODO: Store the generated voters to a PDF or CSV file.
-
-        logger.add_log(20,
-                       'Generated voter {0}'.format(voter_id)
-                       )
-
-        controllers.User.add(voter_id,
-                             password,
-                             section_id,
-                             'voter'
+    voter_generator = controllers.VoterGenerator()
+    voter_generator.generate(num_voters,
+                             section_id
                              )
+
+    pdf_generator = controllers.VoterPDFGenerator(num_voters,
+                                                  controllers.VoterSection.get_voter_section_by_id(section_id)
+                                                  )
+    pdf_generator.generate_entry_pdf(voter_generator.voter_list)
+
+    # Download the PDF to the user computer.
 
     success_msg = 'Successfully created {0} new voters.'.format(num_voters)
     logger.add_log(20,
