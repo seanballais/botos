@@ -89,8 +89,9 @@ def register_voters():
     :return: Return a JSON response.
     """
     # Generate voters
-    num_voters = request.form['num_voters']
-    section_id = request.form['section_id']
+    voter_creation_form = VoterCreationForm()
+    num_voters = voter_creation_form.num_voters.data
+    section_id = voter_creation_form.section.data
 
     logger.add_log(20,
                    'Creating {0} new voters.'.format(num_voters)
@@ -106,14 +107,13 @@ def register_voters():
                                                   )
     pdf_generator.generate_entry_pdf(voter_generator.voter_list)
 
-    # Download the PDF to the user computer.
-
     success_msg = 'Successfully created {0} new voters.'.format(num_voters)
     logger.add_log(20,
                    success_msg
                    )
 
     flash(success_msg)
+    flash('<a href="{0}" target="_blank">Download Voter List (PDF)</a>'.format(pdf_generator.filename))
 
     return '{ "message": "true" }'
 
@@ -360,7 +360,8 @@ def admin_index():
 
     :return: Render a template depending on whether the user is anonymous, an admin, or a voter.
     """
-    admin_creation_form = AdminCreationForm()
+    admin_register_form = AdminCreationForm()
+    voter_register_form = VoterCreationForm()
     logger.add_log(20,
                    'Accessing admin index page.'
                    )
@@ -380,7 +381,8 @@ def admin_index():
                                )
                 return render_template(
                     '{0}/admin/index_admin.html'.format(Settings.get_property_value('current_template')),
-                    form=admin_creation_form
+                    admin_register_form=admin_register_form,
+                    voter_register_form=voter_register_form
                 )
             elif current_user.role == 'viewer':
                 logger.add_log(20,

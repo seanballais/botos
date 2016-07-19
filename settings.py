@@ -36,7 +36,7 @@ LOG_FILENAME = 'app.log'
 LOG_LEVEL = logging.DEBUG  # Change to logging.INFO during production
 
 # Location to store generated files.
-PDF_DIRECTORY = BASE_DIR + 'botos/content'
+PDF_DIRECTORY = BASE_DIR + 'botos/content/pdf'
 
 # Time to add some memes.
 election_closing_text = [

@@ -8,15 +8,15 @@
 
     <h2>Create a new admin</h2>
     <form class="register-admin-form" action="/admin/register/admin" method="post" name="login">
-        {{ form.hidden_tag() }}
+        {{ admin_register_form.hidden_tag() }}
         <p>
-            {{ form.username(size=80) }}<br>
+            {{ admin_register_form.username(size=80) }}<br>
         </p>
         <p>
-            {{ form.password() }}<br>
+            {{ admin_register_form.password() }}<br>
         </p>
         <p>
-            {{ form.role() }}<br>
+            {{ admin_register_form.role() }}<br>
         </p>
         <p>
             <input type="submit" value="Register admin">
@@ -24,16 +24,13 @@
     </form>
 
     <h2>Create a new set of voters</h2>
-    <form class="register-admin-form" action="/admin/register/admin" method="post" name="login">
-        {{ form.hidden_tag() }}
+    <form class="register-admin-form" action="/admin/register/voters" method="post" name="login">
+        {{ voter_register_form.hidden_tag() }}
         <p>
-            {{ form.username(size=80) }}<br>
+            {{ voter_register_form.num_voters() }}<br>
         </p>
         <p>
-            {{ form.password() }}<br>
-        </p>
-        <p>
-            {{ form.role() }}<br>
+            {{ voter_register_form.section() }}<br>
         </p>
         <p>
             <input type="submit" value="Register admin">

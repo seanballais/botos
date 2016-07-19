@@ -45,6 +45,21 @@ class AdminCreationForm(Form):
 
 class VoterCreationForm(Form):
     """Form for creating voters."""
+    section_id = []
+    num_voters = StringField('username',
+                             validators=[DataRequired()],
+                             render_kw={
+                                 'id': "register-admin-username",
+                                 'placeholder': "Enter the username"
+                             })
+
+    section    = SelectField('role',
+                             choices=section_id,
+                             validators=[DataRequired()],
+                             render_kw={
+                                 'id': "register-admin-role"
+                             })
+
     def _get_section_list(self):
         """
         Get a list of all sections but only including the name and ID.
@@ -61,21 +76,16 @@ class VoterCreationForm(Form):
 
             section_list.append(list_section_item)
 
-        return section_list.sort()
+        section_list.sort()
+        return section_list
 
-    num_voters = StringField('username',
-                             validators=[DataRequired()],
-                             render_kw={
-                                 'id': "register-admin-username",
-                                 'placeholder': "Enter the username"
-                             })
+    def __init__(self):
+        """
+        Initialize a few variables.
+        """
+        super(VoterCreationForm, self).__init__()
+        self.section_id = self._get_section_list()
 
-    section    = SelectField('role',
-                             choices=_get_section_list(),
-                             validators=[DataRequired()],
-                             render_kw={
-                                 'id': "register-admin-role"
-                             })
 
 
 class VoterBatchCreationForm(Form):
