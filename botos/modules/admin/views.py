@@ -17,11 +17,11 @@ from flask_login import logout_user
 
 import settings
 
-from botos.modules.app_data import controllers
 from botos import app
 from botos.modules.activity_log import ActivityLogObservable
 from botos.modules.app_data.controllers import Settings
 from botos.modules.admin import controllers
+from botos.modules.app_data import controllers
 from botos.modules.admin.forms import AdminCreationForm
 from botos.modules.admin.forms import VoterCreationForm
 from botos.modules.admin.forms import VoterSectionCreationForm
@@ -46,7 +46,7 @@ def register_admin():
     """
     admin_creation_form = AdminCreationForm()
     logger.add_log(20,
-                   'Attempting to create admin {0}.'.format(request.form['username'])
+                   'Attempting to create admin {0}.'.format(admin_creation_form.username.data)
                    )
 
     username = admin_creation_form.username.data
