@@ -22,7 +22,7 @@ def static_template_view(filename):
 
 @app.route('/content/<path:filename>')
 def static_content_view(filename):
-    return send_from_directory('{0}/botos/content/'.format(app.config['BASE_DIR']),
+    return send_from_directory('{0}/botos/botos-content/'.format(app.config['BASE_DIR']),
                                filename
                                )
 

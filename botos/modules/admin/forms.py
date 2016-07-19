@@ -50,11 +50,12 @@ class VoterCreationForm(Form):
                               validators=[DataRequired()],
                               render_kw={
                                   'id': "register-admin-username",
-                                  'placeholder': "Enter the username"
+                                  'placeholder': "Enter the number of voters"
                               })
 
     section    = SelectField('role',
                              choices=[],
+                             coerce=int,
                              validators=[DataRequired()],
                              render_kw={
                                  'id': "register-admin-role"

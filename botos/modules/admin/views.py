@@ -8,10 +8,12 @@
 
 """
 
+
 from flask import request
 from flask import flash
 from flask import redirect
 from flask import render_template
+from flask import Markup
 from flask_login import current_user
 from flask_login import logout_user
 
@@ -105,6 +107,11 @@ def register_voters():
         pdf_generator = admin_controllers.VoterPDFGenerator(num_voters,
                                                             app_data_controllers.VoterSection.get_voter_section_by_id(
                                                                 section_id
+                                                            ),
+                                                            app_data_controllers.VoterBatch.get_batch_by_id(
+                                                                app_data_controllers.VoterSection
+                                                                    .get_voter_section_by_id(section_id)
+                                                                    .section_name
                                                             ))
         pdf_generator.generate_entry_pdf(voter_generator.voter_list)
 
@@ -114,7 +121,7 @@ def register_voters():
                        )
 
         flash(success_msg)
-        flash('<a href="{0}" target="_blank">Download Voter List (PDF)</a>'.format(pdf_generator.filename))
+        flash(Markup('<a href="{0}" target="_blank">Download Voter List (PDF)</a>'.format(pdf_generator.pdf_link)))
 
     return redirect('/admin')
 

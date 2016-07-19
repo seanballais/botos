@@ -300,11 +300,22 @@ class VoterBatch:
         db.session.commit()
 
     @staticmethod
+    def get_batch_by_id(id):
+        """
+        Get a VoterBatch object according to the ID.
+
+        :param id: The ID of the batch.
+        :return: VoterBatch object.
+        """
+        return models.VoterBatch.query.filter_by(id=id).first()
+
+    @staticmethod
     def get_voter_batch(batch_name):
         """
         Get a VoterBatch object.
 
         :param batch_name: The name of the batch.
+        :return: VoterBatch object.
         """
         return models.VoterBatch.query.filter_by(batch_name=batch_name).first()
 

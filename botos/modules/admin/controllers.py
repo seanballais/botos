@@ -98,7 +98,7 @@ class VoterGenerator:
 
 class VoterPDFGenerator:
     """Generate a PDF file of a list of voters."""
-    filename = ''
+    pdf_link = ''
 
     def generate_entry_pdf(self,
                            voter_list
@@ -134,9 +134,9 @@ class VoterPDFGenerator:
                         )
         contents.append(Spacer(1, 12))
         for voter in voter_list:
-            text = '<font size=12>_______________   {0}   {1}<br/>'.format(voter[0],  # Voter ID
-                                                                           voter[1]   # Password
-                                                                           )
+            text = '<font size=12>_______________   {0}   {1}<br/></font>'.format(voter[0],  # Voter ID
+                                                                                  voter[1]   # Password
+                                                                                  )
             contents.append(Paragraph(text,
                                       styles['Center']
                                       )
@@ -159,21 +159,26 @@ class VoterPDFGenerator:
 
     def __init__(self,
                  num_voters,
-                 section_name
+                 section_name,
+                 batch
                  ):
         """
         Initialize the generator.
 
         :param num_voters: Number of voters.
         :param section_name: Name of the section.
+        :param batch: Batch of the section.
         """
-        self.filename     = '{0}/{1}-{2}-{3}-{4}-{5}.pdf'.format(settings.PDF_DIRECTORY,
-                                                                 section_name,
-                                                                 num_voters,
-                                                                 section_name,
-                                                                 time.strftime('%Y%m%d'),
-                                                                 time.strftime('%H%M%S')
-                                                                 )
+        _pdf_file         = '{0}-{1}-{2}-{3}-{4}.pdf'.format(batch,
+                                                             section_name.section_name,
+                                                             num_voters,
+                                                             time.strftime('%Y%m%d'),
+                                                             time.strftime('%H%M%S')
+                                                             )
+        self.pdf_link     = 'content/{0}'.format(_pdf_file)
+        self.filename     = '{0}/{1}'.format(settings.PDF_DIRECTORY,
+                                             _pdf_file
+                                             )
         self.pdf_doc      = SimpleDocTemplate(filename=self.filename,
                                               pagesize=letter,
                                               rightMargin=72,
@@ -182,6 +187,11 @@ class VoterPDFGenerator:
                                               bottomMargin=72
                                               )
         self.section_name = section_name
+
+        pdf_file = open(self.filename,
+                        'w'
+                        )
+        pdf_file.close()
 
     def __repr__(self):
         return '<VoterPDFGenerator>'
