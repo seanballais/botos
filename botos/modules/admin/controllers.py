@@ -202,7 +202,7 @@ class Utility:
         for batch in temp_batch_list:
             list_batch_item = [
                 batch.id,
-                batch.section_names
+                batch.batch_name
             ]
 
             batch_list.append(list_batch_item)
@@ -222,7 +222,7 @@ class Utility:
         for section in temp_section_list:
             list_section_item = [
                 section.id,
-                section.section_names
+                section.section_name
             ]
 
             section_list.append(list_section_item)

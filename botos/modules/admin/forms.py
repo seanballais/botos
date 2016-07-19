@@ -90,6 +90,7 @@ class VoterSectionCreationForm(Form):
 
     batch        = SelectField('batch',
                                choices=[],
+                               coerce=int,
                                validators=[DataRequired()],
                                render_kw={
                                    'id': "register-batch-category"
