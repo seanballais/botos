@@ -19,6 +19,7 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate
 from reportlab.platypus import Paragraph
 from reportlab.platypus import Spacer
+from reportlab.platypus import Table
 
 import settings
 
@@ -117,32 +118,34 @@ class VoterPDFGenerator:
                                   alignment=TA_CENTER
                                   )
                    )
-        text = '<font size=16><bold>Voter Personal Access Information</bold></font><br/>'
+        text = '<font size=24><b>Voter Personal Access Information</b></font><br/>'
         text += '<font size=12>Section: {0}</font>'.format(self.section_name)
 
-        contents.append(Paragraph(text,
-                                  styles['Center']
-                                  )
-                        )
-        contents.append(Spacer(1, 14))
+        logger.add_log(20,
+                       'Generating PDF with {0} voters from {1}'.format(len(voter_list),
+                                                                        self.section_name
+                                                                        )
+                       )
 
-        # Create the list.
-        text = '<font size=12><bold>                  Voter ID   Password</bold></font>'
         contents.append(Paragraph(text,
                                   styles['Center']
                                   )
                         )
-        contents.append(Spacer(1, 12))
-        for voter in voter_list:
-            text = '<font size=12>_______________   {0}   {1}<br/></font>'.format(voter[0],  # Voter ID
-                                                                                  voter[1]   # Password
-                                                                                  )
-            contents.append(Paragraph(text,
-                                      styles['Center']
-                                      )
-                            )
 
         contents.append(Spacer(1, 24))
+        for voter in voter_list:
+            voter.insert(0, '_______________')
+
+        voter_list.insert(0, [
+            'Signature',
+            'Voter ID',
+            'Password'
+        ])
+
+        voter_table = Table(voter_list)
+
+        contents.append(voter_table)
+        contents.append(Spacer(1, 36))
         contents.append(Paragraph('<font size=12><i>{0}</i></font>'.format(settings.election_closing_text),
                                   styles['Center']
                                   )
@@ -169,15 +172,16 @@ class VoterPDFGenerator:
         :param section_name: Name of the section.
         :param batch: Batch of the section.
         """
-        _pdf_file         = '{0}-{1}-{2}-{3}-{4}.pdf'.format(batch,
-                                                             section_name.section_name,
+        self.section_name = section_name.section_name
+        _pdf_filename     = '{0}-{1}-{2}-{3}-{4}.pdf'.format(batch,
+                                                             self.section_name,
                                                              num_voters,
                                                              time.strftime('%Y%m%d'),
                                                              time.strftime('%H%M%S')
                                                              )
-        self.pdf_link     = 'content/{0}'.format(_pdf_file)
+        self.pdf_link     = 'content/{0}'.format(_pdf_filename)
         self.filename     = '{0}/{1}'.format(settings.PDF_DIRECTORY,
-                                             _pdf_file
+                                             _pdf_filename
                                              )
         self.pdf_doc      = SimpleDocTemplate(filename=self.filename,
                                               pagesize=letter,
@@ -186,12 +190,6 @@ class VoterPDFGenerator:
                                               topMargin=72,
                                               bottomMargin=72
                                               )
-        self.section_name = section_name
-
-        pdf_file = open(self.filename,
-                        'w'
-                        )
-        pdf_file.close()
 
     def __repr__(self):
         return '<VoterPDFGenerator>'

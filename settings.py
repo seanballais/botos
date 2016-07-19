@@ -1,6 +1,7 @@
 """Settings for Botos. This can be different per site."""
 import os
 import logging
+import random
 
 # # App hosting settings
 APP_HOST = '0.0.0.0'
@@ -39,12 +40,12 @@ LOG_LEVEL = logging.DEBUG  # Change to logging.INFO during production
 PDF_DIRECTORY = BASE_DIR + 'botos/botos-content/pdf'
 
 # Time to add some memes.
-election_closing_text = [
+election_closing_text = random.choice([
     'Make America Gre..Wait. Wrong election.',
     'May the odds be ever in your favor. Or not.',
-    'You do know that is election is screwed when the power\'s out, right?',
+    'You do know that this election is screwed when the power\'s out, right?',
     'I can\'t think of additional funny text.',
     'The admin can rig the votes. Just saying.'
-]
+])
 
 # TODO: Move some of the settings here to the SettingsModel.

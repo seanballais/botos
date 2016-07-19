@@ -110,9 +110,10 @@ def register_voters():
                                                             ),
                                                             app_data_controllers.VoterBatch.get_batch_by_id(
                                                                 app_data_controllers.VoterSection
-                                                                    .get_voter_section_by_id(section_id)
-                                                                    .section_name
-                                                            ))
+                                                                .get_voter_section_by_id(section_id)
+                                                                .id
+                                                            ).batch_name
+                                                            )
         pdf_generator.generate_entry_pdf(voter_generator.voter_list)
 
         success_msg = 'Successfully created {0} new voters.'.format(num_voters)
@@ -389,3 +390,5 @@ def admin_index():
                    'Current visitor is anonymous. Might need to say "Who you? You ain\'t my nigga. Identify!"'
                    )
     return redirect('/')
+
+# TODO: Now the voting.
