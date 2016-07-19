@@ -61,31 +61,16 @@ class VoterCreationForm(Form):
                                  'id': "register-admin-role"
                              })
 
-    def _get_section_list(self):
-        """
-        Get a list of all sections but only including the name and ID.
-
-        :return: List of the sections.
-        """
-        section_list = []
-        temp_section_list = controllers.VoterSection.get_all()
-        for section in temp_section_list:
-            list_section_item = [
-                section.id,
-                section.section_names
-            ]
-
-            section_list.append(list_section_item)
-
-        section_list.sort()
-        return section_list
-
-    def __init__(self):
+    def __init__(self,
+                 sections
+                 ):
         """
         Initialize a few variables.
+
+        :param sections: List of sections.
         """
         super(VoterCreationForm, self).__init__()
-        self.section_id = self._get_section_list()
+        self.section_id = sections
 
 
 class VoterBatchCreationForm(Form):
@@ -115,31 +100,16 @@ class VoterSectionCreationForm(Form):
                                    'id': "register-batch-category"
                                })
 
-    def _get_batch_list(self):
-        """
-        Get a list of all batches but only including the name and ID.
-
-        :return: List of the batches.
-        """
-        batch_list = []
-        temp_batch_list = controllers.VoterBatch.get_all()
-        for batch in temp_batch_list:
-            list_batch_item = [
-                batch.id,
-                batch.section_names
-            ]
-
-            batch_list.append(list_batch_item)
-
-        batch_list.sort()
-        return batch_list
-
-    def __init__(self):
+    def __init__(self,
+                 batches
+                 ):
         """
         Initialize a few variables.
+
+        :param batches: List of batches.
         """
         super(VoterSectionCreationForm, self).__init__()
-        self.batches = self._get_batch_list()
+        self.batches = batches
 
 class CandidateCreationForm(Form):
     """From for creating candidates."""

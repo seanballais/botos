@@ -89,8 +89,28 @@ def register_voters():
 
     :return: Return a JSON response.
     """
+
+    def _get_section_list(self):
+        """
+        Get a list of all sections but only including the name and ID.
+
+        :return: List of the sections.
+        """
+        section_list = []
+        temp_section_list = controllers.VoterSection.get_all()
+        for section in temp_section_list:
+            list_section_item = [
+                section.id,
+                section.section_names
+            ]
+
+            section_list.append(list_section_item)
+
+        section_list.sort()
+        return section_list
+
     # Generate voters
-    voter_creation_form = VoterCreationForm()
+    voter_creation_form = VoterCreationForm(_get_section_list())
     num_voters          = voter_creation_form.num_voters.data
     section_id          = voter_creation_form.section.data
 
@@ -116,8 +136,6 @@ def register_voters():
 
         flash(success_msg)
         flash('<a href="{0}" target="_blank">Download Voter List (PDF)</a>'.format(pdf_generator.filename))
-
-    flash('Something went wrong.')
 
     return redirect('/admin')
 
@@ -148,8 +166,6 @@ def register_batch():
 
         flash('Batch {0} created successfully.'.format(batch_name))
 
-    flash('Something went wrong.')
-
     return redirect('/admin')
 
 
@@ -163,7 +179,28 @@ def register_section():
 
     :return: Return a JSON response.
     """
-    section_creation_form = VoterSectionCreationForm()
+
+    def _get_batch_list():
+        """
+        Get a list of all batches but only including the name and ID.
+
+        :param batches:
+        :return: List of the batches.
+        """
+        batch_list = []
+        temp_batch_list = controllers.VoterBatch.get_all()
+        for batch in temp_batch_list:
+            list_batch_item = [
+                batch.id,
+                batch.section_names
+            ]
+
+            batch_list.append(list_batch_item)
+
+        batch_list.sort()
+        return batch_list
+
+    section_creation_form = VoterSectionCreationForm(_get_batch_list())
     section_name          = section_creation_form.section_name.data
     batch_name            = section_creation_form.batch.data
 
@@ -183,8 +220,6 @@ def register_section():
                        )
 
         flash('Section {0} created successfully.'.format(section_name))
-
-    flash('Something went wrong.')
 
     return '{ "message": "true" }'
 
