@@ -15,7 +15,7 @@ from wtforms import SelectField
 from wtforms import IntegerField
 from wtforms.validators import DataRequired
 
-from botos.modules.app_data import controllers
+from botos.modules.admin.controllers import Utility
 
 
 class AdminCreationForm(Form):
@@ -46,7 +46,6 @@ class AdminCreationForm(Form):
 
 class VoterCreationForm(Form):
     """Form for creating voters."""
-    section_id = []
     num_voters = IntegerField('num_voters',
                               validators=[DataRequired()],
                               render_kw={
@@ -55,22 +54,19 @@ class VoterCreationForm(Form):
                               })
 
     section    = SelectField('role',
-                             choices=section_id,
+                             choices=[],
                              validators=[DataRequired()],
                              render_kw={
                                  'id': "register-admin-role"
                              })
 
-    def __init__(self,
-                 sections
-                 ):
-        """
-        Initialize a few variables.
+    @classmethod
+    def new(cls):
+        """Create a new dynamically loading form."""
+        form = cls()
 
-        :param sections: List of sections.
-        """
-        super(VoterCreationForm, self).__init__()
-        self.section_id = sections
+        form.section.choices = Utility.get_section_list()
+        return form
 
 
 class VoterBatchCreationForm(Form):
@@ -85,7 +81,6 @@ class VoterBatchCreationForm(Form):
 
 class VoterSectionCreationForm(Form):
     """Form for creating voter sections."""
-    batches      = []
     section_name = StringField('section_name',
                                validators=[DataRequired()],
                                render_kw={
@@ -94,22 +89,20 @@ class VoterSectionCreationForm(Form):
                                })
 
     batch        = SelectField('batch',
-                               choices=batches,
+                               choices=[],
                                validators=[DataRequired()],
                                render_kw={
                                    'id': "register-batch-category"
                                })
 
-    def __init__(self,
-                 batches
-                 ):
-        """
-        Initialize a few variables.
+    @classmethod
+    def new(cls):
+        """Create a new dynamically loading form."""
+        form = cls()
 
-        :param batches: List of batches.
-        """
-        super(VoterSectionCreationForm, self).__init__()
-        self.batches = batches
+        form.batch.choices = Utility.get_batch_list()
+        return form
+
 
 class CandidateCreationForm(Form):
     """From for creating candidates."""

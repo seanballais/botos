@@ -88,7 +88,7 @@ def register_voters():
     :return: Return a JSON response.
     """
     # Generate voters
-    voter_creation_form = VoterCreationForm(admin_controllers.Utility.get_section_list())
+    voter_creation_form = VoterCreationForm().new()
     num_voters          = voter_creation_form.num_voters.data
     section_id          = voter_creation_form.section.data
 
@@ -158,7 +158,7 @@ def register_section():
 
     :return: Return a JSON response.
     """
-    section_creation_form = VoterSectionCreationForm(admin_controllers.Utility.get_batch_list())
+    section_creation_form = VoterSectionCreationForm().new()
     section_name          = section_creation_form.section_name.data
     batch_name            = section_creation_form.batch.data
 
@@ -342,9 +342,9 @@ def admin_index():
     :return: Render a template depending on whether the user is anonymous, an admin, or a voter.
     """
     admin_register_form   = AdminCreationForm()
-    voter_register_form   = VoterCreationForm(admin_controllers.Utility.get_section_list())
+    voter_register_form   = VoterCreationForm().new()
     batch_register_form   = VoterBatchCreationForm()
-    section_register_form = VoterSectionCreationForm(admin_controllers.Utility.get_batch_list())
+    section_register_form = VoterSectionCreationForm().new()
 
     logger.add_log(20,
                    'Accessing admin index page.'

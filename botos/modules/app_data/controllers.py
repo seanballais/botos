@@ -315,7 +315,7 @@ class VoterBatch:
 
         :return: A list of all the batches and the corresponding ID.
         """
-        return models.VoterSection.query.all()
+        return models.VoterBatch.query.all()
 
 
 class Candidate:
