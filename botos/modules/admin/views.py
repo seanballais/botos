@@ -25,6 +25,7 @@ from botos.modules.admin import controllers
 from botos.modules.admin.forms import AdminCreationForm
 from botos.modules.admin.forms import VoterCreationForm
 from botos.modules.admin.forms import VoterSectionCreationForm
+from botos.modules.admin.forms import VoterBatchCreationForm
 
 
 # Set up the logger
@@ -90,32 +91,35 @@ def register_voters():
     """
     # Generate voters
     voter_creation_form = VoterCreationForm()
-    num_voters = voter_creation_form.num_voters.data
-    section_id = voter_creation_form.section.data
+    num_voters          = voter_creation_form.num_voters.data
+    section_id          = voter_creation_form.section.data
 
     logger.add_log(20,
                    'Creating {0} new voters.'.format(num_voters)
                    )
 
-    voter_generator = controllers.VoterGenerator()
-    voter_generator.generate(num_voters,
-                             section_id
-                             )
+    if voter_creation_form.validate_on_submit():
+        voter_generator = controllers.VoterGenerator()
+        voter_generator.generate(num_voters,
+                                 section_id
+                                 )
 
-    pdf_generator = controllers.VoterPDFGenerator(num_voters,
-                                                  controllers.VoterSection.get_voter_section_by_id(section_id)
-                                                  )
-    pdf_generator.generate_entry_pdf(voter_generator.voter_list)
+        pdf_generator = controllers.VoterPDFGenerator(num_voters,
+                                                      controllers.VoterSection.get_voter_section_by_id(section_id)
+                                                      )
+        pdf_generator.generate_entry_pdf(voter_generator.voter_list)
 
-    success_msg = 'Successfully created {0} new voters.'.format(num_voters)
-    logger.add_log(20,
-                   success_msg
-                   )
+        success_msg = 'Successfully created {0} new voters.'.format(num_voters)
+        logger.add_log(20,
+                       success_msg
+                       )
 
-    flash(success_msg)
-    flash('<a href="{0}" target="_blank">Download Voter List (PDF)</a>'.format(pdf_generator.filename))
+        flash(success_msg)
+        flash('<a href="{0}" target="_blank">Download Voter List (PDF)</a>'.format(pdf_generator.filename))
 
-    return '{ "message": "true" }'
+    flash('Something went wrong.')
+
+    return redirect('/admin')
 
 
 @app.route('/admin/register/batch',
@@ -128,29 +132,25 @@ def register_batch():
 
     :return: Return a JSON response.
     """
-    if request.method != 'POST':
-        logger.add_log(20,
-                       'User attempted to go to a non-page directory with a {0} request.'
-                       'Redirecting to the index page.'.format(request.method)
-                       )
-
-        return redirect('/')
-
-    batch_name = request.form['batch_name']
+    batch_creation_form = VoterBatchCreationForm()
+    batch_name          = batch_creation_form.batch_name.data
 
     logger.add_log(20,
                    'Creating a batch {0}.'.format(batch_name)
                    )
 
-    controllers.VoterBatch.add(batch_name)
+    if batch_creation_form.validate_on_submit():
+        controllers.VoterBatch.add(batch_name)
 
-    logger.add_log(20,
-                   'Created batch {0} successfully.'.format(batch_name)
-                   )
+        logger.add_log(20,
+                       'Created batch {0} successfully.'.format(batch_name)
+                       )
 
-    flash('Batch {0} created successfully.'.format(batch_name))
+        flash('Batch {0} created successfully.'.format(batch_name))
 
-    return '{ "message": "true" }'
+    flash('Something went wrong.')
+
+    return redirect('/admin')
 
 
 @app.route('/admin/register/section',
@@ -163,16 +163,9 @@ def register_section():
 
     :return: Return a JSON response.
     """
-    if request.method != 'POST':
-        logger.add_log(20,
-                       'User attempted to go to a non-page directory with a {0} request.'
-                       'Redirecting to the index page.'.format(request.method)
-                       )
-
-        return redirect('/')
-
-    section_name = request.form['section_name']
-    batch_name = request.form['batch_name']
+    section_creation_form = VoterSectionCreationForm()
+    section_name          = section_creation_form.section_name.data
+    batch_name            = section_creation_form.batch.data
 
     logger.add_log(20,
                    'Creating a section {0} under {1}.'.format(section_name,
@@ -180,15 +173,18 @@ def register_section():
                                                               )
                    )
 
-    controllers.VoterSection.add(section_name,
-                                 batch_name
-                                 )
+    if section_creation_form.validate_on_submit():
+        controllers.VoterSection.add(section_name,
+                                     batch_name
+                                     )
 
-    logger.add_log(20,
-                   'Created section {0} successfully.'.format(batch_name)
-                   )
+        logger.add_log(20,
+                       'Created section {0} successfully.'.format(batch_name)
+                       )
 
-    flash('Section {0} created successfully.'.format(section_name))
+        flash('Section {0} created successfully.'.format(section_name))
+
+    flash('Something went wrong.')
 
     return '{ "message": "true" }'
 
@@ -337,14 +333,6 @@ def logout_admin():
 
     :return: Redirect to the admin login page.
     """
-    if request.method != 'POST':
-        logger.add_log(20,
-                       'User attempted to go to a non-page directory with a {0} request.'
-                       'Redirecting to the index page.'.format(request.method)
-                       )
-
-        return redirect('/')
-
     logger.add_log(20,
                    'Logging out user {0}.'.format(current_user.username)
                    )
@@ -360,8 +348,10 @@ def admin_index():
 
     :return: Render a template depending on whether the user is anonymous, an admin, or a voter.
     """
-    admin_register_form = AdminCreationForm()
-    voter_register_form = VoterCreationForm()
+    admin_register_form   = AdminCreationForm()
+    voter_register_form   = VoterCreationForm()
+    batch_register_form   = VoterBatchCreationForm()
+    section_register_form = VoterSectionCreationForm()
     logger.add_log(20,
                    'Accessing admin index page.'
                    )
@@ -382,7 +372,9 @@ def admin_index():
                 return render_template(
                     '{0}/admin/index_admin.html'.format(Settings.get_property_value('current_template')),
                     admin_register_form=admin_register_form,
-                    voter_register_form=voter_register_form
+                    voter_register_form=voter_register_form,
+                    batch_register_form=batch_register_form,
+                    section_register_form=section_register_form
                 )
             elif current_user.role == 'viewer':
                 logger.add_log(20,

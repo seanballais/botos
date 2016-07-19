@@ -7,7 +7,7 @@
     </form>
 
     <h2>Create a new admin</h2>
-    <form class="register-admin-form" action="/admin/register/admin" method="post" name="login">
+    <form class="register-admin-form" action="/admin/register/admin" method="post">
         {{ admin_register_form.hidden_tag() }}
         <p>
             {{ admin_register_form.username(size=80) }}<br>
@@ -24,7 +24,7 @@
     </form>
 
     <h2>Create a new set of voters</h2>
-    <form class="register-admin-form" action="/admin/register/voters" method="post" name="login">
+    <form class="register-admin-form" action="/admin/register/voters" method="post">
         {{ voter_register_form.hidden_tag() }}
         <p>
             {{ voter_register_form.num_voters() }}<br>
@@ -33,7 +33,32 @@
             {{ voter_register_form.section() }}<br>
         </p>
         <p>
-            <input type="submit" value="Register admin">
+            <input type="submit" value="Register voters">
+        </p>
+    </form>
+
+    <h2>Create a new batch</h2>
+    <form class="register-batch-form" action="/admin/register/batch" method="post">
+        {{ batch_register_form.hidden_tag() }}
+        <p>
+            {{ batch_register_form.batch_name() }}<br>
+        </p>
+        <p>
+            <input type="submit" value="Register batch">
+        </p>
+    </form>
+
+    <h2>Create a new section</h2>
+    <form class="register-section-form" action="/admin/register/section" method="post">
+        {{ section_register_form.hidden_tag() }}
+        <p>
+            {{ section_register_form.section_name() }}<br>
+        </p>
+        <p>
+            {{ section_register_form.batch() }}<br>
+        </p>
+        <p>
+            <input type="submit" value="Register section">
         </p>
     </form>
 {% endblock %}

@@ -308,6 +308,15 @@ class VoterBatch:
         """
         return models.VoterBatch.query.filter_by(batch_name=batch_name).first()
 
+    @staticmethod
+    def get_all():
+        """
+        Get all of the batches.
+
+        :return: A list of all the batches and the corresponding ID.
+        """
+        return models.VoterSection.query.all()
+
 
 class Candidate:
     """Handles the addition, deletion, and modification of candidates."""
