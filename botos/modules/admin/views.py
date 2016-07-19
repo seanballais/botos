@@ -15,13 +15,11 @@ from flask import render_template
 from flask_login import current_user
 from flask_login import logout_user
 
-import settings
-
 from botos import app
 from botos.modules.activity_log import ActivityLogObservable
 from botos.modules.app_data.controllers import Settings
-from botos.modules.admin import controllers
-from botos.modules.app_data import controllers
+from botos.modules.admin import controllers as admin_controllers
+from botos.modules.app_data import controllers as app_data_controllers
 from botos.modules.admin.forms import AdminCreationForm
 from botos.modules.admin.forms import VoterCreationForm
 from botos.modules.admin.forms import VoterSectionCreationForm
@@ -53,7 +51,7 @@ def register_admin():
     password = admin_creation_form.password.data
     role     = admin_creation_form.role.data
     if admin_creation_form.validate_on_submit():
-        admin = controllers.User.get_user(username)
+        admin = app_data_controllers.User.get_user(username)
 
         if admin is None:
             logger.add_log(20,
@@ -62,11 +60,11 @@ def register_admin():
                                                                                   )
                            )
 
-            controllers.User.add(username,
-                                 password,
-                                 '',
-                                 role
-                                 )
+            app_data_controllers.User.add(username,
+                                          password,
+                                          '',
+                                          role
+                                          )
 
             flash('Created admin {0} successfully.'.format(username))
 
@@ -89,28 +87,8 @@ def register_voters():
 
     :return: Return a JSON response.
     """
-
-    def _get_section_list(self):
-        """
-        Get a list of all sections but only including the name and ID.
-
-        :return: List of the sections.
-        """
-        section_list = []
-        temp_section_list = controllers.VoterSection.get_all()
-        for section in temp_section_list:
-            list_section_item = [
-                section.id,
-                section.section_names
-            ]
-
-            section_list.append(list_section_item)
-
-        section_list.sort()
-        return section_list
-
     # Generate voters
-    voter_creation_form = VoterCreationForm(_get_section_list())
+    voter_creation_form = VoterCreationForm(admin_controllers.Utility.get_section_list())
     num_voters          = voter_creation_form.num_voters.data
     section_id          = voter_creation_form.section.data
 
@@ -119,14 +97,15 @@ def register_voters():
                    )
 
     if voter_creation_form.validate_on_submit():
-        voter_generator = controllers.VoterGenerator()
+        voter_generator = admin_controllers.VoterGenerator()
         voter_generator.generate(num_voters,
                                  section_id
                                  )
 
-        pdf_generator = controllers.VoterPDFGenerator(num_voters,
-                                                      controllers.VoterSection.get_voter_section_by_id(section_id)
-                                                      )
+        pdf_generator = admin_controllers.VoterPDFGenerator(num_voters,
+                                                            app_data_controllers.VoterSection.get_voter_section_by_id(
+                                                                section_id
+                                                            ))
         pdf_generator.generate_entry_pdf(voter_generator.voter_list)
 
         success_msg = 'Successfully created {0} new voters.'.format(num_voters)
@@ -158,7 +137,7 @@ def register_batch():
                    )
 
     if batch_creation_form.validate_on_submit():
-        controllers.VoterBatch.add(batch_name)
+        app_data_controllers.VoterBatch.add(batch_name)
 
         logger.add_log(20,
                        'Created batch {0} successfully.'.format(batch_name)
@@ -179,28 +158,7 @@ def register_section():
 
     :return: Return a JSON response.
     """
-
-    def _get_batch_list():
-        """
-        Get a list of all batches but only including the name and ID.
-
-        :param batches:
-        :return: List of the batches.
-        """
-        batch_list = []
-        temp_batch_list = controllers.VoterBatch.get_all()
-        for batch in temp_batch_list:
-            list_batch_item = [
-                batch.id,
-                batch.section_names
-            ]
-
-            batch_list.append(list_batch_item)
-
-        batch_list.sort()
-        return batch_list
-
-    section_creation_form = VoterSectionCreationForm(_get_batch_list())
+    section_creation_form = VoterSectionCreationForm(admin_controllers.Utility.get_batch_list())
     section_name          = section_creation_form.section_name.data
     batch_name            = section_creation_form.batch.data
 
@@ -211,9 +169,9 @@ def register_section():
                    )
 
     if section_creation_form.validate_on_submit():
-        controllers.VoterSection.add(section_name,
-                                     batch_name
-                                     )
+        app_data_controllers.VoterSection.add(section_name,
+                                              batch_name
+                                              )
 
         logger.add_log(20,
                        'Created section {0} successfully.'.format(batch_name)
@@ -221,7 +179,7 @@ def register_section():
 
         flash('Section {0} created successfully.'.format(section_name))
 
-    return '{ "message": "true" }'
+    return redirect('/admin')
 
 
 @app.route('/admin/register/candidate',
@@ -247,7 +205,7 @@ def register_candidate():
     candidate_middle_name = request.form['candidate_middle_name']
     candidate_position = request.form['candidate_position']
     candidate_party = request.form['candidate_party']
-    candidate_index = controllers.Candidate.get_next_index(candidate_position)
+    candidate_index = app_data_controllers.Candidate.get_next_index(candidate_position)
 
     logger.add_log(20,
                    'Creating candidate {0} {1} under {2}.'.format(candidate_first_name,
@@ -256,13 +214,13 @@ def register_candidate():
                                                                   )
                    )
 
-    controllers.Candidate.add(candidate_index,
-                              candidate_first_name,
-                              candidate_last_name,
-                              candidate_middle_name,
-                              candidate_position,
-                              candidate_party
-                              )
+    app_data_controllers.Candidate.add(candidate_index,
+                                       candidate_first_name,
+                                       candidate_last_name,
+                                       candidate_middle_name,
+                                       candidate_position,
+                                       candidate_party
+                                       )
 
     logger.add_log(20,
                    'Created candidate {0} {1} successfully.'.format(candidate_first_name,
@@ -302,7 +260,7 @@ def register_party():
                    'Creating party {0}.'.format(party_name)
                    )
 
-    controllers.CandidateParty.add(party_name)
+    app_data_controllers.CandidateParty.add(party_name)
 
     logger.add_log(20,
                    'Created party {0} successfully.'.format(party_name)
@@ -340,9 +298,9 @@ def register_position():
                                                                           )
                    )
 
-    controllers.CandidatePosition.add(position_name,
-                                      position_level
-                                      )
+    app_data_controllers.CandidatePosition.add(position_name,
+                                               position_level
+                                               )
 
     logger.add_log(20,
                    'Created candidate position {0} at level {1}.'.format(position_name,
@@ -384,9 +342,10 @@ def admin_index():
     :return: Render a template depending on whether the user is anonymous, an admin, or a voter.
     """
     admin_register_form   = AdminCreationForm()
-    voter_register_form   = VoterCreationForm()
+    voter_register_form   = VoterCreationForm(admin_controllers.Utility.get_section_list())
     batch_register_form   = VoterBatchCreationForm()
-    section_register_form = VoterSectionCreationForm()
+    section_register_form = VoterSectionCreationForm(admin_controllers.Utility.get_batch_list())
+
     logger.add_log(20,
                    'Accessing admin index page.'
                    )

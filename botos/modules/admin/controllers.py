@@ -185,3 +185,47 @@ class VoterPDFGenerator:
 
     def __repr__(self):
         return '<VoterPDFGenerator>'
+
+
+class Utility:
+    """Utility functions."""
+
+    @staticmethod
+    def get_batch_list():
+        """
+        Get a list of all batches but only including the name and ID.
+
+        :return: List of the batches.
+        """
+        batch_list = []
+        temp_batch_list = controllers.VoterBatch.get_all()
+        for batch in temp_batch_list:
+            list_batch_item = [
+                batch.id,
+                batch.section_names
+            ]
+
+            batch_list.append(list_batch_item)
+
+        batch_list.sort()
+        return batch_list
+
+    @staticmethod
+    def get_section_list():
+        """
+        Get a list of all sections but only including the name and ID.
+
+        :return: List of the sections.
+        """
+        section_list = []
+        temp_section_list = controllers.VoterSection.get_all()
+        for section in temp_section_list:
+            list_section_item = [
+                section.id,
+                section.section_names
+            ]
+
+            section_list.append(list_section_item)
+
+        section_list.sort()
+        return section_list

@@ -5,9 +5,9 @@
     <bookmark url="file://$PROJECT_DIR$/venv/lib/python3.5/site-packages/flask_login.py" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="94de5c49-841c-48b0-b388-90ddf42a8655" name="Default" comment="Added a dynamically add batches to the section form in the admin panel.">
+    <list default="true" id="94de5c49-841c-48b0-b388-90ddf42a8655" name="Default" comment="Fixed up admin panel views.">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/modules/admin/forms.py" afterPath="$PROJECT_DIR$/botos/modules/admin/forms.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/modules/admin/controllers.py" afterPath="$PROJECT_DIR$/botos/modules/admin/controllers.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/modules/admin/views.py" afterPath="$PROJECT_DIR$/botos/modules/admin/views.py" />
     </list>
     <ignored path="botos.iws" />
@@ -33,11 +33,9 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/botos/modules/admin/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="251">
-              <caret line="112" column="62" selection-start-line="112" selection-start-column="62" selection-end-line="112" selection-end-column="62" />
-              <folding>
-                <element signature="e#266#291#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="18">
+              <caret line="15" column="35" selection-start-line="15" selection-start-column="35" selection-end-line="15" selection-end-column="35" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -45,8 +43,8 @@
       <file leaf-file-name="controllers.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/botos/modules/admin/controllers.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2421">
-              <caret line="165" column="0" selection-start-line="165" selection-start-column="0" selection-end-line="165" selection-end-column="0" />
+            <state relative-caret-position="90">
+              <caret line="193" column="23" selection-start-line="193" selection-start-column="23" selection-end-line="193" selection-end-column="23" />
               <folding>
                 <element signature="e#243#256#0" expanded="true" />
               </folding>
@@ -168,12 +166,12 @@
         <option value="$PROJECT_DIR$/venv/lib/python3.5/site-packages/wtforms/fields/core.py" />
         <option value="$PROJECT_DIR$/botos/modules/voting/forms.py" />
         <option value="$PROJECT_DIR$/botos/modules/app_data/models.py" />
-        <option value="$PROJECT_DIR$/botos/modules/admin/controllers.py" />
         <option value="$PROJECT_DIR$/app.py" />
         <option value="$PROJECT_DIR$/settings.py" />
         <option value="$PROJECT_DIR$/botos/modules/app_data/controllers.py" />
         <option value="$PROJECT_DIR$/botos/templates/default/admin/index_admin.html" />
         <option value="$PROJECT_DIR$/botos/modules/admin/forms.py" />
+        <option value="$PROJECT_DIR$/botos/modules/admin/controllers.py" />
         <option value="$PROJECT_DIR$/botos/modules/admin/views.py" />
       </list>
     </option>
@@ -959,7 +957,14 @@
       <option name="project" value="LOCAL" />
       <updated>1468914327681</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="Added a dynamically add batches to the section form in the admin panel.">
+      <created>1468920419269</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1468920419270</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -1014,7 +1019,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
-    <MESSAGE value="Added an Admin controller in people_info. Added a basic login and registration functionality." />
     <MESSAGE value="Added registration views for the voters and admins." />
     <MESSAGE value="Used .format for logs. Added stub views for the admin." />
     <MESSAGE value="Finished adding the functionalities to the views." />
@@ -1039,7 +1043,8 @@
     <MESSAGE value="Added a section form in the admin field." />
     <MESSAGE value="Somehow a bug got fixed. Completed the necessary forms for voter-related information." />
     <MESSAGE value="Added a dynamically add batches to the section form in the admin panel." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added a dynamically add batches to the section form in the admin panel." />
+    <MESSAGE value="Fixed up admin panel views." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed up admin panel views." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1332,6 +1337,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="477">
           <caret line="305" column="0" selection-start-line="305" selection-start-column="0" selection-end-line="305" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1368,16 +1374,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/botos/modules/admin/controllers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2421">
-          <caret line="165" column="0" selection-start-line="165" selection-start-column="0" selection-end-line="165" selection-end-column="0" />
-          <folding>
-            <element signature="e#243#256#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/botos/modules/admin/forms.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="540">
@@ -1388,13 +1384,21 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/botos/modules/admin/controllers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="193" column="23" selection-start-line="193" selection-start-column="23" selection-end-line="193" selection-end-column="23" />
+          <folding>
+            <element signature="e#243#256#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/botos/modules/admin/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="251">
-          <caret line="112" column="62" selection-start-line="112" selection-start-column="62" selection-end-line="112" selection-end-column="62" />
-          <folding>
-            <element signature="e#266#291#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="18">
+          <caret line="15" column="35" selection-start-line="15" selection-start-column="35" selection-end-line="15" selection-end-column="35" />
+          <folding />
         </state>
       </provider>
     </entry>
