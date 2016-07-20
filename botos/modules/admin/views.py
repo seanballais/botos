@@ -104,17 +104,17 @@ def register_voters():
                                  section_id
                                  )
 
-        pdf_generator = admin_controllers.VoterPDFGenerator(num_voters,
-                                                            app_data_controllers.VoterSection.get_voter_section_by_id(
-                                                                section_id
-                                                            ),
-                                                            app_data_controllers.VoterBatch.get_batch_by_id(
-                                                                app_data_controllers.VoterSection
-                                                                .get_voter_section_by_id(section_id)
-                                                                .id
-                                                            ).batch_name
-                                                            )
-        pdf_generator.generate_entry_pdf(voter_generator.voter_list)
+        xlsx_generator = admin_controllers.VoterExcelGenerator(num_voters,
+                                                               app_data_controllers.VoterSection.get_voter_section_by_id(
+                                                                   section_id
+                                                               ),
+                                                               app_data_controllers.VoterBatch.get_batch_by_id(
+                                                                   app_data_controllers.VoterSection
+                                                                   .get_voter_section_by_id(section_id)
+                                                                   .id
+                                                               ).batch_name
+                                                               )
+        xlsx_generator.generate_xlsx(voter_generator.voter_list)
 
         success_msg = 'Successfully created {0} new voters.'.format(num_voters)
         logger.add_log(20,
@@ -122,7 +122,7 @@ def register_voters():
                        )
 
         flash(success_msg)
-        flash(Markup('<a href="{0}" target="_blank">Download Voter List (PDF)</a>'.format(pdf_generator.pdf_link)))
+        flash(Markup('<a href="{0}" target="_blank">Download Voter List (XLSX)</a>'.format(xlsx_generator.xlsx_link)))
 
     return redirect('/admin')
 
@@ -213,7 +213,6 @@ def register_candidate():
     candidate_middle_name = request.form['candidate_middle_name']
     candidate_position = request.form['candidate_position']
     candidate_party = request.form['candidate_party']
-    candidate_index = app_data_controllers.Candidate.get_next_index(candidate_position)
 
     logger.add_log(20,
                    'Creating candidate {0} {1} under {2}.'.format(candidate_first_name,
@@ -222,8 +221,7 @@ def register_candidate():
                                                                   )
                    )
 
-    app_data_controllers.Candidate.add(candidate_index,
-                                       candidate_first_name,
+    app_data_controllers.Candidate.add(candidate_first_name,
                                        candidate_last_name,
                                        candidate_middle_name,
                                        candidate_position,

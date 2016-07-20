@@ -108,13 +108,69 @@ class VoterSectionCreationForm(Form):
 
 class CandidateCreationForm(Form):
     """From for creating candidates."""
+    first_name  = StringField('first_name',
+                              validators=[DataRequired()],
+                              render_kw={
+                                  'id': "register-candidate-first-name",
+                                  'placeholder': "Enter candidate first name"
+                              })
+    last_name   = StringField('last_name',
+                              validators=[DataRequired()],
+                              render_kw={
+                                  'id': "register-candidate-last-name",
+                                  'placeholder': "Enter candidate last name"
+                              })
+    middle_name = StringField('middle_name',
+                              validators=[DataRequired()],
+                              render_kw={
+                                  'id': "register-candidate-middle-name",
+                                  'placeholder': "Enter candidate middle name"
+                              })
+    position    = SelectField('batch',
+                              choices=[],
+                              coerce=int,
+                              validators=[DataRequired()],
+                              render_kw={
+                                  'id': "register-candidate-position"
+                              })
+    party       = SelectField('batch',
+                              choices=[],
+                              coerce=int,
+                              validators=[DataRequired()],
+                              render_kw={
+                                  'id': "register-party-position"
+                              })
+
+    @classmethod
+    def new(cls):
+        """Create a new dynamically loaded form."""
+        form = cls()
+
+        form
 
 
 class CandidatePartyCreationForm(Form):
     """Form for creating candidate parties."""
+    party_name = StringField('party_name',
+                             validators=[DataRequired()],
+                             render_kw={
+                                 'id': "register-party-name",
+                                 'placeholder': "Enter the party name"
+                             })
 
 
 class CandidatePositionCreationForm(Form):
     """Form for creating candidate positions."""
-
+    position_name = StringField('position_name',
+                                validators=[DataRequired()],
+                                render_kw={
+                                    'id': "register-position-name",
+                                    'placeholder': "Enter the batch name"
+                                })
+    level         = IntegerField('position_level',
+                                 validators=[DataRequired()],
+                                 render_kw={
+                                     'id': "register-position-level",
+                                     'placeholder': "Enter the position level"
+                                 })
 

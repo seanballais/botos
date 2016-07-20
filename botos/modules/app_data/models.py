@@ -251,7 +251,6 @@ class Candidate(Base):
                                 )
 
     def __init__(self,
-                 candidate_idx,
                  first_name,
                  last_name,
                  middle_name,
@@ -261,14 +260,12 @@ class Candidate(Base):
         """
         Construct a new ''Candidate'' object.
 
-        :param candidate_idx: The index of the candidate with respect to the voting page position
         :param first_name: The first name of the candidate.
         :param last_name: The surname of the candidate.
         :param middle_name: The middle name of the candidate.
         :param position: The position a candidate is holding.
         :param party: The party in which a candidate belongs to.
         """
-        self.candidate_idx   = candidate_idx
         self.first_name      = first_name
         self.last_name       = last_name
         self.middle_name     = middle_name

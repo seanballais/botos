@@ -9,8 +9,6 @@
 """
 
 
-from sqlalchemy.sql import func
-
 from botos import db
 from botos.modules.activity_log import ActivityLogObservable
 from botos.modules.app_data import models
@@ -333,8 +331,7 @@ class Candidate:
     """Handles the addition, deletion, and modification of candidates."""
 
     @staticmethod
-    def add(candidate_index,
-            first_name,
+    def add(first_name,
             last_name,
             middle_name,
             position,
@@ -343,10 +340,13 @@ class Candidate:
         """
         Create a new candidate.
 
-        :param candidate_index: Index of the candidate with respect to the position in the row of candidates.
+        :param first_name: First name of the candidate.
+        :param last_name: Last name of the candidate.
+        :param middle_name: Middle name of the candidate.
+        :param position: Position of the candidate.
+        :param party: Party of the candidate.
         """
-        db.session.add(models.Candidate(candidate_index,
-                                        first_name,
+        db.session.add(models.Candidate(first_name,
                                         last_name,
                                         middle_name,
                                         position,
@@ -485,17 +485,13 @@ class Candidate:
                                                 ).first()
 
     @staticmethod
-    def get_next_index(candidate_position):
+    def get_all():
         """
-        Get the largest candidate index and increment it by one.
+        Get all of the candidates.
 
-        :return: The next largest candidate index.
+        :return: A list of all the candidates.
         """
-        max_index_query = db.session.query(func.max(models.Candidate.candidate_idx).label('max_index')
-                                           ).filter(models.Candidate.candidate_position == candidate_position)
-        index_response = max_index_query.one()
-
-        return index_response.max_index + 1
+        return models.Candidate.query.all()
 
 
 class CandidatePosition:
@@ -574,6 +570,15 @@ class CandidatePosition:
         """
         return models.CandidatePosition.query.filter_by(name=position_name).first()
 
+    @staticmethod
+    def get_all():
+        """
+        Get all of the candidates positions.
+
+        :return: A list of all the candidate positions.
+        """
+        return models.CandidatePosition.query.all()
+
 
 class CandidateParty:
     """Handles the creation, deletion, and modification of the parties."""
@@ -622,6 +627,15 @@ class CandidateParty:
         :param party_name: The name of the party.
         """
         return models.CandidateParty.query.filter_by(name=party_name).first()
+
+    @staticmethod
+    def get_all():
+        """
+        Get all of the candidate parties.
+
+        :return: A list of all the candidate parties.
+        """
+        return models.CandidateParty.query.all()
 
 
 class Settings:

@@ -12,14 +12,7 @@ import string
 import random
 import time
 
-from reportlab.lib.enums import TA_CENTER
-from reportlab.lib.pagesizes import letter
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib.styles import ParagraphStyle
-from reportlab.platypus import SimpleDocTemplate
-from reportlab.platypus import Paragraph
-from reportlab.platypus import Spacer
-from reportlab.platypus import Table
+import xlsxwriter
 
 import settings
 
@@ -97,70 +90,46 @@ class VoterGenerator:
         return '<VoterGenerator>'
 
 
-class VoterPDFGenerator:
+class VoterExcelGenerator:
     """Generate a PDF file of a list of voters."""
-    pdf_link = ''
+    xlsx_link = ''
 
-    def generate_entry_pdf(self,
-                           voter_list
-                           ):
+    def generate_xlsx(self,
+                      voter_list
+                      ):
         """
-        Generate a PDF with the list of voters. This document will be used before entry to
-        the voting station. Before entry, the voter must sign the voter ID he/she will be using
-        for voting.
+        Generate a xlsx file with the list of voters.
 
         :param voter_list: List of the voters.
         """
-        contents = []
-        styles = getSampleStyleSheet()
-
-        styles.add(ParagraphStyle(name='Center',
-                                  alignment=TA_CENTER
-                                  )
-                   )
-        text = '<font size=24><b>Voter Personal Access Information</b></font><br/>'
-        text += '<font size=12>{0} - {1}</font>'.format(self.section_name,
-                                                        self.batch
-                                                        )
-
         logger.add_log(20,
-                       'Generating PDF with {0} voters from {1}'.format(len(voter_list),
-                                                                        self.section_name
-                                                                        )
+                       'Generating xlsx with {0} voters from {1}'.format(len(voter_list),
+                                                                         self.section_name
+                                                                         )
                        )
 
-        contents.append(Paragraph(text,
-                                  styles['Center']
-                                  )
-                        )
+        header_format = self.xlsx_book.add_format()
+        id_format     = self.xlsx_book.add_format()
+        pass_format   = self.xlsx_book.add_format()
+        header_format.set_pattern(1)
+        header_format.set_bg_color('#466FC1')
+        header_format.set_font_color('#FFFFFF')
+        id_format.set_pattern(1)
+        id_format.set_bg_color('#79A0EF')
+        pass_format.set_pattern(1)
+        pass_format.set_bg_color('#93ADE1')
 
-        contents.append(Spacer(1, 24))
-        for voter in voter_list:
-            voter.insert(0, '_______________')
+        self.xlsx_sheet.write(0, 0, 'Voter ID', header_format)
+        self.xlsx_sheet.write(0, 1, 'Password', header_format)
 
-        voter_list.insert(0, [
-            'Signature',
-            'Voter ID',
-            'Password'
-        ])
+        row = 1
+        col = 0
+        for id, password in voter_list:
+            self.xlsx_sheet.write(row, col, id, id_format)
+            self.xlsx_sheet.write(row, col + 1, password, pass_format)
+            row += 1
 
-        voter_table = Table(voter_list)
-
-        contents.append(voter_table)
-        contents.append(Spacer(1, 36))
-        contents.append(Paragraph('<font size=12><i>{0}</i></font>'.format(settings.election_closing_text),
-                                  styles['Center']
-                                  )
-                        )
-        contents.append(Spacer(1, 32))
-
-        text = '<font size=12><b>Powered by Botos</b><br/>'
-        text += '<small>Botos is an open source election system developed by Sean Francis N. Ballais.</small></font>'
-        contents.append(Paragraph(text,
-                                  styles['Center']
-                                  )
-                        )
-        self.pdf_doc.build(contents)
+        self.xlsx_book.close()
 
     def __init__(self,
                  num_voters,
@@ -176,23 +145,18 @@ class VoterPDFGenerator:
         """
         self.section_name = section_name.section_name
         self.batch        = batch
-        _pdf_filename     = '{0}-{1}-{2}-{3}-{4}.pdf'.format(self.batch,
-                                                             self.section_name,
-                                                             num_voters,
-                                                             time.strftime('%Y%m%d'),
-                                                             time.strftime('%H%M%S')
-                                                             )
-        self.pdf_link     = 'content/pdf/{0}'.format(_pdf_filename)
-        self.filename     = '{0}/{1}'.format(settings.PDF_DIRECTORY,
-                                             _pdf_filename
+        _xlsx_filename    = '{0}-{1}-{2}-{3}-{4}.xlsx'.format(self.batch,
+                                                              self.section_name,
+                                                              num_voters,
+                                                              time.strftime('%Y%m%d'),
+                                                              time.strftime('%H%M%S')
+                                                              )
+        self.xlsx_link    = 'content/xlsx/{0}'.format(_xlsx_filename)
+        self.filename     = '{0}/{1}'.format(settings.XLSX_DIRECTORY,
+                                             _xlsx_filename
                                              )
-        self.pdf_doc      = SimpleDocTemplate(filename=self.filename,
-                                              pagesize=letter,
-                                              rightMargin=72,
-                                              leftMargin=72,
-                                              topMargin=72,
-                                              bottomMargin=72
-                                              )
+        self.xlsx_book    = xlsxwriter.Workbook(self.filename)
+        self.xlsx_sheet   = self.xlsx_book.add_worksheet()
 
     def __repr__(self):
         return '<VoterPDFGenerator>'
@@ -240,3 +204,45 @@ class Utility:
 
         section_list.sort()
         return section_list
+
+    @staticmethod
+    def get_party_list():
+        """
+        Get a list of all parties.
+
+        :return: List of all parties.
+        """
+        party_list = []
+        temp_party_list = controllers.CandidateParty.get_all()
+        for party in temp_party_list:
+            list_party_item = [
+                party.id,
+                party.name
+            ]
+
+            party_list.append(list_party_item)
+
+        party_list.sort()
+        return party_list
+
+    @staticmethod
+    def get_position_list():
+            """
+            Get a list of all positions.
+
+            :return: List of all parties.
+            """
+            party_list = []
+            temp_party_list = controllers.CandidateParty.get_all()
+            for party in temp_party_list:
+                list_party_item = [
+                    party.id,
+                    party.name
+                ]
+
+                party_list.append(list_party_item)
+
+            party_list.sort()
+            return party_list
+
+    # TODO: Merge the get_x_list() functions into one.
