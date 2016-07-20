@@ -146,7 +146,10 @@ class CandidateCreationForm(Form):
         """Create a new dynamically loaded form."""
         form = cls()
 
-        form
+        form.position.choices = Utility.get_position_list()
+        form.party.choice     = Utility.get_party_list()
+
+        return form
 
 
 class CandidatePartyCreationForm(Form):

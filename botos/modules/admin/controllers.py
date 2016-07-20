@@ -227,22 +227,22 @@ class Utility:
 
     @staticmethod
     def get_position_list():
-            """
-            Get a list of all positions.
+        """
+        Get a list of all positions.
 
-            :return: List of all parties.
-            """
-            party_list = []
-            temp_party_list = controllers.CandidateParty.get_all()
-            for party in temp_party_list:
-                list_party_item = [
-                    party.id,
-                    party.name
-                ]
+        :return: List of all parties.
+        """
+        position_list = []
+        temp_position_list = controllers.CandidatePosition.get_all()
+        for position in temp_position_list:
+            list_position_item = [
+                position.id,
+                position.name
+            ]
 
-                party_list.append(list_party_item)
+            position_list.append(list_position_item)
 
-            party_list.sort()
-            return party_list
+        position_list.sort()
+        return position_list
 
     # TODO: Merge the get_x_list() functions into one.
