@@ -346,7 +346,9 @@ class Candidate:
         :param position: Position of the candidate.
         :param party: Party of the candidate.
         """
-        db.session.add(models.Candidate(first_name,
+        candidate_idx = 0
+        db.session.add(models.Candidate(candidate_idx,
+                                        first_name,
                                         last_name,
                                         middle_name,
                                         position,

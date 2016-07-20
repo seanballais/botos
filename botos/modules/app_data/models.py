@@ -226,11 +226,6 @@ class Candidate(Base):
     """Represents the candidate in the database."""
     __tablename__   = 'candidate'
 
-    candidate_id    = db.Column(db.Integer,
-                                nullable=False,
-                                autoincrement=True
-                                )
-
     candidate_idx   = db.Column(db.SmallInteger,
                                 nullable=False
                                 )  # Index that will be used for the positioning in the voting page
@@ -251,6 +246,7 @@ class Candidate(Base):
                                 )
 
     def __init__(self,
+                 candidate_idx,
                  first_name,
                  last_name,
                  middle_name,
@@ -260,17 +256,19 @@ class Candidate(Base):
         """
         Construct a new ''Candidate'' object.
 
+        :param candidate_idx: Index of the candidate used in the voting page.
         :param first_name: The first name of the candidate.
         :param last_name: The surname of the candidate.
         :param middle_name: The middle name of the candidate.
         :param position: The position a candidate is holding.
         :param party: The party in which a candidate belongs to.
         """
-        self.first_name      = first_name
-        self.last_name       = last_name
-        self.middle_name     = middle_name
-        self.position        = position
-        self.party           = party
+        self.candidate_idx = candidate_idx
+        self.first_name    = first_name
+        self.last_name     = last_name
+        self.middle_name   = middle_name
+        self.position      = position
+        self.party         = party
 
     def __repr__(self):
         return '<Candidate %r>' % (self.first_name + self.last_name)

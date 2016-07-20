@@ -7,8 +7,9 @@
   <component name="ChangeListManager">
     <list default="true" id="94de5c49-841c-48b0-b388-90ddf42a8655" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/modules/admin/controllers.py" afterPath="$PROJECT_DIR$/botos/modules/admin/controllers.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/modules/admin/forms.py" afterPath="$PROJECT_DIR$/botos/modules/admin/forms.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/modules/admin/views.py" afterPath="$PROJECT_DIR$/botos/modules/admin/views.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/modules/app_data/controllers.py" afterPath="$PROJECT_DIR$/botos/modules/app_data/controllers.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/modules/app_data/models.py" afterPath="$PROJECT_DIR$/botos/modules/app_data/models.py" />
     </list>
     <ignored path="botos.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -30,11 +31,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/botos/modules/admin/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="275">
-              <caret line="223" column="39" selection-start-line="223" selection-start-column="39" selection-end-line="223" selection-end-column="39" />
+            <state relative-caret-position="218">
+              <caret line="219" column="0" selection-start-line="219" selection-start-column="0" selection-end-line="219" selection-end-column="0" />
               <folding>
                 <element signature="e#267#292#0" expanded="true" />
               </folding>
@@ -45,7 +46,7 @@
       <file leaf-file-name="controllers.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/botos/modules/admin/controllers.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
+            <state relative-caret-position="3726">
               <caret line="235" column="68" selection-start-line="235" selection-start-column="68" selection-end-line="235" selection-end-column="68" />
               <folding>
                 <element signature="e#243#256#0" expanded="true" />
@@ -57,8 +58,8 @@
       <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/botos/modules/app_data/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-949">
-              <caret line="92" column="4" selection-start-line="92" selection-start-column="4" selection-end-line="92" selection-end-column="4" />
+            <state relative-caret-position="308">
+              <caret line="265" column="42" selection-start-line="265" selection-start-column="42" selection-end-line="265" selection-end-column="42" />
               <folding />
             </state>
           </provider>
@@ -67,8 +68,8 @@
       <file leaf-file-name="controllers.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/botos/modules/app_data/controllers.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="269">
-              <caret line="362" column="0" selection-start-line="362" selection-start-column="0" selection-end-line="362" selection-end-column="0" />
+            <state relative-caret-position="434">
+              <caret line="349" column="40" selection-start-line="349" selection-start-column="40" selection-end-line="349" selection-end-column="40" />
               <folding>
                 <element signature="e#269#289#0" expanded="true" />
               </folding>
@@ -76,10 +77,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="forms.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="forms.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/botos/modules/admin/forms.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="614">
+            <state relative-caret-position="974">
               <caret line="151" column="19" selection-start-line="151" selection-start-column="19" selection-end-line="151" selection-end-column="19" />
               <folding>
                 <element signature="e#239#265#0" expanded="true" />
@@ -181,12 +182,12 @@
         <option value="$PROJECT_DIR$/botos/modules/voting/forms.py" />
         <option value="$PROJECT_DIR$/botos/templates/default/admin/index_admin.html" />
         <option value="$PROJECT_DIR$/app.py" />
-        <option value="$PROJECT_DIR$/botos/modules/app_data/models.py" />
-        <option value="$PROJECT_DIR$/botos/modules/admin/views.py" />
-        <option value="$PROJECT_DIR$/botos/modules/app_data/controllers.py" />
         <option value="$PROJECT_DIR$/settings.py" />
         <option value="$PROJECT_DIR$/botos/modules/admin/controllers.py" />
         <option value="$PROJECT_DIR$/botos/modules/admin/forms.py" />
+        <option value="$PROJECT_DIR$/botos/modules/app_data/models.py" />
+        <option value="$PROJECT_DIR$/botos/modules/admin/views.py" />
+        <option value="$PROJECT_DIR$/botos/modules/app_data/controllers.py" />
       </list>
     </option>
   </component>
@@ -926,7 +927,14 @@
       <option name="project" value="LOCAL" />
       <updated>1469022013076</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="Added forms for the candidates.">
+      <created>1469022182170</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1469022182170</updated>
+    </task>
+    <option name="localTasksCounter" value="50" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -1002,7 +1010,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
-    <MESSAGE value="Modified the views to conform with the updated controllers." />
     <MESSAGE value="Added code that will display a different template based on the current user's identity." />
     <MESSAGE value="Fixed a few import errors when creating the Settings table on app launch. Added views in the app." />
     <MESSAGE value="Renamed people_info to data. Moved the settings there as well. Most like the vote store will be moved to data as well." />
@@ -1027,7 +1034,8 @@
     <MESSAGE value="Finished adding PDF creation support." />
     <MESSAGE value="Fixed a download link for the PDF file." />
     <MESSAGE value="Converted PDF to XLSX" />
-    <option name="LAST_COMMIT_MESSAGE" value="Converted PDF to XLSX" />
+    <MESSAGE value="Added forms for the candidates." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added forms for the candidates." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1323,32 +1331,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/botos/modules/admin/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="275">
-          <caret line="223" column="39" selection-start-line="223" selection-start-column="39" selection-end-line="223" selection-end-column="39" />
-          <folding>
-            <element signature="e#267#292#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/settings.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="36">
           <caret line="2" column="14" selection-start-line="2" selection-start-column="14" selection-end-line="2" selection-end-column="14" />
           <folding>
             <element signature="e#58#67#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/botos/modules/admin/controllers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="235" column="68" selection-start-line="235" selection-start-column="68" selection-end-line="235" selection-end-column="68" />
-          <folding>
-            <element signature="e#243#256#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1365,28 +1353,48 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/botos/modules/app_data/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-949">
-          <caret line="92" column="4" selection-start-line="92" selection-start-column="4" selection-end-line="92" selection-end-column="4" />
+        <state relative-caret-position="308">
+          <caret line="265" column="42" selection-start-line="265" selection-start-column="42" selection-end-line="265" selection-end-column="42" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/botos/modules/admin/forms.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="974">
+          <caret line="151" column="19" selection-start-line="151" selection-start-column="19" selection-end-line="151" selection-end-column="19" />
+          <folding>
+            <element signature="e#239#265#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/botos/modules/admin/controllers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3726">
+          <caret line="235" column="68" selection-start-line="235" selection-start-column="68" selection-end-line="235" selection-end-column="68" />
+          <folding>
+            <element signature="e#243#256#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/botos/modules/app_data/controllers.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="269">
-          <caret line="362" column="0" selection-start-line="362" selection-start-column="0" selection-end-line="362" selection-end-column="0" />
+        <state relative-caret-position="434">
+          <caret line="349" column="40" selection-start-line="349" selection-start-column="40" selection-end-line="349" selection-end-column="40" />
           <folding>
             <element signature="e#269#289#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/botos/modules/admin/forms.py">
+    <entry file="file://$PROJECT_DIR$/botos/modules/admin/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="614">
-          <caret line="151" column="19" selection-start-line="151" selection-start-column="19" selection-end-line="151" selection-end-column="19" />
+        <state relative-caret-position="218">
+          <caret line="219" column="0" selection-start-line="219" selection-start-column="0" selection-end-line="219" selection-end-column="0" />
           <folding>
-            <element signature="e#239#265#0" expanded="true" />
+            <element signature="e#267#292#0" expanded="true" />
           </folding>
         </state>
       </provider>

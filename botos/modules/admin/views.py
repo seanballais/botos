@@ -26,6 +26,9 @@ from botos.modules.admin.forms import AdminCreationForm
 from botos.modules.admin.forms import VoterCreationForm
 from botos.modules.admin.forms import VoterSectionCreationForm
 from botos.modules.admin.forms import VoterBatchCreationForm
+from botos.modules.admin.forms import CandidateCreationForm
+from botos.modules.admin.forms import CandidatePartyCreationForm
+from botos.modules.admin.forms import CandidatePositionCreationForm
 
 
 # Set up the logger
@@ -200,19 +203,13 @@ def register_candidate():
 
     :return: Return a JSON response.
     """
-    if request.method != 'POST':
-        logger.add_log(20,
-                       'User attempted to go to a non-page directory with a {0} request.'
-                       'Redirecting to the index page.'.format(request.method)
-                       )
+    candidate_creation_form = CandidateCreationForm.new()
 
-        return redirect('/')
-
-    candidate_first_name = request.form['Candidate_first-name']
-    candidate_last_name = request.form['candidate_last_name']
-    candidate_middle_name = request.form['candidate_middle_name']
-    candidate_position = request.form['candidate_position']
-    candidate_party = request.form['candidate_party']
+    candidate_first_name = candidate_creation_form.first_name.data
+    candidate_last_name = candidate_creation_form.last_name.data
+    candidate_middle_name = candidate_creation_form.middle_name.data
+    candidate_position = candidate_creation_form.position.data
+    candidate_party = candidate_creation_form.party.data
 
     logger.add_log(20,
                    'Creating candidate {0} {1} under {2}.'.format(candidate_first_name,
@@ -221,23 +218,24 @@ def register_candidate():
                                                                   )
                    )
 
-    app_data_controllers.Candidate.add(candidate_first_name,
-                                       candidate_last_name,
-                                       candidate_middle_name,
-                                       candidate_position,
-                                       candidate_party
-                                       )
+    if candidate_creation_form.validate_on_submit():
+        app_data_controllers.Candidate.add(candidate_first_name,
+                                           candidate_last_name,
+                                           candidate_middle_name,
+                                           candidate_position,
+                                           candidate_party
+                                           )
 
-    logger.add_log(20,
-                   'Created candidate {0} {1} successfully.'.format(candidate_first_name,
-                                                                    candidate_last_name
-                                                                    )
-                   )
+        logger.add_log(20,
+                       'Created candidate {0} {1} successfully.'.format(candidate_first_name,
+                                                                        candidate_last_name
+                                                                        )
+                       )
 
-    flash('Candidate {0} {1} created successfully.'.format(candidate_first_name,
-                                                           candidate_last_name
-                                                           )
-          )
+        flash('Candidate {0} {1} created successfully.'.format(candidate_first_name,
+                                                               candidate_last_name
+                                                               )
+              )
 
     return '{ "message": "true" }'
 
