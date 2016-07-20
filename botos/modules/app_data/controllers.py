@@ -9,6 +9,8 @@
 """
 
 
+from sqlalchemy.sql import func
+
 from botos import db
 from botos.modules.activity_log import ActivityLogObservable
 from botos.modules.app_data import models
@@ -346,8 +348,7 @@ class Candidate:
         :param position: Position of the candidate.
         :param party: Party of the candidate.
         """
-        candidate_idx = 0
-        db.session.add(models.Candidate(candidate_idx,
+        db.session.add(models.Candidate(Candidate.get_next_index(position),
                                         first_name,
                                         last_name,
                                         middle_name,
@@ -485,6 +486,21 @@ class Candidate:
         return models.Candidate.query.filter_by(candidate_position=candidate_position,
                                                 candidate_idx=candidate_index
                                                 ).first()
+
+    @staticmethod
+    def get_next_index(candidate_position):
+        """
+        Get the largest candidate index and increment it by one.
+
+        :return: The next largest candidate index.
+        """
+        max_index_query = db.session.query(func.max(models.Candidate.candidate_idx).label('max_index')
+                                           ).filter(models.Candidate.candidate_position == candidate_position)
+        index_response = max_index_query.one()
+        if index_response.max_index == 0:
+            return index_response.max_index
+
+        return index_response.max_index + 1
 
     @staticmethod
     def get_all():
