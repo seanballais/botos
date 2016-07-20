@@ -9,7 +9,6 @@
 """
 
 
-from flask import request
 from flask import flash
 from flask import redirect
 from flask import render_template
@@ -237,7 +236,7 @@ def register_candidate():
                                                                )
               )
 
-    return '{ "message": "true" }'
+    return redirect('/admin')
 
 
 @app.route('/admin/register/party',
@@ -252,21 +251,22 @@ def register_party():
     """
     party_creation_form = CandidatePartyCreationForm()
 
-    party_name = request.form['party_name']
+    party_name = party_creation_form.party_name.data
 
-    logger.add_log(20,
-                   'Creating party {0}.'.format(party_name)
-                   )
+    if party_creation_form.validate_on_submit():
+        logger.add_log(20,
+                       'Creating party {0}.'.format(party_name)
+                       )
 
-    app_data_controllers.CandidateParty.add(party_name)
+        app_data_controllers.CandidateParty.add(party_name)
 
-    logger.add_log(20,
-                   'Created party {0} successfully.'.format(party_name)
-                   )
+        logger.add_log(20,
+                       'Created party {0} successfully.'.format(party_name)
+                       )
 
-    flash('Successfully created party {0}.'.format(party_name))
+        flash('Successfully created party {0}.'.format(party_name))
 
-    return '{ "message": "true" }'
+    return redirect('/admin')
 
 
 @app.route('/admin/register/position',
@@ -279,39 +279,34 @@ def register_position():
 
     :return: Return a JSON response.
     """
-    if request.method != 'POST':
+    position_creation_form = CandidatePositionCreationForm()
+
+    position_name = position_creation_form.position_name.data
+    position_level = position_creation_form.level.data
+
+    if position_creation_form.validate_on_submit():
         logger.add_log(20,
-                       'User attempted to go to a non-page directory with a {0} request.'
-                       'Redirecting to the index page.'.format(request.method)
+                       'Creating candidate position {0} at level {1}.'.format(position_name,
+                                                                              position_level
+                                                                              )
                        )
 
-        return redirect('/')
+        app_data_controllers.CandidatePosition.add(position_name,
+                                                   position_level
+                                                   )
 
-    position_name = request.form['position_name']
-    position_level = request.form['position_level']
-
-    logger.add_log(20,
-                   'Creating candidate position {0} at level {1}.'.format(position_name,
-                                                                          position_level
-                                                                          )
-                   )
-
-    app_data_controllers.CandidatePosition.add(position_name,
-                                               position_level
-                                               )
-
-    logger.add_log(20,
-                   'Created candidate position {0} at level {1}.'.format(position_name,
-                                                                         position_level
-                                                                         )
-                   )
-
-    flash('Successfully created candidate position {0} at level {1}.'.format(position_name,
+        logger.add_log(20,
+                       'Created candidate position {0} at level {1}.'.format(position_name,
                                                                              position_level
                                                                              )
-          )
+                       )
 
-    return '{ "message": "true" }'
+        flash('Successfully created candidate position {0} at level {1}.'.format(position_name,
+                                                                                 position_level
+                                                                                 )
+              )
+
+    return redirect('/admin')
 
 
 @app.route('/admin/logout',
@@ -339,10 +334,13 @@ def admin_index():
 
     :return: Render a template depending on whether the user is anonymous, an admin, or a voter.
     """
-    admin_register_form   = AdminCreationForm()
-    voter_register_form   = VoterCreationForm().new()
-    batch_register_form   = VoterBatchCreationForm()
-    section_register_form = VoterSectionCreationForm().new()
+    admin_register_form     = AdminCreationForm()
+    voter_register_form     = VoterCreationForm().new()
+    batch_register_form     = VoterBatchCreationForm()
+    section_register_form   = VoterSectionCreationForm().new()
+    candidate_register_form = CandidateCreationForm().new()
+    party_register_form     = CandidatePartyCreationForm()
+    position_register_form  = CandidatePositionCreationForm()
 
     logger.add_log(20,
                    'Accessing admin index page.'
@@ -366,7 +364,10 @@ def admin_index():
                     admin_register_form=admin_register_form,
                     voter_register_form=voter_register_form,
                     batch_register_form=batch_register_form,
-                    section_register_form=section_register_form
+                    section_register_form=section_register_form,
+                    candidate_register_form=candidate_register_form,
+                    party_register_form=party_register_form,
+                    position_register_form=position_register_form
                 )
             elif current_user.role == 'viewer':
                 logger.add_log(20,

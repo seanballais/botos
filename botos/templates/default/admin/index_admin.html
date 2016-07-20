@@ -61,4 +61,55 @@
             <input type="submit" value="Register section">
         </p>
     </form>
+
+    <h2>Create a new Candidate</h2>
+    <form class="register-candidate-form" action="/admin/register/candidate" method="post">
+        {{ candidate_register_form.hidden_tag() }}
+        <p>
+            {{ candidate_register_form.first_name() }}<br>
+        </p>
+        <p>
+            {{ candidate_register_form.middle_name() }}<br>
+        </p>
+        <p>
+            {{ candidate_register_form.last_name() }}<br>
+        </p>
+        <p>
+            {{ candidate_register_form.position() }}<br>
+        </p>
+        <p>
+            {{ candidate_register_form.party() }}<br>
+        </p>
+        <p>
+            {{ section_register_form.batch() }}<br>
+        </p>
+        <p>
+            <input type="submit" value="Register candidate">
+        </p>
+    </form>
+
+    <h2>Create a new party</h2>
+    <form class="register-party-form" action="/admin/register/party" method="post">
+        {{ party_register_form.hidden_tag() }}
+        <p>
+            {{ party_register_form.party_name() }}<br>
+        </p>
+        <p>
+            <input type="submit" value="Register party">
+        </p>
+    </form>
+
+    <h2>Create a new position</h2>
+    <form class="register-position-form" action="/admin/register/position" method="post">
+        {{ position_register_form.hidden_tag() }}
+        <p>
+            {{ position_register_form.position_name() }}<br>
+        </p>
+        <p>
+            {{ position_register_form.level() }}<br>
+        </p>
+        <p>
+            <input type="submit" value="Register position">
+        </p>
+    </form>
 {% endblock %}
