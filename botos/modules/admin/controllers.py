@@ -119,7 +119,9 @@ class VoterPDFGenerator:
                                   )
                    )
         text = '<font size=24><b>Voter Personal Access Information</b></font><br/>'
-        text += '<font size=12>Section: {0}</font>'.format(self.section_name)
+        text += '<font size=12>{0} - {1}</font>'.format(self.section_name,
+                                                        self.batch
+                                                        )
 
         logger.add_log(20,
                        'Generating PDF with {0} voters from {1}'.format(len(voter_list),
@@ -173,13 +175,14 @@ class VoterPDFGenerator:
         :param batch: Batch of the section.
         """
         self.section_name = section_name.section_name
-        _pdf_filename     = '{0}-{1}-{2}-{3}-{4}.pdf'.format(batch,
+        self.batch        = batch
+        _pdf_filename     = '{0}-{1}-{2}-{3}-{4}.pdf'.format(self.batch,
                                                              self.section_name,
                                                              num_voters,
                                                              time.strftime('%Y%m%d'),
                                                              time.strftime('%H%M%S')
                                                              )
-        self.pdf_link     = 'content/{0}'.format(_pdf_filename)
+        self.pdf_link     = 'content/pdf/{0}'.format(_pdf_filename)
         self.filename     = '{0}/{1}'.format(settings.PDF_DIRECTORY,
                                              _pdf_filename
                                              )

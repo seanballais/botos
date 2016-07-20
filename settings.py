@@ -44,7 +44,7 @@ election_closing_text = random.choice([
     'Make America Gre..Wait. Wrong election.',
     'May the odds be ever in your favor. Or not.',
     'You do know that this election is screwed when the power\'s out, right?',
-    'I can\'t think of additional funny text.',
+    'I tried so hard and got so far. But in the end, it doesn\'t even matter...',
     'The admin can rig the votes. Just saying.'
 ])
 
