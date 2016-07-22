@@ -9,12 +9,15 @@
 """
 
 
+import os
+
 from flask import flash
 from flask import redirect
 from flask import render_template
 from flask import Markup
 from flask_login import current_user
 from flask_login import logout_user
+from werkzeug.utils import secure_filename
 
 from botos import app
 from botos.modules.activity_log import ActivityLogObservable
@@ -28,6 +31,8 @@ from botos.modules.admin.forms import VoterBatchCreationForm
 from botos.modules.admin.forms import CandidateCreationForm
 from botos.modules.admin.forms import CandidatePartyCreationForm
 from botos.modules.admin.forms import CandidatePositionCreationForm
+
+import settings
 
 
 # Set up the logger
@@ -209,6 +214,7 @@ def register_candidate():
     candidate_middle_name = candidate_creation_form.middle_name.data
     candidate_position = candidate_creation_form.position.data
     candidate_party = candidate_creation_form.party.data
+    candidate_profile = candidate_creation_form.profile_pic.data
 
     logger.add_log(20,
                    'Creating candidate {0} {1} under {2}.'.format(candidate_first_name,
@@ -218,9 +224,30 @@ def register_candidate():
                    )
 
     if candidate_creation_form.validate_on_submit():
+        file_ext = admin_controllers.Utility.get_file_extension(candidate_profile.data.filename)
+        filename = '{0}_{1}.{2}'.format(candidate_first_name,
+                                        candidate_last_name,
+                                        file_ext
+                                        )
+        if file_ext != '' and admin_controllers.Utility.file_extensions_allowed(file_ext):
+            candidate_profile.save('(0}/'.format(settings.PROF_DIRECTORY),
+                                   filename
+                                   )
+        else:
+            logger.add_log(20,
+                           'Unsupported file uploaded.'
+                           )
+            flash('Use .png, .gif, .jpeg, or .jpg for the images.')
+            return redirect('/admin')
+
+        profile_link = '{0}/{1}'.format(settings.PROF_DIRECTORY,
+                                        filename
+                                        )
+
         app_data_controllers.Candidate.add(candidate_first_name,
                                            candidate_last_name,
                                            candidate_middle_name,
+                                           profile_link,
                                            candidate_position,
                                            candidate_party
                                            )

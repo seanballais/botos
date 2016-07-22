@@ -35,7 +35,18 @@ BCRYPT_LOG_ROUNDS = 12
 LOG_FILENAME = 'app.log'
 LOG_LEVEL = logging.DEBUG  # Change to logging.INFO during production
 
-# Location to store generated files.
+# Location to store generated XLSX files.
 XLSX_DIRECTORY = BASE_DIR + 'botos/botos-content/xlsx'
+
+# Location to store the profile pictures.
+PROF_DIRECTORY = BASE_DIR + 'botos/botos-content/candidate-img'
+
+# Allowed extensions to be uploaded in the candidate registration form.
+ALLOWED_EXTENSIONS = [
+    'png',
+    'gif',
+    'jpg',
+    'jpeg'
+]
 
 # TODO: Move some of the settings here to the SettingsModel.

@@ -127,7 +127,12 @@ class CandidateCreationForm(Form):
                                   'id': "register-candidate-middle-name",
                                   'placeholder': "Enter candidate middle name"
                               })
-
+    profile_pic = FileField('profile_pic',
+                            validators=[DataRequired()],
+                            render_kw={
+                                'id': "register-candidate-profile-pic",
+                                'placeholder': "Upload the candidate's picture. Minimum size of 140x140."
+                            })
     position    = SelectField('batch',
                               choices=[],
                               coerce=int,

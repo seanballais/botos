@@ -336,6 +336,7 @@ class Candidate:
     def add(first_name,
             last_name,
             middle_name,
+            profile_URL,
             position,
             party
             ):
@@ -345,6 +346,7 @@ class Candidate:
         :param first_name: First name of the candidate.
         :param last_name: Last name of the candidate.
         :param middle_name: Middle name of the candidate.
+        :param profile_URL: Profile link of the candidate.
         :param position: Position of the candidate.
         :param party: Party of the candidate.
         """
@@ -352,6 +354,7 @@ class Candidate:
                                         first_name,
                                         last_name,
                                         middle_name,
+                                        profile_URL,
                                         position,
                                         party
                                         )

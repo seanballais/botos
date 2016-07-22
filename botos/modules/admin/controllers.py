@@ -245,4 +245,27 @@ class Utility:
         position_list.sort()
         return position_list
 
+    @staticmethod
+    def file_extensions_allowed(extension):
+        """
+        Check if the file extension is allowed.
+
+        :param extension: File extension.
+        :return: Return True if allowed. False, otherwise.
+        """
+        return extension in settings.ALLOWED_EXTENSIONS
+
+    @staticmethod
+    def get_file_extension(filename):
+        """
+        Get the file extension.
+
+        :param filename: Filename where we will get the file extension.
+        :return: Return the file extension. Return '' if none.
+        """
+        if '.' in filename:
+            return filename.rsplit('.', 1)[1]
+
+        return ''
+
     # TODO: Merge the get_x_list() functions into one.
