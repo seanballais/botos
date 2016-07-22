@@ -63,7 +63,7 @@
     </form>
 
     <h2>Create a new Candidate</h2>
-    <form class="register-candidate-form" action="/admin/register/candidate" method="post">
+    <form class="register-candidate-form" action="/admin/register/candidate" method="post" enctype=multipart/form-data>
         {{ candidate_register_form.hidden_tag() }}
         <p>
             {{ candidate_register_form.first_name() }}<br>
@@ -75,7 +75,7 @@
             {{ candidate_register_form.last_name() }}<br>
         </p>
         <p>
-            {{ candidate_register_form.last_name() }}<br>
+            {{ candidate_register_form.profile_pic() }}<br>
         </p>
         <p>
             {{ candidate_register_form.position() }}<br>
