@@ -13,6 +13,7 @@ from wtforms import StringField
 from wtforms import PasswordField
 from wtforms import SelectField
 from wtforms import IntegerField
+from wtforms import FileField
 from wtforms.validators import DataRequired
 
 from botos.modules.admin.controllers import Utility
@@ -126,6 +127,7 @@ class CandidateCreationForm(Form):
                                   'id': "register-candidate-middle-name",
                                   'placeholder': "Enter candidate middle name"
                               })
+
     position    = SelectField('batch',
                               choices=[],
                               coerce=int,
@@ -147,7 +149,7 @@ class CandidateCreationForm(Form):
         form = cls()
 
         form.position.choices = Utility.get_position_list()
-        form.party.choice     = Utility.get_party_list()
+        form.party.choices    = Utility.get_party_list()
 
         return form
 

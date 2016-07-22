@@ -238,6 +238,9 @@ class Candidate(Base):
     middle_name     = db.Column(db.String(16),
                                 nullable=True
                                 )
+    profile_URL     = db.Column(db.String(128),
+                                nullable=False
+                                )
     position        = db.Column(db.Integer,
                                 db.ForeignKey('candidate_position.id')
                                 )
@@ -250,6 +253,7 @@ class Candidate(Base):
                  first_name,
                  last_name,
                  middle_name,
+                 profile_URL,
                  position,
                  party
                  ):
@@ -260,6 +264,7 @@ class Candidate(Base):
         :param first_name: The first name of the candidate.
         :param last_name: The surname of the candidate.
         :param middle_name: The middle name of the candidate.
+        :param profile_URL: URL to the profile picture of the candidate.
         :param position: The position a candidate is holding.
         :param party: The party in which a candidate belongs to.
         """
@@ -267,6 +272,7 @@ class Candidate(Base):
         self.first_name    = first_name
         self.last_name     = last_name
         self.middle_name   = middle_name
+        self.profile_URL   = profile_URL
         self.position      = position
         self.party         = party
 

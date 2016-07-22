@@ -348,7 +348,7 @@ class Candidate:
         :param position: Position of the candidate.
         :param party: Party of the candidate.
         """
-        db.session.add(models.Candidate(Candidate.get_next_index(position),
+        db.session.add(models.Candidate(Candidate.get_next_index(),
                                         first_name,
                                         last_name,
                                         middle_name,
@@ -366,7 +366,7 @@ class Candidate:
 
         :param candidate_id: The ID of the candidate to be deleted.
         """
-        models.Candidate.query.filter_by(candidate_id=candidate_id).first().delete()
+        models.Candidate.query.filter_by(id=candidate_id).first().delete()
 
         db.session.commit()
 
@@ -388,7 +388,7 @@ class Candidate:
         :param candidate_id: The ID of the candidate.
         :param candidate_index: The new index of the candidate.
         """
-        models.Candidate.query.filter_by(candidate_id=candidate_id).first().candidate_idx = candidate_index
+        models.Candidate.query.filter_by(id=candidate_id).first().candidate_idx = candidate_index
 
         db.session.commit()
 
@@ -402,7 +402,7 @@ class Candidate:
         :param candidate_id: The ID of the candidate.
         :param candidate_first_name: The new first name of the candidate.
         """
-        models.Candidate.query.filter_by(candidate_id=candidate_id).first().first_name = candidate_first_name
+        models.Candidate.query.filter_by(id=candidate_id).first().first_name = candidate_first_name
 
         db.session.commit()
 
@@ -416,7 +416,7 @@ class Candidate:
         :param candidate_id: The ID of the candidate.
         :param candidate_last_name: The new last name of the candidate.
         """
-        models.Candidate.query.filter_by(candidate_id=candidate_id).first().last_name = candidate_last_name
+        models.Candidate.query.filter_by(id=candidate_id).first().last_name = candidate_last_name
 
         db.session.commit()
 
@@ -430,7 +430,7 @@ class Candidate:
         :param candidate_id: The ID of the candidate.
         :param candidate_middle_name: The new middle name of the candidate.
         """
-        models.Candidate.query.filter_by(candidate_id=candidate_id).first().middle_name = candidate_middle_name
+        models.Candidate.query.filter_by(id=candidate_id).first().middle_name = candidate_middle_name
 
         db.session.commit()
 
@@ -444,7 +444,7 @@ class Candidate:
         :param candidate_id: The ID of the candidate.
         :param candidate_position: The new position of the candidate.
         """
-        models.Candidate.query.filter_by(candidate_id_list=candidate_id).first().position = candidate_position
+        models.Candidate.query.filter_by(id=candidate_id).first().position = candidate_position
 
         db.session.commit()
 
@@ -458,7 +458,7 @@ class Candidate:
         :param candidate_id: The ID of the candidate.
         :param candidate_party: The new party of the candidate.
         """
-        models.Candidate.query.filter_by(candidate_id=candidate_id).first().party = candidate_party
+        models.Candidate.query.filter_by(id=candidate_id).first().party = candidate_party
 
         db.session.commit()
 
@@ -470,7 +470,7 @@ class Candidate:
         :param candidate_id: The ID of the candidate.
         :return: Candidate object if the Candidate exists, None otherwise.
         """
-        return models.Candidate.query.filter_by(candidate_id=candidate_id).first()
+        return models.Candidate.query.filter_by(id=candidate_id).first()
 
     @staticmethod
     def get_candidate(candidate_position,
@@ -483,22 +483,31 @@ class Candidate:
         :param candidate_index: The index of the candidate with respect to the position.
         :return: Candidate object if the candidate exists, None otherwise.
         """
-        return models.Candidate.query.filter_by(candidate_position=candidate_position,
+        return models.Candidate.query.filter_by(position=candidate_position,
                                                 candidate_idx=candidate_index
                                                 ).first()
 
     @staticmethod
-    def get_next_index(candidate_position):
+    def get_profile_url(candidate_id):
+        """
+        Get the candidate's profile picture.
+
+        :param candidate_id: ID of the candidate.
+        :return: Return a string containing the URL of the profile picture.
+        """
+        return models.Candidate.query.filter_by(id=candidate_id).first()
+
+    @staticmethod
+    def get_next_index():
         """
         Get the largest candidate index and increment it by one.
 
         :return: The next largest candidate index.
         """
-        max_index_query = db.session.query(func.max(models.Candidate.candidate_idx).label('max_index')
-                                           ).filter(models.Candidate.candidate_position == candidate_position)
+        max_index_query = db.session.query(func.max(models.Candidate.candidate_idx).label('max_index'))
         index_response = max_index_query.one()
-        if index_response.max_index == 0:
-            return index_response.max_index
+        if index_response.max_index == 0 or index_response.max_index is None:
+            return 0
 
         return index_response.max_index + 1
 
@@ -719,12 +728,3 @@ class Settings:
         models.SettingsModel.query.filter_by(key=settings_property).delete()
 
         db.session.commit()
-
-
-def generate_candidate_html_list():
-    """
-    Generate candidate list for the voting page proper.
-
-    :return: HTML string of the candidate list.
-    """
-    pass
