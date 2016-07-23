@@ -667,6 +667,7 @@ class CandidateParty:
         """
         return models.CandidateParty.query.all()
 
+
 class VoteStore:
     """Handles the addition, deletion, and modification of VoteStore objects."""
 
@@ -675,6 +676,18 @@ class VoteStore:
         """
         Populate the whole VoteStore table with the current data.
         """
+        candidates = Candidate.get_all()
+        sections   = VoterSection.get_all()
+        for candidate in candidates:
+            for section in sections:
+                db.session.add(models.VoteStore(section,
+                                                candidate
+                                                )
+                               )
+
+        db.session.commit()
+
+
 
 
 class Settings:

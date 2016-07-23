@@ -9,7 +9,6 @@
     <list default="true" id="94de5c49-841c-48b0-b388-90ddf42a8655" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/modules/app_data/controllers.py" afterPath="$PROJECT_DIR$/botos/modules/app_data/controllers.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/modules/app_data/models.py" afterPath="$PROJECT_DIR$/botos/modules/app_data/models.py" />
     </list>
     <ignored path="botos.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -55,21 +54,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="models.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/botos/modules/app_data/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="239">
-              <caret line="378" column="38" selection-start-line="378" selection-start-column="38" selection-end-line="378" selection-end-column="38" />
+            <state relative-caret-position="311">
+              <caret line="371" column="38" selection-start-line="371" selection-start-column="38" selection-end-line="371" selection-end-column="38" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="controllers.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="controllers.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/botos/modules/app_data/controllers.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="203">
-              <caret line="675" column="65" selection-start-line="675" selection-start-column="65" selection-end-line="675" selection-end-column="65" />
+            <state relative-caret-position="452">
+              <caret line="689" column="4" selection-start-line="689" selection-start-column="4" selection-end-line="689" selection-end-column="4" />
               <folding>
                 <element signature="e#269#300#0" expanded="true" />
               </folding>
@@ -206,8 +205,8 @@
         <option value="$PROJECT_DIR$/botos/modules/admin/forms.py" />
         <option value="$PROJECT_DIR$/botos-app" />
         <option value="$PROJECT_DIR$/botos/modules/admin/views.py" />
-        <option value="$PROJECT_DIR$/botos/modules/app_data/controllers.py" />
         <option value="$PROJECT_DIR$/botos/modules/app_data/models.py" />
+        <option value="$PROJECT_DIR$/botos/modules/app_data/controllers.py" />
       </list>
     </option>
   </component>
@@ -695,13 +694,6 @@
       <option name="presentableId" value="Default" />
       <updated>1465459195922</updated>
     </task>
-    <task id="LOCAL-00006" summary="Added a VoterSection controller class. Updated the section name in the VoterSection model class to be unique.">
-      <created>1467130007001</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1467130007001</updated>
-    </task>
     <task id="LOCAL-00007" summary="Added VoterSectionVotes and VoterBatch controllers.">
       <created>1467208265504</created>
       <option name="number" value="00007" />
@@ -1038,7 +1030,14 @@
       <option name="project" value="LOCAL" />
       <updated>1469276598535</updated>
     </task>
-    <option name="localTasksCounter" value="55" />
+    <task id="LOCAL-00055" summary="Added an __init__ to the VoteStore model.">
+      <created>1469277249487</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1469277249487</updated>
+    </task>
+    <option name="localTasksCounter" value="56" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -1093,7 +1092,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
-    <MESSAGE value="Minimal login added." />
     <MESSAGE value="Added password hashing." />
     <MESSAGE value="Added admin creation." />
     <MESSAGE value="Added a voter creation form." />
@@ -1118,7 +1116,8 @@
     <MESSAGE value="Added upload support for the profile pictures." />
     <MESSAGE value="Fixed bug where the page would just continuously load without stopping when uploading a candidate image." />
     <MESSAGE value="Added the VoteStore model." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added the VoteStore model." />
+    <MESSAGE value="Added an __init__ to the VoteStore model." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added an __init__ to the VoteStore model." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1460,21 +1459,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/botos/modules/app_data/controllers.py">
+    <entry file="file://$PROJECT_DIR$/botos/modules/app_data/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="203">
-          <caret line="675" column="65" selection-start-line="675" selection-start-column="65" selection-end-line="675" selection-end-column="65" />
-          <folding>
-            <element signature="e#269#300#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="311">
+          <caret line="371" column="38" selection-start-line="371" selection-start-column="38" selection-end-line="371" selection-end-column="38" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/botos/modules/app_data/models.py">
+    <entry file="file://$PROJECT_DIR$/botos/modules/app_data/controllers.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="239">
-          <caret line="378" column="38" selection-start-line="378" selection-start-column="38" selection-end-line="378" selection-end-column="38" />
-          <folding />
+        <state relative-caret-position="452">
+          <caret line="689" column="4" selection-start-line="689" selection-start-column="4" selection-end-line="689" selection-end-column="4" />
+          <folding>
+            <element signature="e#269#300#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
