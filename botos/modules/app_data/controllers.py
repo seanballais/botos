@@ -667,6 +667,15 @@ class CandidateParty:
         """
         return models.CandidateParty.query.all()
 
+class VoteStore:
+    """Handles the addition, deletion, and modification of VoteStore objects."""
+
+    @staticmethod
+    def populate():
+        """
+        Populate the whole VoteStore table with the current data.
+        """
+
 
 class Settings:
     """Singleton class for the settings."""

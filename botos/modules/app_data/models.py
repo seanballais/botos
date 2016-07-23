@@ -364,6 +364,20 @@ class VoteStore(Base):
                                 db.ForeignKey('candidate.id')
                                 )
 
+    def __init__(self,
+                 section,
+                 candidate
+                 ):
+        """
+        Initialize the settings model.
+
+        :param section: The section where a vote count belongs to.
+        :param candidate: The candidate where the vote counts belongs to.
+        """
+        self.current_votes = 0
+        self.section       = section
+        self.candidate     = candidate
+
 
 class SettingsModel(Base):
     """Key/value store for the settings."""
