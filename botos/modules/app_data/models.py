@@ -167,12 +167,12 @@ class VoterSection(Base):
                                                         ),
                                      lazy='dynamic'
                                      )
-    """section_votes  = db.relationship('VoterSectionVotes',
+    section_votes  = db.relationship('VoteStore',
                                      backref=db.backref('section',
                                                         lazy='select'
                                                         ),
                                      lazy='dynamic'
-                                     )"""
+                                     )
 
     def __init__(self,
                  section_name,
@@ -224,36 +224,42 @@ class VoterBatch(Base):
 
 class Candidate(Base):
     """Represents the candidate in the database."""
-    __tablename__   = 'candidate'
+    __tablename__     = 'candidate'
 
-    candidate_idx   = db.Column(db.SmallInteger,
-                                nullable=False
-                                )  # Index that will be used for the positioning in the voting page
-    first_name      = db.Column(db.String(16),
-                                nullable=False
-                                )
-    last_name       = db.Column(db.String(16),
-                                nullable=False
-                                )
-    middle_name     = db.Column(db.String(16),
-                                nullable=True
-                                )
-    profile_URL     = db.Column(db.String(128),
-                                nullable=False
-                                )
-    position        = db.Column(db.Integer,
-                                db.ForeignKey('candidate_position.id')
-                                )
-    party           = db.Column(db.Integer,
-                                db.ForeignKey('candidate_party.id')
-                                )
+    candidate_idx     = db.Column(db.SmallInteger,
+                                  nullable=False
+                                  )  # Index that will be used for the positioning in the voting page
+    first_name        = db.Column(db.String(16),
+                                  nullable=False
+                                  )
+    last_name         = db.Column(db.String(16),
+                                  nullable=False
+                                  )
+    middle_name       = db.Column(db.String(16),
+                                  nullable=True
+                                  )
+    profile_url       = db.Column(db.String(128),
+                                  nullable=False
+                                  )
+    position          = db.Column(db.Integer,
+                                  db.ForeignKey('candidate_position.id')
+                                  )
+    party             = db.Column(db.Integer,
+                                  db.ForeignKey('candidate_party.id')
+                                  )
+    section_candidate = db.relationship('VoteStore',
+                                        backref=db.backref('vote_store',
+                                                           lazy='select'
+                                                           ),
+                                        lazy='dynamic'
+                                        )
 
     def __init__(self,
                  candidate_idx,
                  first_name,
                  last_name,
                  middle_name,
-                 profile_URL,
+                 profile_url,
                  position,
                  party
                  ):
@@ -264,7 +270,7 @@ class Candidate(Base):
         :param first_name: The first name of the candidate.
         :param last_name: The surname of the candidate.
         :param middle_name: The middle name of the candidate.
-        :param profile_URL: URL to the profile picture of the candidate.
+        :param profile_url: URL to the profile picture of the candidate.
         :param position: The position a candidate is holding.
         :param party: The party in which a candidate belongs to.
         """
@@ -272,7 +278,7 @@ class Candidate(Base):
         self.first_name    = first_name
         self.last_name     = last_name
         self.middle_name   = middle_name
-        self.profile_URL   = profile_URL
+        self.profile_url   = profile_url
         self.position      = position
         self.party         = party
 
@@ -341,6 +347,22 @@ class CandidateParty(Base):
 
     def __repr__(self):
         return '<CandidateParty %r>' % self.name
+
+
+class VoteStore(Base):
+    """Table where votes will be stored."""
+    __tablename__   = 'vote_store'
+
+    current_votes   = db.Column(db.Integer,
+                                nullable=False
+                                )
+    # historical_data = ''
+    section         = db.Column(db.Integer,
+                                db.ForeignKey('voter_section.id')
+                                )
+    candidate       = db.Column(db.Integer,
+                                db.ForeignKey('candidate.id')
+                                )
 
 
 class SettingsModel(Base):
