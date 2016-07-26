@@ -491,6 +491,16 @@ class Candidate:
                                                 ).first()
 
     @staticmethod
+    def get_candidate_with_position(candidate_position):
+        """
+        Get all candidates based on the candidate position.
+
+        :param candidate_position: Position of the candidate.
+        :return: A list of all candidates of a given position.
+        """
+        return models.Candidate.query.filter_by(position=candidate_position).all()
+
+    @staticmethod
     def get_profile_url(candidate_id):
         """
         Get the candidate's profile picture.
@@ -687,7 +697,73 @@ class VoteStore:
 
         db.session.commit()
 
+    @staticmethod
+    def increment_vote(candidate,
+                       section
+                       ):
+        """
+        Increment the vote of a given candidate of a section by one.
 
+        :param candidate: The candidate whose vote will be incremented.
+        :param section: The section on which the vote belongs to.
+        """
+        models.VoteStore.query.filter_by(candidate=candidate,
+                                         section=section
+                                         ).first().current_votes += 1
+
+        db.session.commit()
+
+    @staticmethod
+    def get_section_votes(section,
+                          candidate
+                          ):
+        """
+        Get the votes of a given section on a Candidate.
+
+        :param section: The section where the votes will be gathered from.
+        :param candidate: The candidate where to votes belongs to.
+        :return: The section votes.
+        """
+        return models.VoteStore.query.filter_by(candidate=candidate,
+                                                section=section
+                                                ).first().current_votes
+
+    @staticmethod
+    def get_candidate_total_votes(candidate):
+        """
+        Get the total votes of a candidate.
+
+        :param candidate: The candidate where the votes will be gathered from.
+        :return: The total votes of a given candidate.
+        """
+        total_votes = 0
+        section_votes = models.VoteStore.query.filter_by(candidate=candidate).all()
+        for section in section_votes:
+            total_votes += section.current_votes
+
+        return total_votes
+
+    @staticmethod
+    def delete_section(section):
+        """
+        Delete all records of a given section in the VoteStore database.
+
+        :param section: Name of the section.
+        """
+        models.VoteStore.query.filter_by(section=section).delete()
+
+        db.session.commit()
+
+    @staticmethod
+    def delete_candidate(candidate):
+        """
+        Delete all records of a given candidate in the VoteStore database.
+
+        :param candidate: Name of the candidate.
+        """
+        models.VoteStore.query.filter_by(candidate=candidate).delete()
+
+        db.session.commit()
 
 
 class Settings:

@@ -90,6 +90,7 @@ class User(Base):
         """
         return self._password
 
+    # noinspection PyPropertyDefinition
     @password.setter
     def _set_password(self,
                       plain_password
@@ -168,7 +169,7 @@ class VoterSection(Base):
                                      lazy='dynamic'
                                      )
     section_votes  = db.relationship('VoteStore',
-                                     backref=db.backref('section',
+                                     backref=db.backref('section_votestore',
                                                         lazy='select'
                                                         ),
                                      lazy='dynamic'

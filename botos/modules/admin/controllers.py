@@ -246,6 +246,29 @@ class Utility:
         return position_list
 
     @staticmethod
+    def get_candidate_of_position_list(position):
+        """
+        Get a list of all candidates of a given position.
+
+        :param position: Position of the candidate.
+        :return: List of the candidates of a given position.
+        """
+        candidate_list = []
+        temp_candidate_list = controllers.Candidate.get_candidate_with_position(position)
+        for candidate in temp_candidate_list:
+            list_candidate_item = {
+                'id': candidate.id,
+                'first_name': candidate.first_name,
+                'last_name': candidate.last_name,
+                'profile_url': candidate.profile_url
+            }
+
+            candidate_list.append(list_candidate_item)
+
+        candidate_list.sort()
+        return candidate_list
+
+    @staticmethod
     def file_extensions_allowed(extension):
         """
         Check if the file extension is allowed.

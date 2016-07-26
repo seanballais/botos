@@ -8,15 +8,19 @@
 
 """
 
+from flask import Markup
+
 from flask_wtf import Form
 from wtforms import StringField
 from wtforms import PasswordField
 from wtforms import SelectField
 from wtforms import IntegerField
 from wtforms import FileField
+from wtforms import RadioField
 from wtforms.validators import DataRequired
 
 from botos.modules.admin.controllers import Utility
+from botos.modules.app_data import controllers
 
 
 class AdminCreationForm(Form):
@@ -184,3 +188,38 @@ class CandidatePositionCreationForm(Form):
                                      'placeholder': "Enter the position level"
                                  })
 
+
+class VoteStoreForm(Form):
+    """Form for dynamically creating candidate voting positions."""
+    pass
+
+    @classmethod
+    def new(cls):
+        form = cls()
+
+        for position in Utility.get_position_list():
+            candidate_list = []
+            for candidate in controllers.Candidate.get_candidate_with_position(position):
+                item_content = Markup(
+                    "<img src='{0}'/><br>{1} {2} {3}".format(candidate.profile_url,
+                                                             candidate.first_name,
+                                                             candidate.middle_name,
+                                                             candidate.last_name
+                                                             )
+                )
+                candidate_list.append((
+                    candidate.id,
+                    item_content
+                ))
+
+            setattr(form,
+                    '{0}'.format(position[0]),
+                    RadioField('{0}_choices'.format(position[1]),
+                               validators=[DataRequired()],
+                               choices=candidate_list,
+                               render_kw={
+                                   'class': "candidate-voting",
+                               })
+                    )
+
+        return form

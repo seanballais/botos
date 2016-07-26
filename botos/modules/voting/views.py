@@ -172,6 +172,12 @@ def app_index():
                            'Logged in user is an admin. Redirecting to the admin panel.'
                            )
             return redirect('/admin')
+        else:
+            logger.add_log(20,
+                           'Logged in user is a voter. Displaying the voting page.'
+                           )
+            return render_template('{0}/voting.html'.format(Settings.get_property_value('current_template'))
+                                   )
 
     logger.add_log(20,
                    'Current visitor is anonymous. Might need to say "Who you? You ain\'t my nigga."'
