@@ -17,6 +17,7 @@ from flask_login import login_user
 from flask_login import logout_user
 from flask_login import current_user
 from wtforms import RadioField
+from wtforms.validators import DataRequired
 
 from botos.modules.app_data import controllers
 from botos import app
@@ -167,7 +168,7 @@ def app_index():
     # Generate the necessary form fields
     for position in Utility.get_position_list():
         candidate_list = []
-        for candidate in controllers.Candidate.get_candidate_with_position(position):
+        for candidate in controllers.Candidate.get_candidate_with_position(position[0]):
             item_content = Markup(
                 "<img src='{0}'/><br>{1} {2} {3}".format(candidate.profile_url,
                                                          candidate.first_name,
