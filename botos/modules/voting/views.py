@@ -12,9 +12,11 @@ from flask import request
 from flask import render_template
 from flask import flash
 from flask import redirect
+from flask import Markup
 from flask_login import login_user
 from flask_login import logout_user
 from flask_login import current_user
+from wtforms import RadioField
 
 from botos.modules.app_data import controllers
 from botos import app
@@ -22,7 +24,9 @@ from botos import login_manager
 from botos.modules.activity_log import ActivityLogObservable
 from botos.modules.app_data.controllers import Settings
 from botos.modules.app_data.models import User
+from botos.modules.admin.controllers import Utility
 from botos.modules.voting.forms import LoginForm
+from botos.modules.voting.forms import VotingForm
 
 # Set up the logger
 logger = ActivityLogObservable.ActivityLogObservable('voting_' + __name__)
@@ -160,6 +164,34 @@ def app_index():
     """
     login_form = LoginForm()
 
+    # Generate the necessary form fields
+    for position in Utility.get_position_list():
+        candidate_list = []
+        for candidate in controllers.Candidate.get_candidate_with_position(position):
+            item_content = Markup(
+                "<img src='{0}'/><br>{1} {2} {3}".format(candidate.profile_url,
+                                                         candidate.first_name,
+                                                         candidate.middle_name,
+                                                         candidate.last_name
+                                                         )
+            )
+            candidate_list.append((
+                candidate.id,
+                item_content
+            ))
+
+        setattr(VotingForm,
+                '{0}'.format(position[0]),
+                RadioField('{0}_choices'.format(position[1]),
+                           validators=[DataRequired()],
+                           choices=candidate_list,
+                           render_kw={
+                               'class': "candidate-voting",
+                           })
+                )
+
+    voting_form = VotingForm()
+
     logger.add_log(20,
                    'Accessing index page.'
                    )
@@ -176,7 +208,8 @@ def app_index():
             logger.add_log(20,
                            'Logged in user is a voter. Displaying the voting page.'
                            )
-            return render_template('{0}/voting.html'.format(Settings.get_property_value('current_template'))
+            return render_template('{0}/voting.html'.format(Settings.get_property_value('current_template')),
+                                   voting_form=voting_form
                                    )
 
     logger.add_log(20,

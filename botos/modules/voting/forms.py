@@ -11,7 +11,10 @@
 from flask_wtf import Form
 from wtforms import StringField
 from wtforms import PasswordField
+from wtforms import RadioField
 from wtforms.validators import DataRequired
+
+from botos.modules.admin.controllers import Utility
 
 
 class LoginForm(Form):
@@ -29,3 +32,8 @@ class LoginForm(Form):
                                  'id': "login-password",
                                  'placeholder': "Enter your password"
                              })
+
+
+class VotingForm(Form):
+    """Form for dynamically creating candidate voting positions."""
+    pass

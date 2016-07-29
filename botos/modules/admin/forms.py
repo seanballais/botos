@@ -187,39 +187,3 @@ class CandidatePositionCreationForm(Form):
                                      'id': "register-position-level",
                                      'placeholder': "Enter the position level"
                                  })
-
-
-class VoteStoreForm(Form):
-    """Form for dynamically creating candidate voting positions."""
-    pass
-
-    @classmethod
-    def new(cls):
-        form = cls()
-
-        for position in Utility.get_position_list():
-            candidate_list = []
-            for candidate in controllers.Candidate.get_candidate_with_position(position):
-                item_content = Markup(
-                    "<img src='{0}'/><br>{1} {2} {3}".format(candidate.profile_url,
-                                                             candidate.first_name,
-                                                             candidate.middle_name,
-                                                             candidate.last_name
-                                                             )
-                )
-                candidate_list.append((
-                    candidate.id,
-                    item_content
-                ))
-
-            setattr(form,
-                    '{0}'.format(position[0]),
-                    RadioField('{0}_choices'.format(position[1]),
-                               validators=[DataRequired()],
-                               choices=candidate_list,
-                               render_kw={
-                                   'class': "candidate-voting",
-                               })
-                    )
-
-        return form
