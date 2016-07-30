@@ -6,3 +6,9 @@ a.radio-picture {
     text-decoration: none;
     width: 50px;
 }
+
+.hidden {
+    left: -10000px;
+    position: absolute;
+    top: -1000px;
+}

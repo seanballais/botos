@@ -166,18 +166,25 @@ def app_index():
     login_form = LoginForm()
 
     # Generate the necessary form fields
+    level_num = 1
     for position in Utility.get_position_list():
         candidate_list = []
+        candidate_num = 0
         for candidate in controllers.Candidate.get_candidate_with_position(position[0]):
             item_content = Markup(
-                "<a href=\"javascript:set_radio('1-0');\" "
-                "class=\"radio-picture\" style=\"background: url('{0}') no"
-                "-repeat scroll 0 0 white;\">&nbsp;</a>".format(candidate.profile_url)
+                "<a href=\"javascript:set_radio('{0}-{1}');\" "
+                "class=\"radio-picture\" style=\"background: url('{2}') no"
+                "-repeat scroll 0 0 white;\">&nbsp;</a>".format(level_num,
+                                                                candidate_num,
+                                                                candidate.profile_url
+                                                                )
             )
             candidate_list.append((
                 candidate.id,
                 item_content
             ))
+
+            candidate_num += 1
 
         setattr(VotingForm,
                 '{0}'.format(position[0]),
@@ -188,6 +195,8 @@ def app_index():
                                'id': "{0}".format(position[1]),
                            })
                 )
+
+        level_num += 1
 
     voting_form = VotingForm()
 

@@ -12,11 +12,15 @@ import settings
 login_manager.login_view = 'botos.modules.voting.views.app_index'
 
 
-@app.route('/static/<path:filename>')
+@app.route('/assets/<path:filename>',
+           methods=[
+               'GET',
+               'POST'
+           ])
 def static_template_view(filename):
-    return send_from_directory('{0}/botos/templates/{1}'.format(app.config['BASE_DIR'],
-                                                                Settings.get_property_value('current_template')
-                                                                ),
+    return send_from_directory('{0}/botos/templates/{1}/static/'.format(app.config['BASE_DIR'],
+                                                                        Settings.get_property_value('current_template')
+                                                                        ),
                                filename
                                )
 
