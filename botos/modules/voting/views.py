@@ -170,11 +170,9 @@ def app_index():
         candidate_list = []
         for candidate in controllers.Candidate.get_candidate_with_position(position[0]):
             item_content = Markup(
-                "<img src='{0}'/><br>{1} {2} {3}".format(candidate.profile_url,
-                                                         candidate.first_name,
-                                                         candidate.middle_name,
-                                                         candidate.last_name
-                                                         )
+                "<a href=\"javascript:set_radio('1-0');\" "
+                "class=\"radio-picture\" style=\"background: url('{0}') no"
+                "-repeat scroll 0 0 white;\">&nbsp;</a>".format(candidate.profile_url)
             )
             candidate_list.append((
                 candidate.id,
@@ -187,7 +185,7 @@ def app_index():
                            validators=[DataRequired()],
                            choices=candidate_list,
                            render_kw={
-                               'class': "candidate-voting",
+                               'id': "{0}".format(position[1]),
                            })
                 )
 
