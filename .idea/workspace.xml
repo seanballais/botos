@@ -7,13 +7,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="94de5c49-841c-48b0-b388-90ddf42a8655" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/botos/templates/default/static/js/scripts.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app.py" afterPath="$PROJECT_DIR$/app.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/modules/voting/views.py" afterPath="$PROJECT_DIR$/botos/modules/voting/views.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/templates/default/base.html" afterPath="$PROJECT_DIR$/botos/templates/default/base.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/templates/default/static/css/styles.css" afterPath="$PROJECT_DIR$/botos/templates/default/static/css/styles.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/templates/default/voting.html" afterPath="$PROJECT_DIR$/botos/templates/default/voting.html" />
     </list>
     <ignored path="botos.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -56,11 +51,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="styles.css" pinned="false" current-in-tab="false">
+      <file leaf-file-name="styles.css" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/botos/templates/default/static/css/styles.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="17" selection-start-line="0" selection-start-column="17" selection-end-line="0" selection-end-column="17" />
+            <state relative-caret-position="54">
+              <caret line="3" column="17" selection-start-line="3" selection-start-column="17" selection-end-line="3" selection-end-column="17" />
               <folding />
             </state>
           </provider>
@@ -106,7 +101,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/botos/modules/voting/views.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="288">
@@ -210,11 +205,11 @@
         <option value="$PROJECT_DIR$/botos/modules/app_data/controllers.py" />
         <option value="$PROJECT_DIR$/botos/templates/default/admin/index_admin.html" />
         <option value="$PROJECT_DIR$/botos/templates/default/static/js/scripts.js" />
-        <option value="$PROJECT_DIR$/botos/templates/default/static/css/styles.css" />
         <option value="$PROJECT_DIR$/app.py" />
         <option value="$PROJECT_DIR$/botos/templates/default/base.html" />
         <option value="$PROJECT_DIR$/botos/templates/default/voting.html" />
         <option value="$PROJECT_DIR$/botos/modules/voting/views.py" />
+        <option value="$PROJECT_DIR$/botos/templates/default/static/css/styles.css" />
       </list>
     </option>
   </component>
@@ -692,13 +687,6 @@
       <option name="presentableId" value="Default" />
       <updated>1465459195922</updated>
     </task>
-    <task id="LOCAL-00012" summary="Added new modules.">
-      <created>1467541146779</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1467541146779</updated>
-    </task>
     <task id="LOCAL-00013" summary="Added a log file directory.">
       <created>1467541945455</created>
       <option name="number" value="00013" />
@@ -1035,7 +1023,14 @@
       <option name="project" value="LOCAL" />
       <updated>1469864841293</updated>
     </task>
-    <option name="localTasksCounter" value="61" />
+    <task id="LOCAL-00061" summary="Fixed candidate selection.">
+      <created>1469867936302</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1469867936302</updated>
+    </task>
+    <option name="localTasksCounter" value="62" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -1090,7 +1085,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
-    <MESSAGE value="Moved a few things to the admin controller. Added PDF generation." />
     <MESSAGE value="Added Voter creation form." />
     <MESSAGE value="Added a section form in the admin field." />
     <MESSAGE value="Somehow a bug got fixed. Completed the necessary forms for voter-related information." />
@@ -1115,7 +1109,8 @@
     <MESSAGE value="Moved voting form field addition code to view." />
     <MESSAGE value="Added a bare bones voting page." />
     <MESSAGE value="Voting page under the works." />
-    <option name="LAST_COMMIT_MESSAGE" value="Voting page under the works." />
+    <MESSAGE value="Fixed candidate selection." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed candidate selection." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1410,22 +1405,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/botos/templates/default/static/css/styles.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="17" selection-start-line="0" selection-start-column="17" selection-end-line="0" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/botos/templates/default/admin/index_admin.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="502">
-          <caret line="115" column="0" selection-start-line="115" selection-start-column="0" selection-end-line="115" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/botos/templates/default/base.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
@@ -1475,6 +1454,22 @@
           <folding>
             <element signature="e#231#256#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/botos/templates/default/admin/index_admin.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="502">
+          <caret line="115" column="0" selection-start-line="115" selection-start-column="0" selection-end-line="115" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/botos/templates/default/static/css/styles.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="3" column="17" selection-start-line="3" selection-start-column="17" selection-end-line="3" selection-end-column="17" />
+          <folding />
         </state>
       </provider>
     </entry>

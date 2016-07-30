@@ -1,14 +1,9 @@
 a.radio-picture {
-    border: 1px solid black;
     display: inline-block;
-    height: 50px;
-    margin-right: 10px;
-    text-decoration: none;
-    width: 50px;
+    height: 160px;
+    width: 150px;
 }
 
-.hidden {
-    left: -10000px;
-    position: absolute;
-    top: -1000px;
+ul {
+    list-style-type: none;
 }
