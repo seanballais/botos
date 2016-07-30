@@ -4,6 +4,16 @@ a.radio-picture {
     width: 150px;
 }
 
+a.radio-picture:hover {
+
+}
+
 ul {
     list-style-type: none;
+}
+
+ul > li > input {
+    left: -10000px;
+    position: absolute;
+    top: -1000px;
 }
