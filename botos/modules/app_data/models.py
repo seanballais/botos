@@ -364,6 +364,8 @@ class VoteStore(Base):
                                 db.ForeignKey('candidate.id')
                                 )
 
+    # TODO: Fix (null) values in the database.
+
     def __init__(self,
                  section,
                  candidate

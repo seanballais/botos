@@ -7,23 +7,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="94de5c49-841c-48b0-b388-90ddf42a8655" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.app.log.swp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/botos/botos-content/candidate-img/Jeri_Cat.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/botos/botos-content/candidate-img/Leo_Supposed to be here.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/botos/botos-content/candidate-img/Nicolas_Pedro.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/botos/botos-content/candidate-img/Sean Francis_Ballais.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/botos/botos-content/candidate-img/Sean_Handsome.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/botos/botos-content/xlsx/2018-Emerald-1-20160729-201312.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/botos/botos-content/xlsx/2018-Eyy-1-20160724-194335.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/botos/botos-content/xlsx/2018-Eyy-1-20160729-193906.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/botos_app.db" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/botos/templates/default/static/js/jquery-3.1.0.min.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/venv/bin/mako-render" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/botos/modules/app_data/sqlalchemy_columns.py" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos_app.db" afterPath="$PROJECT_DIR$/botos_app.db" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/modules/app_data/controllers.py" afterPath="$PROJECT_DIR$/botos/modules/app_data/controllers.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/modules/app_data/models.py" afterPath="$PROJECT_DIR$/botos/modules/app_data/models.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/venv/pip-selfcheck.json" afterPath="$PROJECT_DIR$/venv/pip-selfcheck.json" />
     </list>
     <ignored path="botos.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -96,7 +82,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="controllers.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="controllers.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/botos/modules/app_data/controllers.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="223">
@@ -108,21 +94,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="subprocess.py" pinned="false" current-in-tab="false">
-        <entry file="file:///usr/lib/python3.5/subprocess.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="18">
-              <caret line="1607" column="0" selection-start-line="1607" selection-start-column="0" selection-end-line="1607" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="models.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/botos/modules/app_data/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2667">
-              <caret line="211" column="19" selection-start-line="211" selection-start-column="19" selection-end-line="211" selection-end-column="19" />
+            <state relative-caret-position="285">
+              <caret line="366" column="46" selection-start-line="366" selection-start-column="46" selection-end-line="366" selection-end-column="46" />
               <folding>
                 <element signature="e#262#311#0" expanded="true" />
               </folding>
@@ -227,8 +203,8 @@
         <option value="$PROJECT_DIR$/botos/templates/default/voting.html" />
         <option value="$PROJECT_DIR$/botos/modules/app_data/sqlalchemy_columns.py" />
         <option value="$PROJECT_DIR$/alembic/versions/70a172e73b98_baseline.py" />
-        <option value="$PROJECT_DIR$/botos/modules/app_data/models.py" />
         <option value="$PROJECT_DIR$/botos/modules/app_data/controllers.py" />
+        <option value="$PROJECT_DIR$/botos/modules/app_data/models.py" />
       </list>
     </option>
   </component>
@@ -768,13 +744,6 @@
       <option name="presentableId" value="Default" />
       <updated>1465459195922</updated>
     </task>
-    <task id="LOCAL-00020" summary="Used .format for logs. Added stub views for the admin.">
-      <created>1468057155255</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1468057155255</updated>
-    </task>
     <task id="LOCAL-00021" summary="Finished adding the functionalities to the views.">
       <created>1468068794303</created>
       <option name="number" value="00021" />
@@ -1111,7 +1080,14 @@
       <option name="project" value="LOCAL" />
       <updated>1469966813817</updated>
     </task>
-    <option name="localTasksCounter" value="69" />
+    <task id="LOCAL-00069" summary="Fixed code where VoteStore populate() code returns OperationalError.">
+      <created>1469973356281</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1469973356282</updated>
+    </task>
+    <option name="localTasksCounter" value="70" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -1166,7 +1142,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
-    <MESSAGE value="Added a almost done admin creation feature set." />
     <MESSAGE value="Finished adding PDF creation support." />
     <MESSAGE value="Fixed a download link for the PDF file." />
     <MESSAGE value="Converted PDF to XLSX" />
@@ -1191,7 +1166,8 @@
     <MESSAGE value="Added candidate names." />
     <MESSAGE value="Added party names." />
     <MESSAGE value="Added historical data in VoteStore." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added historical data in VoteStore." />
+    <MESSAGE value="Fixed code where VoteStore populate() code returns OperationalError." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed code where VoteStore populate() code returns OperationalError." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1528,16 +1504,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/botos/modules/app_data/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2667">
-          <caret line="211" column="19" selection-start-line="211" selection-start-column="19" selection-end-line="211" selection-end-column="19" />
-          <folding>
-            <element signature="e#262#311#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///usr/lib/python3.5/subprocess.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="18">
@@ -1552,6 +1518,16 @@
           <caret line="702" column="58" selection-start-line="702" selection-start-column="58" selection-end-line="702" selection-end-column="58" />
           <folding>
             <element signature="e#269#300#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/botos/modules/app_data/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="366" column="46" selection-start-line="366" selection-start-column="46" selection-end-line="366" selection-end-column="46" />
+          <folding>
+            <element signature="e#262#311#0" expanded="true" />
           </folding>
         </state>
       </provider>
