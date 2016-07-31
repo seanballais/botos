@@ -2,10 +2,16 @@ a.radio-picture {
     display: inline-block;
     height: 160px;
     width: 150px;
+    opacity: 1.0;
+    transition: all 0.3s ease;
 }
 
 a.radio-picture:hover {
+    opacity: 0.75;
+}
 
+.selected-glow {
+    border: 7px solid #33ccff;
 }
 
 ul {

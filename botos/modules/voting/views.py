@@ -166,17 +166,19 @@ def app_index():
     login_form = LoginForm()
 
     # Generate the necessary form fields
+    js_link_handlers = []
     level_num = 1
     for position in Utility.get_position_list():
         candidate_list = []
         candidate_num = 0
         for candidate in controllers.Candidate.get_candidate_with_position(position[0]):
             item_content = Markup(
-                "<a href=\"javascript:set_radio('{0}-{1}');\" "
-                "class=\"radio-picture\" style=\"background: url('{2}') no"
+                "<a href=\"javascript:set_radio('{0}-{1}');\" id=\"{0}-{1}\" "
+                "class=\"radio-picture {3}\" style=\"background: url('{2}') no"
                 "-repeat scroll 0 0 white;\">&nbsp;</a>".format(level_num,
                                                                 candidate_num,
-                                                                candidate.profile_url
+                                                                candidate.profile_url,
+                                                                position[0]
                                                                 )
             )
             candidate_list.append((
@@ -195,6 +197,18 @@ def app_index():
                                'id': "{0}".format(position[1]),
                            })
                 )
+
+        js_link_handlers.append(
+            Markup(
+                '<script type="text/javascript">\n'
+                '\t\t\t$("a.' + str(position[0]) + '").click(function() {\n'
+                '\t\t\t\tvar $id = $(this).attr("id");\n'
+                '\t\t\t\t$("a.' + str(position[0]) + '").removeClass("selected-glow");\n'
+                '\t\t\t\t$(this).addClass("selected-glow");\n'
+                '\t\t\t})\n'
+                '\t\t</script>\n'
+            )
+        )
 
         level_num += 1
 
@@ -217,7 +231,8 @@ def app_index():
                            'Logged in user is a voter. Displaying the voting page.'
                            )
             return render_template('{0}/voting.html'.format(Settings.get_property_value('current_template')),
-                                   voting_form=voting_form
+                                   voting_form=voting_form,
+                                   link_handler=js_link_handlers
                                    )
 
     logger.add_log(20,

@@ -2,7 +2,7 @@
 
 {% block content %}
     <h1>This is where you vote.</h1>
-    <form class="voting-form">
+    <form id="voting-form">
         {{ voting_form.hidden_tag() }}
         {% for field in voting_form %}
             {{ field() }}
@@ -10,4 +10,7 @@
     </form>
     <script type="text/javascript" src="/assets/js/jquery-3.1.0.min.js"></script>
     <script type="text/javascript" src="/assets/js/scripts.js"></script>
+    {% for handler in link_handler %}
+        {{ handler }}
+    {% endfor %}
 {% endblock %}
