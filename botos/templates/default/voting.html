@@ -4,8 +4,8 @@
     <h1>This is where you vote.</h1>
     <form id="voting-form">
         {{ voting_form.hidden_tag() }}
-        {% for field, position in candidate_info %}
-            <h2 class="position">{{ position[1] }}</h2>
+        {% for field in voting_form if field.widget.input_type != 'hidden' %}
+            <h2 class="candidate-positions">{{ field.label }}</h2>
             {{ field() }}
         {% endfor %}
     </form>

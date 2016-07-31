@@ -175,11 +175,14 @@ def app_index():
             item_content = Markup(
                 "<a href=\"javascript:set_radio('{0}-{1}');\" id=\"{0}-{1}\" "
                 "class=\"radio-picture {3}\" style=\"background: url('{2}') no"
-                "-repeat scroll 0 0 white;\">&nbsp;</a>".format(level_num,
-                                                                candidate_num,
-                                                                candidate.profile_url,
-                                                                position[0]
-                                                                )
+                "-repeat scroll 0 0 white;\">&nbsp;</a><br/>"
+                "<h3 class='candidate-name'>{4} {5}</h3>".format(level_num,
+                                                                 candidate_num,
+                                                                 candidate.profile_url,
+                                                                 position[0],
+                                                                 candidate.first_name,
+                                                                 candidate.last_name
+                                                                 )
             )
             candidate_list.append((
                 candidate.id,
@@ -190,7 +193,7 @@ def app_index():
 
         setattr(VotingForm,
                 '{0}'.format(position[0]),
-                RadioField('{0}_choices'.format(position[1]),
+                RadioField(label=position[1],
                            validators=[DataRequired()],
                            choices=candidate_list,
                            render_kw={
@@ -232,9 +235,6 @@ def app_index():
                            )
             return render_template('{0}/voting.html'.format(Settings.get_property_value('current_template')),
                                    voting_form=voting_form,
-                                   candidate_info=zip(voting_form,
-                                                      Utility.get_position_list()
-                                                      ),
                                    link_handler=js_link_handlers
                                    )
 

@@ -9,7 +9,6 @@
     <list default="true" id="94de5c49-841c-48b0-b388-90ddf42a8655" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/modules/voting/views.py" afterPath="$PROJECT_DIR$/botos/modules/voting/views.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/templates/default/static/css/styles.css" afterPath="$PROJECT_DIR$/botos/templates/default/static/css/styles.css" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/templates/default/voting.html" afterPath="$PROJECT_DIR$/botos/templates/default/voting.html" />
     </list>
     <ignored path="botos.iws" />
@@ -103,11 +102,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/botos/modules/voting/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="133">
-              <caret line="235" column="81" selection-start-line="235" selection-start-column="81" selection-end-line="235" selection-end-column="81" />
+            <state relative-caret-position="277">
+              <caret line="183" column="84" selection-start-line="183" selection-start-column="84" selection-end-line="183" selection-end-column="84" />
               <folding>
                 <element signature="e#231#256#0" expanded="true" />
               </folding>
@@ -125,11 +124,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="voting.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="voting.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/botos/templates/default/voting.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="126">
-              <caret line="7" column="47" selection-start-line="7" selection-start-column="47" selection-end-line="7" selection-end-column="47" />
+            <state relative-caret-position="144">
+              <caret line="8" column="25" selection-start-line="8" selection-start-column="25" selection-end-line="8" selection-end-column="25" />
               <folding />
             </state>
           </provider>
@@ -210,8 +209,8 @@
         <option value="$PROJECT_DIR$/botos/templates/default/base.html" />
         <option value="$PROJECT_DIR$/botos/templates/default/static/js/scripts.js" />
         <option value="$PROJECT_DIR$/botos/templates/default/static/css/styles.css" />
-        <option value="$PROJECT_DIR$/botos/modules/voting/views.py" />
         <option value="$PROJECT_DIR$/botos/templates/default/voting.html" />
+        <option value="$PROJECT_DIR$/botos/modules/voting/views.py" />
       </list>
     </option>
   </component>
@@ -689,13 +688,6 @@
       <option name="presentableId" value="Default" />
       <updated>1465459195922</updated>
     </task>
-    <task id="LOCAL-00016" summary="Removed VoterSectionVotes.">
-      <created>1467893409715</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1467893409715</updated>
-    </task>
     <task id="LOCAL-00017" summary="Added a non-functional login functionality to the voting module.">
       <created>1467911907320</created>
       <option name="number" value="00017" />
@@ -1032,7 +1024,14 @@
       <option name="project" value="LOCAL" />
       <updated>1469955257526</updated>
     </task>
-    <option name="localTasksCounter" value="65" />
+    <task id="LOCAL-00065" summary="Added support for position names">
+      <created>1469956979150</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1469956979150</updated>
+    </task>
+    <option name="localTasksCounter" value="66" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -1376,6 +1375,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-4637">
           <caret line="93" column="20" selection-start-line="93" selection-start-column="20" selection-end-line="93" selection-end-column="20" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1428,14 +1428,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/botos/modules/admin/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="19" column="21" selection-start-line="19" selection-start-column="21" selection-end-line="19" selection-end-column="21" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/botos/templates/default/static/js/scripts.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="36">
@@ -1452,21 +1444,29 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/botos/modules/voting/views.py">
+    <entry file="file://$PROJECT_DIR$/botos/modules/admin/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
-          <caret line="235" column="81" selection-start-line="235" selection-start-column="81" selection-end-line="235" selection-end-column="81" />
-          <folding>
-            <element signature="e#231#256#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="342">
+          <caret line="19" column="21" selection-start-line="19" selection-start-column="21" selection-end-line="19" selection-end-column="21" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/botos/templates/default/voting.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
-          <caret line="7" column="47" selection-start-line="7" selection-start-column="47" selection-end-line="7" selection-end-column="47" />
+        <state relative-caret-position="144">
+          <caret line="8" column="25" selection-start-line="8" selection-start-column="25" selection-end-line="8" selection-end-column="25" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/botos/modules/voting/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="277">
+          <caret line="183" column="84" selection-start-line="183" selection-start-column="84" selection-end-line="183" selection-end-column="84" />
+          <folding>
+            <element signature="e#231#256#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
