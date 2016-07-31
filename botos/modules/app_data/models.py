@@ -13,6 +13,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from botos import db
 from botos import bcrypt
 
+from botos.modules.app_data.sqlalchemy_columns import JsonEncodedDict
 
 class Base(db.Model):
     """The class that all models inherit from. Not to be used directly."""
@@ -357,7 +358,7 @@ class VoteStore(Base):
     current_votes   = db.Column(db.Integer,
                                 nullable=False
                                 )
-    # historical_data = ''
+    historical_data = db.Column(JsonEncodedDict)
     section         = db.Column(db.Integer,
                                 db.ForeignKey('voter_section.id')
                                 )
@@ -375,9 +376,10 @@ class VoteStore(Base):
         :param section: The section where a vote count belongs to.
         :param candidate: The candidate where the vote counts belongs to.
         """
-        self.current_votes = 0
-        self.section       = section
-        self.candidate     = candidate
+        self.current_votes   = 0
+        self.section         = section
+        self.candidate       = candidate
+        self.historical_data = '{}'
 
 
 class SettingsModel(Base):

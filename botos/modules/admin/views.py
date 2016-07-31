@@ -350,6 +350,26 @@ def logout_admin():
     return redirect('/admin')
 
 
+@app.route('/admin/populate_votes/',
+           methods=[
+               'POST'
+           ])
+def populate():
+    """
+    Populate the vote store with the necessary candidates, parties, and
+    other necessary information.
+
+    :return: Redirect to the admin.
+    """
+    logger.add_log(20,
+                   'Populating VoteStore.'
+                   )
+
+    app_data_controllers.VoteStore.populate()
+
+    return redirect('/admin')
+
+
 @app.route('/admin')
 def admin_index():
     """

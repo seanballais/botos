@@ -2,6 +2,10 @@
 
 {% block content %}
     <h1>This is where you vote.</h1>
+    <form action="/logout" method="post">
+        <button name="logout" value="logout">Logout</button>
+    </form>
+
     <form id="voting-form">
         {{ voting_form.hidden_tag() }}
         {% for field in voting_form if field.widget.input_type != 'hidden' %}

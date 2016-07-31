@@ -115,14 +115,6 @@ def logout_voter():
 
     :return: Redirect to the login page.
     """
-    if request.method != 'POST':
-        logger.add_log(20,
-                       'User attempted to go to a non-page directory with a {0} request.'
-                       'Redirecting to the index page.'.format(request.method)
-                       )
-
-        return redirect('/')
-
     logger.add_log(20,
                    'Logging out user {0}.'.format(current_user.username)
                    )
