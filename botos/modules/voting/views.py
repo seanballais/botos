@@ -232,6 +232,9 @@ def app_index():
                            )
             return render_template('{0}/voting.html'.format(Settings.get_property_value('current_template')),
                                    voting_form=voting_form,
+                                   candidate_info=zip(voting_form,
+                                                      Utility.get_position_list()
+                                                      ),
                                    link_handler=js_link_handlers
                                    )
 

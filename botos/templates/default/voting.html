@@ -4,7 +4,8 @@
     <h1>This is where you vote.</h1>
     <form id="voting-form">
         {{ voting_form.hidden_tag() }}
-        {% for field in voting_form %}
+        {% for field, position in candidate_info %}
+            <h2 class="position">{{ position[1] }}</h2>
             {{ field() }}
         {% endfor %}
     </form>

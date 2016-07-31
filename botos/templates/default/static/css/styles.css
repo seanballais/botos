@@ -8,6 +8,7 @@ a.radio-picture {
 
 a.radio-picture:hover {
     opacity: 0.75;
+    border: 7px solid #33ccff;
 }
 
 .selected-glow {
