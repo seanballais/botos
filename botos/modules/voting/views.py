@@ -172,18 +172,22 @@ def app_index():
         candidate_list = []
         candidate_num = 0
         for candidate in controllers.Candidate.get_candidate_with_position(position[0]):
+            candidate_party_name = controllers.CandidateParty.get_candidate_party_by_id(candidate.party).name
+
             item_content = Markup(
                 "<a href=\"javascript:set_radio('{0}-{1}');\" id=\"{0}-{1}\" "
                 "class=\"radio-picture {3}\" style=\"background: url('{2}') no"
                 "-repeat scroll 0 0 white;\">&nbsp;</a><br/>"
-                "<h3 class='candidate-name'>{4} {5}</h3>".format(level_num,
-                                                                 candidate_num,
-                                                                 candidate.profile_url,
-                                                                 position[0],
-                                                                 candidate.first_name,
-                                                                 candidate.last_name
-                                                                 )
+                "<h3 class='candidate-name'>{4} {5}<br><small>{6}</small></h3>".format(level_num,
+                                                                                       candidate_num,
+                                                                                       candidate.profile_url,
+                                                                                       position[0],
+                                                                                       candidate.first_name,
+                                                                                       candidate.last_name,
+                                                                                       candidate_party_name
+                                                                                       )
             )
+
             candidate_list.append((
                 candidate.id,
                 item_content

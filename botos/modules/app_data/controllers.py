@@ -669,6 +669,16 @@ class CandidateParty:
         return models.CandidateParty.query.filter_by(name=party_name).first()
 
     @staticmethod
+    def get_candidate_party_by_id(party_id):
+        """
+        Get a CandidateParty object by ID.
+
+        :param party_id: The id of the party.
+        :return: The CandidateParty object. Duh!
+        """
+        return models.CandidateParty.query.filter_by(id=party_id).first()
+
+    @staticmethod
     def get_all():
         """
         Get all of the candidate parties.
