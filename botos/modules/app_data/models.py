@@ -13,7 +13,6 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from botos import db
 from botos import bcrypt
 
-from botos.modules.app_data.sqlalchemy_columns import JsonEncodedDict
 
 class Base(db.Model):
     """The class that all models inherit from. Not to be used directly."""
@@ -202,7 +201,7 @@ class VoterBatch(Base):
                                 unique=True
                                 )
     batch_sections  = db.relationship('VoterSection',
-                                      backref=db.backref('batch',
+                                      backref=db.backref('voter_batch',
                                                          lazy='select'
                                                          ),
                                       lazy='dynamic'
@@ -358,8 +357,7 @@ class VoteStore(Base):
     current_votes   = db.Column(db.Integer,
                                 nullable=False
                                 )
-    historical_data = db.Column(JsonEncodedDict)
-    section         = db.Column(db.Integer,
+    voter_section   = db.Column(db.Integer,
                                 db.ForeignKey('voter_section.id')
                                 )
     candidate       = db.Column(db.Integer,

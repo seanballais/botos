@@ -700,8 +700,8 @@ class VoteStore:
         sections   = VoterSection.get_all()
         for candidate in candidates:
             for section in sections:
-                db.session.add(models.VoteStore(section,
-                                                candidate
+                db.session.add(models.VoteStore(section.id,
+                                                candidate.id
                                                 )
                                )
 
