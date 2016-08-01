@@ -98,9 +98,6 @@ def login():
     logger.add_log(20,
                    'Username or password not entered.'
                    )
-    flash('Something is wrong. Please enter both username and password',
-          'error'
-          )
 
     return redirect('/')
 

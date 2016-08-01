@@ -177,16 +177,16 @@ class VoterSection(Base):
 
     def __init__(self,
                  section_name,
-                 section_batch
+                 batch_id
                  ):
         """
         Construct a new ''VoterSection'' object.
         :param section_name: The name of the section. The section are used
             are used to group statistical data.
-        :param section_batch: The batch the section is under.
+        :param batch_id: The batch the section is under.
         """
         self.section_name  = section_name
-        self.section_batch = section_batch
+        self.batch_id = batch_id
 
     def __repr__(self):
         return '<VoterSection %r>' % self.section_name
@@ -354,17 +354,15 @@ class VoteStore(Base):
     """Table where votes will be stored."""
     __tablename__   = 'vote_store'
 
-    current_votes   = db.Column(db.Integer,
-                                nullable=False
-                                )
-    voter_section   = db.Column(db.Integer,
-                                db.ForeignKey('voter_section.id')
-                                )
-    candidate       = db.Column(db.Integer,
-                                db.ForeignKey('candidate.id')
-                                )
-
-    # TODO: Fix (null) values in the database.
+    current_votes = db.Column(db.Integer,
+                              nullable=False
+                              )
+    voter_section = db.Column(db.Integer,
+                              db.ForeignKey('voter_section.id')
+                              )
+    candidate     = db.Column(db.Integer,
+                              db.ForeignKey('candidate.id')
+                              )
 
     def __init__(self,
                  section,
@@ -377,9 +375,8 @@ class VoteStore(Base):
         :param candidate: The candidate where the vote counts belongs to.
         """
         self.current_votes   = 0
-        self.section         = section
+        self.voter_section   = section
         self.candidate       = candidate
-        self.historical_data = '{}'
 
 
 class SettingsModel(Base):

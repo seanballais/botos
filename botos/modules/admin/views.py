@@ -367,6 +367,8 @@ def populate():
 
     app_data_controllers.VoteStore.populate()
 
+    flash('Vote store populated.')
+
     return redirect('/admin')
 
 
