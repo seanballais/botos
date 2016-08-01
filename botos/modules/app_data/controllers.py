@@ -718,7 +718,7 @@ class VoteStore:
         :param section: The section on which the vote belongs to.
         """
         models.VoteStore.query.filter_by(candidate=candidate,
-                                         section=section
+                                         voter_section=section
                                          ).first().current_votes += 1
 
         db.session.commit()

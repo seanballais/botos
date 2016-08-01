@@ -8,7 +8,6 @@
 
 """
 
-from flask import request
 from flask import render_template
 from flask import flash
 from flask import redirect
@@ -31,6 +30,113 @@ from botos.modules.voting.forms import VotingForm
 
 # Set up the logger
 logger = ActivityLogObservable.ActivityLogObservable('voting_' + __name__)
+
+
+def generate_voting_form():
+    """
+    Generate a voting form based on the information from the database.
+
+    :return: Return a voting form with attributes based on the database.
+    """
+    logger.add_log(20,
+                   'Generating voting form.'
+                   )
+
+    level_num = 1
+    for position in Utility.get_position_list():
+        candidate_list = []
+        candidate_num = 0
+        for candidate in controllers.Candidate.get_candidate_with_position(position[0]):
+            logger.add_log(20,
+                           'Generating candidate {0}.'.format(candidate.id)
+                           )
+
+            candidate_list.append((
+                candidate.id,
+                generate_option_images(level_num,
+                                       candidate_num,
+                                       candidate,
+                                       position[0],
+                                       controllers.CandidateParty.get_candidate_party_by_id(candidate.party).name
+                                       )
+            ))
+
+            candidate_num += 1
+
+        setattr(VotingForm,
+                '{0}'.format(position[0]),
+                RadioField(label=position[1],
+                           validators=[DataRequired()],
+                           choices=candidate_list,
+                           render_kw={
+                               'id': "{0}".format(position[1]),
+                           })
+                )
+        level_num += 1
+
+    return VotingForm()
+
+
+def generate_option_images(level_num,
+                           candidate_num,
+                           candidate,
+                           candidate_position,
+                           candidate_party_name
+                           ):
+    """
+    Generate option images for the candidates.
+
+    :param level_num: Level of the candidate position.
+    :param candidate_num: The nth candidate in the loop.
+    :param candidate_position: The position of the candidate.
+    :param candidate_party_name: Party name of the candidate.
+    :return: Return a markup of the option images.
+    """
+    return Markup(
+        "<a href=\"javascript:set_radio('{0}-{1}');\" id=\"{0}-{1}\" "
+        "class=\"radio-picture {3}\" style=\"background: url('{2}') no"
+        "-repeat scroll 0 0 white;\">&nbsp;</a><br/>"
+        "<h3 class='candidate-name'>{4} {5}<br><small>{6}</small></h3>".format(level_num,
+                                                                               candidate_num,
+                                                                               candidate.profile_url,
+                                                                               candidate_position,
+                                                                               candidate.first_name,
+                                                                               candidate.last_name,
+                                                                               candidate_party_name
+                                                                               )
+    )
+
+
+def generate_candidate_script_code(candidate_position):
+    """
+    Generate a JS script that will be used to add selection feedback.
+
+    :param candidate_position: ID of the position of the candidate.
+    :return: Return a markup string.
+    """
+    str_position = str(candidate_position)
+    return Markup(
+        '<script type="text/javascript">\n'
+        '\t\t\t$("a.' + str_position + '").click(function() {\n'
+        '\t\t\t\tvar $id = $(this).attr("id");\n'
+        '\t\t\t\t$("a.' + str_position + '").removeClass("selected-glow");\n'
+        '\t\t\t\t$(this).addClass("selected-glow");\n'
+        '\t\t\t})\n'
+        '\t\t</script>\n'
+    )
+
+
+def generate_js_script():
+    """
+    Generate a JS script that will allow selection feedback on candidates.
+
+    :return: Return a JS script.
+    """
+    js_link_handlers = []
+    for position in Utility.get_position_list():
+        js_link_handlers.append(generate_candidate_script_code(position[0]))
+
+    return js_link_handlers
 
 
 @login_manager.user_loader
@@ -115,9 +221,10 @@ def logout_voter():
     logger.add_log(20,
                    'Logging out user {0}.'.format(current_user.username)
                    )
-    logout_user()
 
-    # TODO: Delete the voter as well.
+    # current_user.active = False
+
+    logout_user()
 
     return redirect('/')
 
@@ -132,15 +239,16 @@ def send_vote():
 
     :return: Redirect the user to the index page.
     """
-    if request.method != 'POST':
-        logger.add_log(20,
-                       'User attempted to go to a non-page directory with a {0} request.'
-                       'Redirecting to the index page.'.format(request.method)
-                       )
+    form = generate_voting_form()
+    for field in form:
+        # Data contains the IDs of the candidates or the CSRF token.
+        if field.type != 'CSRFTokenField' and field.data != 'None':
+            print(field.data)
+            controllers.VoteStore.increment_vote(field.data,
+                                                 current_user.section_id
+                                                 )
 
-        return redirect('/')
-
-    # TODO: Send votes to VoteStore.
+    return redirect('/')
 
     # Delete the user
 
@@ -153,62 +261,6 @@ def app_index():
     :return: Render the appropriate template depending on the user status.
     """
     login_form = LoginForm()
-
-    # Generate the necessary form fields
-    js_link_handlers = []
-    level_num = 1
-    for position in Utility.get_position_list():
-        candidate_list = []
-        candidate_num = 0
-        for candidate in controllers.Candidate.get_candidate_with_position(position[0]):
-            candidate_party_name = controllers.CandidateParty.get_candidate_party_by_id(candidate.party).name
-
-            item_content = Markup(
-                "<a href=\"javascript:set_radio('{0}-{1}');\" id=\"{0}-{1}\" "
-                "class=\"radio-picture {3}\" style=\"background: url('{2}') no"
-                "-repeat scroll 0 0 white;\">&nbsp;</a><br/>"
-                "<h3 class='candidate-name'>{4} {5}<br><small>{6}</small></h3>".format(level_num,
-                                                                                       candidate_num,
-                                                                                       candidate.profile_url,
-                                                                                       position[0],
-                                                                                       candidate.first_name,
-                                                                                       candidate.last_name,
-                                                                                       candidate_party_name
-                                                                                       )
-            )
-
-            candidate_list.append((
-                candidate.id,
-                item_content
-            ))
-
-            candidate_num += 1
-
-        setattr(VotingForm,
-                '{0}'.format(position[0]),
-                RadioField(label=position[1],
-                           validators=[DataRequired()],
-                           choices=candidate_list,
-                           render_kw={
-                               'id': "{0}".format(position[1]),
-                           })
-                )
-
-        js_link_handlers.append(
-            Markup(
-                '<script type="text/javascript">\n'
-                '\t\t\t$("a.' + str(position[0]) + '").click(function() {\n'
-                '\t\t\t\tvar $id = $(this).attr("id");\n'
-                '\t\t\t\t$("a.' + str(position[0]) + '").removeClass("selected-glow");\n'
-                '\t\t\t\t$(this).addClass("selected-glow");\n'
-                '\t\t\t})\n'
-                '\t\t</script>\n'
-            )
-        )
-
-        level_num += 1
-
-    voting_form = VotingForm()
 
     logger.add_log(20,
                    'Accessing index page.'
@@ -227,8 +279,8 @@ def app_index():
                            'Logged in user is a voter. Displaying the voting page.'
                            )
             return render_template('{0}/voting.html'.format(Settings.get_property_value('current_template')),
-                                   voting_form=voting_form,
-                                   link_handler=js_link_handlers
+                                   voting_form=generate_voting_form(),
+                                   link_handler=generate_js_script()
                                    )
 
     logger.add_log(20,

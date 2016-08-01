@@ -6,12 +6,13 @@
         <button name="logout" value="logout">Logout</button>
     </form>
 
-    <form id="voting-form">
+    <form id="voting-form" action="/send_vote" method="post">
         {{ voting_form.hidden_tag() }}
         {% for field in voting_form if field.widget.input_type != 'hidden' %}
             <h2 class="candidate-positions">{{ field.label }}</h2>
             {{ field() }}
         {% endfor %}
+        <input type="submit" value="Submit votes">
     </form>
     <script type="text/javascript" src="/assets/js/jquery-3.1.0.min.js"></script>
     <script type="text/javascript" src="/assets/js/scripts.js"></script>
