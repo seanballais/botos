@@ -142,7 +142,7 @@ class User:
 
     @staticmethod
     def set_active(username,
-                   state=False
+                   state=True
                    ):
         """
         Set the active state of a user.

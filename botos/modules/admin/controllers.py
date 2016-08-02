@@ -265,8 +265,9 @@ class Utility:
 
             candidate_list.append(list_candidate_item)
 
-        candidate_list.sort()
-        return candidate_list
+        return sorted(candidate_list,
+                      key=lambda k: k['id']
+                      )
 
     @staticmethod
     def file_extensions_allowed(extension):

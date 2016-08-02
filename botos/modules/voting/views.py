@@ -8,6 +8,9 @@
 
 """
 
+
+import json
+
 from flask import render_template
 from flask import flash
 from flask import redirect
@@ -52,7 +55,7 @@ def generate_voting_form():
                            )
 
             candidate_list.append((
-                candidate.id,
+                candidate['id'],
                 generate_option_images(level_num,
                                        candidate_num,
                                        candidate,
@@ -88,6 +91,7 @@ def generate_option_images(level_num,
 
     :param level_num: Level of the candidate position.
     :param candidate_num: The nth candidate in the loop.
+    :param candidate: Candidate dictionary.
     :param candidate_position: The position of the candidate.
     :param candidate_party_name: Party name of the candidate.
     :return: Return a markup of the option images.
@@ -98,10 +102,10 @@ def generate_option_images(level_num,
         "-repeat scroll 0 0 white;\">&nbsp;</a><br/>"
         "<h3 class='candidate-name'>{4} {5}<br><small>{6}</small></h3>".format(level_num,
                                                                                candidate_num,
-                                                                               candidate.profile_url,
+                                                                               candidate['profile_url'],
                                                                                candidate_position,
-                                                                               candidate.first_name,
-                                                                               candidate.last_name,
+                                                                               candidate['first_name'],
+                                                                               candidate['last_name'],
                                                                                candidate_party_name
                                                                                )
     )
@@ -172,10 +176,10 @@ def login():
                    )
 
     if login_form.validate_on_submit():
-        registered_user = controllers.User.get_user(username)
+        reg_user = controllers.User.get_user(username)
 
-        if registered_user is not None and registered_user.is_password_correct(password):
-            login_user(registered_user,
+        if reg_user is not None and reg_user.is_password_correct(password) and reg_user.is_active():
+            login_user(reg_user,
                        remember=True
                        )
 
@@ -222,8 +226,6 @@ def logout_voter():
                    'Logging out user {0}.'.format(current_user.username)
                    )
 
-    # current_user.active = False
-
     logout_user()
 
     return redirect('/')
@@ -237,20 +239,56 @@ def send_vote():
     """
     Send the vote to the database.
 
-    :return: Redirect the user to the index page.
+    :return: Redirect the user to the thank you page.
     """
     form = generate_voting_form()
     for field in form:
-        # Data contains the IDs of the candidates or the CSRF token.
         if field.type != 'CSRFTokenField' and field.data != 'None':
-            print(field.data)
+            logger.add_log(20,
+                           'Passing in voter data. Voting for candidate {0}'.format(field.data)
+                           )
             controllers.VoteStore.increment_vote(field.data,
                                                  current_user.section_id
                                                  )
 
-    return redirect('/')
+    controllers.User.set_active(current_user.username,
+                                False
+                                )
 
-    # Delete the user
+    return redirect('/thank_you')
+
+
+@app.route('/get_votes',
+           methods=[
+               'POST',
+               'GET'
+           ])
+def get_votes():
+    """
+    Get the current votes in the system.
+
+    :return: Return a JSON string containing the latest votes of each candidate.
+    """
+    vote_data = {}
+    for position in Utility.get_position_list():
+        candidate_votes = {}
+        for candidate in Utility.get_candidate_of_position_list(position[0]):
+            total_votes = controllers.VoteStore.get_candidate_total_votes(candidate['id'])
+            candidate_votes[candidate['id']] = total_votes
+
+        vote_data[position[1]] = candidate_votes
+
+    return json.dumps(vote_data)
+
+
+@app.route('/thank_you')
+def vote_thank_you():
+    """
+    Display the thank you page.
+
+    :return: Render the thank you page.
+    """
+    return render_template('{0}/thank-you.html'.format(Settings.get_property_value('current_template')))
 
 
 @app.route('/')
@@ -284,7 +322,7 @@ def app_index():
                                    )
 
     logger.add_log(20,
-                   'Current visitor is anonymous. Might need to say "Who you? You ain\'t my nigga."'
+                   'Current visitor is anonymous or inactive. Might need to say "Who you? You ain\'t my nigga."'
                    )
 
     # TODO: Make the index template.
