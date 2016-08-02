@@ -237,13 +237,15 @@ class Utility:
         for position in temp_position_list:
             list_position_item = [
                 position.id,
-                position.name
+                position.name,
+                position.level
             ]
 
             position_list.append(list_position_item)
 
-        position_list.sort()
-        return position_list
+        return sorted(position_list,
+                      key=lambda k: k[2]
+                      )
 
     @staticmethod
     def get_candidate_of_position_list(position):
