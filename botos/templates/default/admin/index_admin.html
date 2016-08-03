@@ -1,3 +1,5 @@
+{% from 'default/admin/vote_graph.html' import vote_graph %}
+
 {% extends "default/base.html" %}
 
 {% block content %}
@@ -119,4 +121,7 @@
             <input type="submit" value="Populate">
         </p>
     </form>
+
+    <h2>Vote Statistics</h2>
+    {{ vote_graph() }}
 {% endblock %}

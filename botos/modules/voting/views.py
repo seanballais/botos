@@ -274,7 +274,13 @@ def get_votes():
         candidate_votes = {}
         for candidate in Utility.get_candidate_of_position_list(position[0]):
             total_votes = controllers.VoteStore.get_candidate_total_votes(candidate['id'])
-            candidate_votes[candidate['id']] = total_votes
+            candidate_votes[candidate['id']] = {
+                total_votes,
+                '{0} {1}'.format(candidate['first_name'],
+                                 candidate['last_name']
+                                 ),
+                '{0}'.format(candidate['profile_pic'])
+            }
 
         vote_data[position[1]] = candidate_votes
 

@@ -1,6 +1,8 @@
+{% from 'default/admin/vote_graph.html' import vote_graph %}
+
 {% extends "default/base.html" %}
 
 {% block content %}
     <h1 class="voting-splash-header">Viewer!</h1>
-
+    {{ vote_graph() }}
 {% endblock %}
