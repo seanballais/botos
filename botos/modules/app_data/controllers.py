@@ -39,7 +39,8 @@ class User:
         db.session.add(models.User(username,
                                    password,
                                    section_id,
-                                   role
+                                   role,
+                                   active=True
                                    )
                        )
 

@@ -55,7 +55,7 @@ def generate_voting_form():
                            )
 
             candidate_list.append((
-                candidate['id'],
+                candidate.id,
                 generate_option_images(level_num,
                                        candidate_num,
                                        candidate,
@@ -102,10 +102,10 @@ def generate_option_images(level_num,
         "-repeat scroll 0 0 white;\">&nbsp;</a><br/>"
         "<h3 class='candidate-name'>{4} {5}<br><small>{6}</small></h3>".format(level_num,
                                                                                candidate_num,
-                                                                               candidate['profile_url'],
+                                                                               candidate.profile_url,
                                                                                candidate_position,
-                                                                               candidate['first_name'],
-                                                                               candidate['last_name'],
+                                                                               candidate.first_name,
+                                                                               candidate.last_name,
                                                                                candidate_party_name
                                                                                )
     )
@@ -288,7 +288,18 @@ def vote_thank_you():
 
     :return: Render the thank you page.
     """
-    return render_template('{0}/thank-you.html'.format(Settings.get_property_value('current_template')))
+    if not current_user.is_active():
+        logger.add_log(20,
+                       'Voter {0} finished voting. Accessing thank you page.'.format(current_user.id)
+                       )
+
+        return render_template('{0}/thank-you.html'.format(Settings.get_property_value('current_template')))
+
+    logger.add_log(20,
+                   'Someone attempted to visit the thank you. Not sure if it was a voter, admin, or someone anonymous.'
+                   )
+
+    return redirect('/')
 
 
 @app.route('/')
@@ -312,7 +323,7 @@ def app_index():
                            'Logged in user is an admin. Redirecting to the admin panel.'
                            )
             return redirect('/admin')
-        else:
+        elif current_user.is_active():
             logger.add_log(20,
                            'Logged in user is a voter. Displaying the voting page.'
                            )

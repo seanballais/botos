@@ -14,6 +14,8 @@ import time
 
 import xlsxwriter
 
+from operator import itemgetter
+
 import settings
 
 from botos.modules.app_data import controllers
@@ -244,7 +246,7 @@ class Utility:
             position_list.append(list_position_item)
 
         return sorted(position_list,
-                      key=lambda k: k[2]
+                      key=itemgetter(2)
                       )
 
     @staticmethod

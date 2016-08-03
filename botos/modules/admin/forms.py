@@ -8,19 +8,15 @@
 
 """
 
-from flask import Markup
-
 from flask_wtf import Form
 from wtforms import StringField
 from wtforms import PasswordField
 from wtforms import SelectField
 from wtforms import IntegerField
 from wtforms import FileField
-from wtforms import RadioField
 from wtforms.validators import DataRequired
 
 from botos.modules.admin.controllers import Utility
-from botos.modules.app_data import controllers
 
 
 class AdminCreationForm(Form):
@@ -157,7 +153,15 @@ class CandidateCreationForm(Form):
         """Create a new dynamically loaded form."""
         form = cls()
 
-        form.position.choices = Utility.get_position_list()
+        position_list = []
+        temp_position_list = Utility.get_position_list()
+        for position in temp_position_list:
+            position_list.append([
+                position[0],
+                position[1]
+            ])
+
+        form.position.choices = position_list
         form.party.choices    = Utility.get_party_list()
 
         return form

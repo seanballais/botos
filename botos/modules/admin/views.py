@@ -427,4 +427,4 @@ def admin_index():
                    )
     return redirect('/')
 
-# TODO: Now the voting.
+# TODO: Add the viewer and the viewer account support.
