@@ -92,8 +92,13 @@ class VoterGenerator:
         return '<VoterGenerator>'
 
 
+class VotePDFGenerator:
+    """Generate a PDF file of the votes."""
+    pdf_link = ''
+
+
 class VoterExcelGenerator:
-    """Generate a PDF file of a list of voters."""
+    """Generate an Excel file of a list of voters."""
     xlsx_link = ''
 
     def generate_xlsx(self,

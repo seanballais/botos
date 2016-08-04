@@ -1,3 +1,56 @@
 {% macro vote_graph() %}
-    <h1>Hi!</h1>
+    <script type="text/javascript" src="/assets/js/chart.min.js"></script>
+    <canvas id="vote-chart" class="chart chart-bar" width="400" height="400"></canvas>
+    <script type="text/javascript">
+        function drawChart() {
+            var voteData = $.ajax({
+                url: '/get_votes',
+                dataType: 'json',
+            }).done(function (results) {
+                var color_list = [
+                    '#D64541',
+                    '#F89406',
+                    '#F9BF3B',
+                    '#00B16A',
+                    '#1E8BC3',
+                    '#663399'
+                ];
+                var labels = [];
+                var data = [];
+                var bgColor = [];
+                var borderColor = [];
+                var colorIndex = 0;
+                console.log(results);
+                for (var position in results) {
+                    for (var info in position) {
+                        console.log(position.info);
+                        labels.push(position.info.name);
+                        data.push(position.info.votes);
+                        bgColor.push(color_list[6 % colorIndex]);
+                        borderColor.push(color_list[6 % colorIndex]);
+
+                        colorIndex++;
+                    }
+                }
+
+                var tableData = {
+                    labels: labels,
+                    data: data,
+                    backgroundColor: bgColor,
+                    borderColor: borderColor,
+                    borderWidth: 1
+                };
+
+                var ctx = $('#vote-chart');
+                var vote_chart = new Chart(ctx).Bar(tableData);
+
+                setTimeout(function() {
+                    drawChart();
+                    }, 15000
+                );
+            })
+        }
+
+        drawChart();
+    </script>
 {% endmacro %}

@@ -132,6 +132,15 @@ class User:
                                            ).first()
 
     @staticmethod
+    def get_voter_count():
+        """
+        Get the number of voters.
+
+        :return: An integer containing the number of voters.
+        """
+        return models.User.query.filter_by(role='voter').count()
+
+    @staticmethod
     def is_active(username):
         """
         Check if user is active or not.
