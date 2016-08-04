@@ -253,6 +253,16 @@ class VoterSection:
         return models.VoterSection.query.filter_by(id=section_id).first()
 
     @staticmethod
+    def get_all_voter_section_by_batch(batch_id):
+        """
+        Get a VoterSection object.
+
+        :param batch_id: ID of the batch.
+        :return: A VoterSection object.
+        """
+        return models.VoterSection.query.filter_by(batch_id=batch_id).all()
+
+    @staticmethod
     def get_all():
         """
         Get all of the voter sections.

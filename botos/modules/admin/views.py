@@ -132,6 +132,21 @@ def register_voters():
     return redirect('/admin')
 
 
+@app.route('/admin/generate_stats',
+           methods=[
+               'POST',
+               'GET'
+           ])
+def generate_stats():
+    """
+    Generate the statistics.
+    """
+    pdf_generator = admin_controllers.VotePDFGenerator()
+    pdf_generator.generate_pdf()
+
+    return redirect('/admin')
+
+
 @app.route('/admin/register/batch',
            methods=[
                'POST'

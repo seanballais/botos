@@ -14,9 +14,20 @@ import time
 
 import xlsxwriter
 
+import settings
+
 from operator import itemgetter
 
-import settings
+from reportlab.lib import colors
+from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate
+from reportlab.platypus import Paragraph
+from reportlab.platypus import Spacer
+from reportlab.platypus import Table
+from reportlab.platypus import TableStyle
 
 from botos.modules.app_data import controllers
 from botos.modules.activity_log import ActivityLogObservable
@@ -100,7 +111,35 @@ class VotePDFGenerator:
         """
         Generate a PDF file of all voting records.
         """
-        pass
+        content = []
+
+        styles = getSampleStyleSheet()
+        styles.add(ParagraphStyle(name='Center',
+                                  alignment=TA_CENTER
+                                  )
+                   )
+
+        header_text = '<font size=20>Vote Statistics</font>'
+        content.append(Paragraph(header_text,
+                                 styles['Normal']
+                                 )
+                       )
+
+        table_data = []
+        for batch in Utility.get_batch_list():
+            batch_text = '<b>Batch: {0}</b>'.format(batch[1])
+            content.append(Paragraph(batch_text,
+                                     styles['Normal']
+                                     )
+                           )
+            for section in Utility.get_section_of_batch_list(batch[0]):
+                section_text = '<b>Section: {0}</b>'.format(section.section_name)
+                content.append(Paragraph(section_text,
+                                         styles['Normal']
+                                         )
+                               )
+
+        self.document.build(content)
 
     def __init__(self):
         """
@@ -113,6 +152,13 @@ class VotePDFGenerator:
         self.filename = '{0}/{1}'.format(settings.PDF_DIRECTORY,
                                          _pdf_filename
                                          )
+        self.document = SimpleDocTemplate(self.filename,
+                                          pagesize=letter,
+                                          rightMargin=72,
+                                          leftMargin=72,
+                                          topMargin=72,
+                                          bottomMargin=72
+                                          )
 
 
 class VoterExcelGenerator:
@@ -229,6 +275,16 @@ class Utility:
 
         section_list.sort()
         return section_list
+
+    @staticmethod
+    def get_section_of_batch_list(batch_id):
+        """
+        Get a list of all sections under a batch.
+
+        :param batch_id: The ID of the batch.
+        :return: List of the sections.
+        """
+        return controllers.VoterSection.get_all_voter_section_by_batch(batch_id)
 
     @staticmethod
     def get_party_list():
