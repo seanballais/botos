@@ -20,29 +20,35 @@
                 var bgColor = [];
                 var borderColor = [];
                 var colorIndex = 0;
-                console.log(results);
-                for (var position in results) {
-                    for (var info in position) {
-                        console.log(position.info);
-                        labels.push(position.info.name);
-                        data.push(position.info.votes);
-                        bgColor.push(color_list[6 % colorIndex]);
-                        borderColor.push(color_list[6 % colorIndex]);
+                $.each(results, function(key, value) {
+                    $.each(value, function(key, value) {
+                        labels.push(value['name']);
+                        data.push(value['votes']);
+                        bgColor.push(color_list[colorIndex % 6]);
+                        borderColor.push(color_list[colorIndex % 6]);
 
                         colorIndex++;
-                    }
-                }
+                    });
+                });
 
-                var tableData = {
+                graphData = {
                     labels: labels,
-                    data: data,
-                    backgroundColor: bgColor,
-                    borderColor: borderColor,
-                    borderWidth: 1
+                    datasets: [{
+                        backgroundColor: bgColor,
+                        borderColor: borderColor,
+                        borderWidth: 1,
+                        data: data
+                    }]
                 };
 
                 var ctx = $('#vote-chart');
-                var vote_chart = new Chart(ctx).Bar(tableData);
+                var liveGraph = new Chart(ctx, {
+                    type: 'bar',
+                    data: graphData,
+                    options: {
+                        animationSteps: 20
+                    }
+                });
 
                 setTimeout(function() {
                     drawChart();

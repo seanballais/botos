@@ -96,6 +96,24 @@ class VotePDFGenerator:
     """Generate a PDF file of the votes."""
     pdf_link = ''
 
+    def generate_pdf(self):
+        """
+        Generate a PDF file of all voting records.
+        """
+        pass
+
+    def __init__(self):
+        """
+        Initialize the generator.
+        """
+        _pdf_filename = '{0}-{1}.pdf'.format(time.strftime('%Y%m%d'),
+                                                       time.strftime('%H%M%S')
+                                                       )
+        self.pdf_link = 'content/xlsx/{0}'.format(_pdf_filename)
+        self.filename = '{0}/{1}'.format(settings.PDF_DIRECTORY,
+                                         _pdf_filename
+                                         )
+
 
 class VoterExcelGenerator:
     """Generate an Excel file of a list of voters."""

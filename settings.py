@@ -37,6 +37,7 @@ LOG_LEVEL = logging.DEBUG  # Change to logging.INFO during production
 
 # Location to store generated XLSX files.
 XLSX_DIRECTORY = BASE_DIR + 'botos/botos-content/xlsx'
+PDF_DIRECTORY = BASE_DIR + 'botos/botos-content/pdf'
 
 # Location to store the profile pictures.
 PROF_DIRECTORY = BASE_DIR + 'botos/botos-content/candidate-img'
