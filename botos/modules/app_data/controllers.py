@@ -141,6 +141,18 @@ class User:
         return models.User.query.filter_by(role='voter').count()
 
     @staticmethod
+    def get_section_voter_count(section_id):
+        """
+        Get the total number of voters of a given section.
+
+        :param section_id: ID of the section.
+        :return: Number of voters per section.
+        """
+        return models.User.query.filter_by(role='voter',
+                                           section_id=section_id
+                                           ).count()
+
+    @staticmethod
     def is_active(username):
         """
         Check if user is active or not.
@@ -356,7 +368,7 @@ class Candidate:
     def add(first_name,
             last_name,
             middle_name,
-            profile_URL,
+            profile_url,
             position,
             party
             ):
@@ -366,7 +378,7 @@ class Candidate:
         :param first_name: First name of the candidate.
         :param last_name: Last name of the candidate.
         :param middle_name: Middle name of the candidate.
-        :param profile_URL: Profile link of the candidate.
+        :param profile_url: Profile link of the candidate.
         :param position: Position of the candidate.
         :param party: Party of the candidate.
         """
@@ -374,7 +386,7 @@ class Candidate:
                                         first_name,
                                         last_name,
                                         middle_name,
-                                        profile_URL,
+                                        profile_url,
                                         position,
                                         party
                                         )
@@ -755,7 +767,7 @@ class VoteStore:
         :return: The section votes.
         """
         return models.VoteStore.query.filter_by(candidate=candidate,
-                                                section=section
+                                                voter_section=section
                                                 ).first().current_votes
 
     @staticmethod
