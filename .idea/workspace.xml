@@ -5,11 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="94de5c49-841c-48b0-b388-90ddf42a8655" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos_app.db" afterPath="$PROJECT_DIR$/botos_app.db" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/templates/default/static/css/styles.css" afterPath="$PROJECT_DIR$/botos/templates/default/static/css/styles.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/templates/default/static/js/scripts.js" afterPath="$PROJECT_DIR$/botos/templates/default/static/js/scripts.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/templates/default/thank-you.html" afterPath="$PROJECT_DIR$/botos/templates/default/thank-you.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/templates/default/voting.html" afterPath="$PROJECT_DIR$/botos/templates/default/voting.html" />
     </list>
     <ignored path="botos.iws" />
@@ -849,13 +845,6 @@
       <option name="presentableId" value="Default" />
       <updated>1465459195922</updated>
     </task>
-    <task id="LOCAL-00034" summary="Added a voter creation form.">
-      <created>1468761659745</created>
-      <option name="number" value="00034" />
-      <option name="presentableId" value="LOCAL-00034" />
-      <option name="project" value="LOCAL" />
-      <updated>1468761659745</updated>
-    </task>
     <task id="LOCAL-00035" summary="Accidentally placed the VoterCreationForm code in the wrong class. Placed it in the correct one now.">
       <created>1468761875926</created>
       <option name="number" value="00035" />
@@ -1192,7 +1181,14 @@
       <option name="project" value="LOCAL" />
       <updated>1470571215555</updated>
     </task>
-    <option name="localTasksCounter" value="83" />
+    <task id="LOCAL-00083" summary="Improved voting UI.">
+      <created>1470572955206</created>
+      <option name="number" value="00083" />
+      <option name="presentableId" value="LOCAL-00083" />
+      <option name="project" value="LOCAL" />
+      <updated>1470572955256</updated>
+    </task>
+    <option name="localTasksCounter" value="84" />
     <servers />
   </component>
   <component name="TestHistory">

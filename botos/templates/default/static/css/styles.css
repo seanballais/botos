@@ -17,6 +17,8 @@ a.radio-picture:hover {
 
 ul {
     list-style-type: none;
+
+    text-align: center;
 }
 
 ul > li {
@@ -38,6 +40,10 @@ ul > li > input {
 
 h1.center-text {
     text-align: center;
+}
+
+h3.candidate-name {
+    font-size: 1.5em;
 }
 
 div#flash-messages {
