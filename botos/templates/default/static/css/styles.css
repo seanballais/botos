@@ -19,6 +19,17 @@ ul {
     list-style-type: none;
 }
 
+ul > li {
+    display: inline-block;
+
+    text-align: center;
+
+    margin-left: 1%;
+    margin-right: 1%;
+
+    width: fit-content;
+}
+
 ul > li > input {
     left: -10000px;
     position: absolute;
@@ -47,6 +58,16 @@ div#admin-content {
 
 div#admin-content div {
     background-color: #ffffff;
+}
+
+.col-center {
+    float: none;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.candidate-positions {
+    text-align: center;
 }
 
 form#login-form div input {

@@ -1,19 +1,25 @@
 {% extends "default/base.html" %}
 
 {% block content %}
-    <h1>This is where you vote.</h1>
-    <form action="/logout" method="post">
-        <button name="logout" value="logout">Logout</button>
-    </form>
+    <div class="row">
+        <div class="col-xs-12 col-md-offset-3 col-md-6">
+            <h1>Choose your candidates</h1>
+            <form action="/logout" method="post">
+                <button class="btn btn-danger center-block" name="logout" value="logout">Logout</button>
+            </form>
+        </div>
 
-    <form id="voting-form" action="/send_vote" method="post">
-        {{ voting_form.hidden_tag() }}
-        {% for field in voting_form if field.widget.input_type != 'hidden' %}
-            <h2 class="candidate-positions">{{ field.label }}</h2>
-            {{ field() }}
-        {% endfor %}
-        <input type="submit" value="Submit votes">
-    </form>
+        <div class="col-xs-12 col-md-offset-3 col-md-6">
+            <form id="voting-form" action="/send_vote" method="post">
+                {{ voting_form.hidden_tag() }}
+                {% for field in voting_form if field.widget.input_type != 'hidden' %}
+                    <h2 class="candidate-positions">{{ field.label }}</h2>
+                    {{ field() }}
+                {% endfor %}
+                <input class="btn btn-warning center-block" type="submit" value="Submit votes">
+            </form>
+        </div>
+    </div>
     <script type="text/javascript" src="/assets/js/jquery-3.1.0.min.js"></script>
     <script type="text/javascript" src="/assets/js/scripts.js"></script>
     {% for handler in link_handler %}

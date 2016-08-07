@@ -1,8 +1,12 @@
 {% extends "default/base.html" %}
 
 {% block content %}
-    <h1>Thank you for voting!</h1>
-    <form action="/logout" method="post">
-        <button name="logout" value="logout">Logout</button>
-    </form>
+    <div class="row">
+        <div class="col-xs-12 col-md-offset-4 col-md-4">
+            <h1>Thank you for voting!</h1>
+            <form action="/logout" method="post">
+                <button name="logout" value="logout">Logout</button>
+            </form>
+        </div>
+    </div>
 {% endblock %}
