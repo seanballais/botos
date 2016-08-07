@@ -1,17 +1,18 @@
 {% extends "default/base.html" %}
 
 {% block content %}
-    <h1 class="voting-splash-header">Election!</h1>
-    <form class="login-form" action="/login" method="post" name="login">
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.username(size=80) }}<br>
-        </p>
-        <p>
-            {{ form.password() }}<br>
-        </p>
-        <p>
-            <input type="submit" value="Sign in">
-        </p>
-    </form>
+    <div class="row">
+        <div class="col-xs-12 col-md-offset-4 col-md-4">
+            <h1 class="center-text">Botos Login</h1>
+            <form id="login-form" action="/login" method="post" name="login">
+                <div class="input-group">
+                    {{ form.hidden_tag() }}
+                    {{ form.username(size=40, class="form-control") }}
+                    {{ form.password(size=40, class="form-control") }}
+                    <input id="login-submit" class="btn btn-info" type="submit" value="Sign in">
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
 {% endblock %}
