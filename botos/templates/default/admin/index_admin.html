@@ -1,127 +1,142 @@
-{% from 'default/admin/vote_graph.html' import vote_graph %}
-
 {% extends "default/base.html" %}
 
 {% block content %}
-    <h1 class="voting-splash-header">Admin!</h1>
-    <form action="/admin/logout" method="post">
-        <button name="logout" value="logout">Logout</button>
-    </form>
+    <div class="row" id="admin-content">
+        <div class="col-xs-12 col-md-offset-2 col-md-8">
+            <h1 class="text-header">Botos Admin</h1>
+            <form action="/admin/logout" method="post">
+                <button class="btn btn-danger" name="logout" value="logout">Logout</button>
+            </form>
+        </div>
 
-    <h2>Create a new admin</h2>
-    <form class="register-admin-form" action="/admin/register/admin" method="post">
-        {{ admin_register_form.hidden_tag() }}
-        <p>
-            {{ admin_register_form.username }}<br>
-        </p>
-        <p>
-            {{ admin_register_form.password() }}<br>
-        </p>
-        <p>
-            {{ admin_register_form.role() }}<br>
-        </p>
-        <p>
-            <input type="submit" value="Register admin">
-        </p>
-    </form>
+        <div class="col-xs-12 col-md-offset-2 col-md-8">
+            <h2>Create a new admin</h2>
+            <form class="register-admin-form" action="/admin/register/admin" method="post">
+                {{ admin_register_form.hidden_tag() }}
+                <p>
+                    {{ admin_register_form.username }}<br>
+                </p>
+                <p>
+                    {{ admin_register_form.password() }}<br>
+                </p>
+                <p>
+                    {{ admin_register_form.role() }}<br>
+                </p>
+                <p>
+                    <input type="submit" value="Register admin">
+                </p>
+            </form>
+        </div>
 
-    <h2>Create a new set of voters</h2>
-    <form class="register-admin-form" action="/admin/register/voters" method="post">
-        {{ voter_register_form.hidden_tag() }}
-        <p>
-            {{ voter_register_form.num_voters() }}<br>
-        </p>
-        <p>
-            {{ voter_register_form.section() }}<br>
-        </p>
-        <p>
-            <input type="submit" value="Register voters">
-        </p>
-    </form>
+        <div class="col-xs-12 col-md-offset-2 col-md-8">
+            <h2>Create a new set of voters</h2>
+            <form class="register-admin-form" action="/admin/register/voters" method="post">
+                {{ voter_register_form.hidden_tag() }}
+                <p>
+                    {{ voter_register_form.num_voters() }}<br>
+                </p>
+                <p>
+                    {{ voter_register_form.section() }}<br>
+                </p>
+                <p>
+                    <input type="submit" value="Register voters">
+                </p>
+            </form>
+        </div>
 
-    <h2>Create a new batch</h2>
-    <form class="register-batch-form" action="/admin/register/batch" method="post">
-        {{ batch_register_form.hidden_tag() }}
-        <p>
-            {{ batch_register_form.batch_name() }}<br>
-        </p>
-        <p>
-            <input type="submit" value="Register batch">
-        </p>
-    </form>
+        <div class="col-xs-12 col-md-offset-2 col-md-8">
+            <h2>Create a new batch</h2>
+            <form class="register-batch-form" action="/admin/register/batch" method="post">
+                {{ batch_register_form.hidden_tag() }}
+                <p>
+                    {{ batch_register_form.batch_name() }}<br>
+                </p>
+                <p>
+                    <input type="submit" value="Register batch">
+                </p>
+            </form>
+        </div>
 
-    <h2>Create a new section</h2>
-    <form class="register-section-form" action="/admin/register/section" method="post">
-        {{ section_register_form.hidden_tag() }}
-        <p>
-            {{ section_register_form.section_name() }}<br>
-        </p>
-        <p>
-            {{ section_register_form.batch() }}<br>
-        </p>
-        <p>
-            <input type="submit" value="Register section">
-        </p>
-    </form>
+        <div class="col-xs-12 col-md-offset-2 col-md-8">
+            <h2>Create a new section</h2>
+            <form class="register-section-form" action="/admin/register/section" method="post">
+                {{ section_register_form.hidden_tag() }}
+                <p>
+                    {{ section_register_form.section_name() }}<br>
+                </p>
+                <p>
+                    {{ section_register_form.batch() }}<br>
+                </p>
+                <p>
+                    <input type="submit" value="Register section">
+                </p>
+            </form>
+        </div>
 
-    <h2>Create a new Candidate</h2>
-    <form class="register-candidate-form" action="/admin/register/candidate" method="post" enctype=multipart/form-data>
-        {{ candidate_register_form.hidden_tag() }}
-        <p>
-            {{ candidate_register_form.first_name() }}<br>
-        </p>
-        <p>
-            {{ candidate_register_form.middle_name() }}<br>
-        </p>
-        <p>
-            {{ candidate_register_form.last_name() }}<br>
-        </p>
-        <p>
-            {{ candidate_register_form.profile_pic() }}<br>
-        </p>
-        <p>
-            {{ candidate_register_form.position() }}<br>
-        </p>
-        <p>
-            {{ candidate_register_form.party() }}<br>
-        </p>
-        <p>
-            <input type="submit" value="Register candidate">
-        </p>
-    </form>
+        <div class="col-xs-12 col-md-offset-2 col-md-8">
+            <h2>Create a new Candidate</h2>
+            <form class="register-candidate-form" action="/admin/register/candidate" method="post" enctype=multipart/form-data>
+                {{ candidate_register_form.hidden_tag() }}
+                <p>
+                    {{ candidate_register_form.first_name() }}<br>
+                </p>
+                <p>
+                    {{ candidate_register_form.middle_name() }}<br>
+                </p>
+                <p>
+                    {{ candidate_register_form.last_name() }}<br>
+                </p>
+                <p>
+                    {{ candidate_register_form.profile_pic() }}<br>
+                </p>
+                <p>
+                    {{ candidate_register_form.position() }}<br>
+                </p>
+                <p>
+                    {{ candidate_register_form.party() }}<br>
+                </p>
+                <p>
+                    <input type="submit" value="Register candidate">
+                </p>
+            </form>
+        </div>
 
-    <h2>Create a new party</h2>
-    <form class="register-party-form" action="/admin/register/party" method="post">
-        {{ party_register_form.hidden_tag() }}
-        <p>
-            {{ party_register_form.party_name() }}<br>
-        </p>
-        <p>
-            <input type="submit" value="Register party">
-        </p>
-    </form>
+        <div class="col-xs-12 col-md-offset-2 col-md-8">
+            <h2>Create a new party</h2>
+            <form class="register-party-form" action="/admin/register/party" method="post">
+                {{ party_register_form.hidden_tag() }}
+                <p>
+                    {{ party_register_form.party_name() }}<br>
+                </p>
+                <p>
+                    <input type="submit" value="Register party">
+                </p>
+            </form>
+        </div>
 
-    <h2>Create a new position</h2>
-    <form class="register-position-form" action="/admin/register/position" method="post">
-        {{ position_register_form.hidden_tag() }}
-        <p>
-            {{ position_register_form.position_name() }}<br>
-        </p>
-        <p>
-            {{ position_register_form.level() }}<br>
-        </p>
-        <p>
-            <input type="submit" value="Register position">
-        </p>
-    </form>
+        <div class="col-xs-12 col-md-offset-2 col-md-8">
+            <h2>Create a new position</h2>
+            <form class="register-position-form" action="/admin/register/position" method="post">
+                {{ position_register_form.hidden_tag() }}
+                <p>
+                    {{ position_register_form.position_name() }}<br>
+                </p>
+                <p>
+                    {{ position_register_form.level() }}<br>
+                </p>
+                <p>
+                    <input type="submit" value="Register position">
+                </p>
+            </form>
+        </div>
 
-    <h2>Populate vote database</h2>
-    <form class="populate-vote-store" action="/admin/populate_votes/" method="post">
-        <p>
-            <input type="submit" value="Populate">
-        </p>
-    </form>
-
-    <h2>Vote Statistics</h2>
-    {{ vote_graph() }}
+        <div class="col-xs-12 col-md-offset-2 col-md-8">
+            <h2>Populate vote database</h2>
+            <form class="populate-vote-store" action="/admin/populate_votes/" method="post">
+                <p>
+                    <input type="submit" value="Populate">
+                </p>
+            </form>
+        </div>
+    </div>
 {% endblock %}

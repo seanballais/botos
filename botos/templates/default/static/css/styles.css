@@ -24,3 +24,27 @@ ul > li > input {
     position: absolute;
     top: -1000px;
 }
+
+h1.text-header {
+    text-align: center;
+}
+
+div#flash-messages {
+    background-color: #1ec0ff !important;
+    color: #ffffff;
+
+    margin-top: 0;
+    margin-bottom: 1%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+
+    text-align: center;
+}
+
+div#admin-content {
+    background-color: #a3daff;
+}
+
+div#admin-content div {
+    background-color: #ffffff;
+}

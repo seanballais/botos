@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/botos/modules/voting/views.py" line="236" />
     <bookmark url="file://$PROJECT_DIR$/venv/lib/python3.5/site-packages/flask_login.py" />
-    <bookmark url="file://$PROJECT_DIR$/botos/modules/admin/controllers.py" line="510" />
-    <bookmark url="file://$PROJECT_DIR$/botos/modules/voting/views.py" line="282" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="94de5c49-841c-48b0-b388-90ddf42a8655" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/botos/botos-content/pdf/README.md" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/botos/templates/default/admin/vote_graph.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/botos/templates/default/static/js/jquery-3.1.0.min.js" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/modules/admin/controllers.py" afterPath="$PROJECT_DIR$/botos/modules/admin/controllers.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/modules/app_data/controllers.py" afterPath="$PROJECT_DIR$/botos/modules/app_data/controllers.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/templates/default/admin/index_admin.html" afterPath="$PROJECT_DIR$/botos/templates/default/admin/index_admin.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/templates/default/admin/index_viewer.html" afterPath="$PROJECT_DIR$/botos/templates/default/admin/index_viewer.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/templates/default/base.html" afterPath="$PROJECT_DIR$/botos/templates/default/base.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/botos/templates/default/static/css/styles.css" afterPath="$PROJECT_DIR$/botos/templates/default/static/css/styles.css" />
     </list>
     <ignored path="botos.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -30,58 +32,12 @@
     <favorites_list name="botos" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="controllers.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/botos/modules/admin/controllers.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="367">
-              <caret line="253" column="60" selection-start-line="253" selection-start-column="60" selection-end-line="253" selection-end-column="60" />
-              <folding>
-                <element signature="e#243#256#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="settings.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/settings.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="216">
-              <caret line="13" column="3" selection-start-line="13" selection-start-column="3" selection-end-line="13" selection-end-column="3" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="controllers.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/botos/modules/app_data/controllers.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="6678">
-              <caret line="375" column="31" selection-start-line="375" selection-start-column="31" selection-end-line="375" selection-end-column="31" />
-              <folding>
-                <element signature="e#269#300#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/botos/modules/app_data/models.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4320">
-              <caret line="243" column="2" selection-start-line="243" selection-start-column="2" selection-end-line="243" selection-end-column="2" />
-              <folding>
-                <element signature="e#262#311#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
+    <leaf>
       <file leaf-file-name="index_admin.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/botos/templates/default/admin/index_admin.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="9" selection-start-line="0" selection-start-column="9" selection-end-line="0" selection-end-column="23" />
+            <state relative-caret-position="90">
+              <caret line="6" column="44" selection-start-line="6" selection-start-column="44" selection-end-line="6" selection-end-column="44" />
               <folding />
             </state>
           </provider>
@@ -90,18 +46,8 @@
       <file leaf-file-name="index_viewer.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/botos/templates/default/admin/index_viewer.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="23" selection-start-line="0" selection-start-column="23" selection-end-line="0" selection-end-column="23" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="vote_graph.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/botos/templates/default/admin/vote_graph.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="126">
-              <caret line="7" column="33" selection-start-line="7" selection-start-column="33" selection-end-line="7" selection-end-column="33" />
+            <state relative-caret-position="54">
+              <caret line="3" column="108" selection-start-line="3" selection-start-column="108" selection-end-line="3" selection-end-column="108" />
               <folding />
             </state>
           </provider>
@@ -110,21 +56,49 @@
       <file leaf-file-name="base.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/botos/templates/default/base.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="162">
-              <caret line="9" column="76" selection-start-line="9" selection-start-column="76" selection-end-line="9" selection-end-column="76" />
+            <state relative-caret-position="196">
+              <caret line="16" column="23" selection-start-line="16" selection-start-column="23" selection-end-line="16" selection-end-column="23" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/botos/modules/admin/views.py">
+      <file leaf-file-name="thank-you.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/botos/templates/default/thank-you.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2034">
-              <caret line="134" column="29" selection-start-line="134" selection-start-column="29" selection-end-line="134" selection-end-column="29" />
-              <folding>
-                <element signature="e#267#290#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="108">
+              <caret line="6" column="11" selection-start-line="6" selection-start-column="11" selection-end-line="6" selection-end-column="11" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="voting.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/botos/templates/default/voting.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="360">
+              <caret line="20" column="16" selection-start-line="20" selection-start-column="16" selection-end-line="20" selection-end-column="16" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/botos/templates/default/index.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="198">
+              <caret line="11" column="12" selection-start-line="11" selection-start-column="12" selection-end-line="11" selection-end-column="12" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="styles.css" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/botos/templates/default/static/css/styles.css">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="385">
+              <caret line="44" column="23" selection-start-line="44" selection-start-column="23" selection-end-line="44" selection-end-column="23" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -190,22 +164,22 @@
         <option value="$PROJECT_DIR$/botos/modules/voting/forms.py" />
         <option value="$PROJECT_DIR$/app.py" />
         <option value="$PROJECT_DIR$/botos/templates/default/static/js/scripts.js" />
-        <option value="$PROJECT_DIR$/botos/templates/default/static/css/styles.css" />
         <option value="$PROJECT_DIR$/botos/modules/app_data/sqlalchemy_columns.py" />
         <option value="$PROJECT_DIR$/alembic/versions/70a172e73b98_baseline.py" />
         <option value="$PROJECT_DIR$/botos/modules/app_data/models.py" />
         <option value="$PROJECT_DIR$/botos/templates/default/voting.html" />
         <option value="$PROJECT_DIR$/botos/templates/default/thank-you.html" />
         <option value="$PROJECT_DIR$/botos/modules/admin/forms.py" />
-        <option value="$PROJECT_DIR$/botos/templates/default/admin/index_admin.html" />
-        <option value="$PROJECT_DIR$/botos/templates/default/admin/index_viewer.html" />
-        <option value="$PROJECT_DIR$/botos/templates/default/base.html" />
         <option value="$PROJECT_DIR$/botos/modules/voting/views.py" />
         <option value="$PROJECT_DIR$/botos/templates/default/admin/vote_graph.html" />
         <option value="$PROJECT_DIR$/settings.py" />
         <option value="$PROJECT_DIR$/botos/modules/admin/views.py" />
         <option value="$PROJECT_DIR$/botos/modules/app_data/controllers.py" />
         <option value="$PROJECT_DIR$/botos/modules/admin/controllers.py" />
+        <option value="$PROJECT_DIR$/botos/templates/default/base.html" />
+        <option value="$PROJECT_DIR$/botos/templates/default/admin/index_admin.html" />
+        <option value="$PROJECT_DIR$/botos/templates/default/admin/index_viewer.html" />
+        <option value="$PROJECT_DIR$/botos/templates/default/static/css/styles.css" />
       </list>
     </option>
   </component>
@@ -265,7 +239,6 @@
     </navigator>
     <panes>
       <pane id="Scope" />
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -375,6 +348,10 @@
               <option name="myItemId" value="static" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="css" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -481,6 +458,10 @@
               <option name="myItemId" value="botos-content" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="xlsx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -504,8 +485,31 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="botos" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="botos" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="botos" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="botos-content" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="candidate-img" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -514,7 +518,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$/venv/bin/python3.5" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
-    <property name="SearchEverywhereHistoryKey" value="populate&#9;null&#9;null&#10;generate_&#9;null&#9;null&#10;XLSX_D&#9;null&#9;null" />
+    <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file:///home/seanballais/Code/Projects/botos/botos/templates/default/static/css/styles.css&#10;populate&#9;null&#9;null&#10;generate_&#9;null&#9;null&#10;XLSX_D&#9;null&#9;null" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -1179,13 +1183,13 @@
     <frame x="0" y="24" width="1366" height="699" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2137628" sideWeight="0.5654102" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2137628" sideWeight="0.54767185" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32819724" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30508474" sideWeight="0.50292826" order="11" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290735" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.30508474" sideWeight="0.49707174" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2137628" sideWeight="0.4345898" order="1" side_tool="true" content_ui="tabs" x="508" y="52" width="341" height="626" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2137628" sideWeight="0.45232815" order="1" side_tool="true" content_ui="tabs" x="508" y="52" width="341" height="626" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2137628" sideWeight="0.68104774" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3451464" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1213,7 +1217,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
-    <MESSAGE value="Added a bare bones voting page." />
     <MESSAGE value="Voting page under the works." />
     <MESSAGE value="Fixed candidate selection." />
     <MESSAGE value="Removed bullet points." />
@@ -1238,7 +1241,8 @@
     <MESSAGE value="Added initial code for creating a PDF of the vote statistics." />
     <MESSAGE value="Added batch and section votes in the PDF file." />
     <MESSAGE value="Finished PDF creation of the vote statistics." />
-    <option name="LAST_COMMIT_MESSAGE" value="Finished PDF creation of the vote statistics." />
+    <MESSAGE value="Started using Bootstrap for the UI." />
+    <option name="LAST_COMMIT_MESSAGE" value="Started using Bootstrap for the UI." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1264,13 +1268,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/botos/modules/app_data/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/botos/modules/forms.py" />
     <entry file="file://$PROJECT_DIR$/botos/templates/default/login.html" />
     <entry file="file://$PROJECT_DIR$/setup_models.py" />
@@ -1437,13 +1434,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/botos/templates/default/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="11" column="12" selection-start-line="11" selection-start-column="12" selection-end-line="11" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/botos/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="360">
@@ -1458,26 +1448,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/botos/templates/default/static/css/styles.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="1" selection-start-line="6" selection-start-column="1" selection-end-line="6" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/botos/modules/app_data/sqlalchemy_columns.py" />
     <entry file="file://$PROJECT_DIR$/alembic/versions/70a172e73b98_baseline.py" />
     <entry file="file://$PROJECT_DIR$/venv/lib/python3.5/site-packages/werkzeug/_reloader.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="130">
           <caret line="127" column="0" selection-start-line="127" selection-start-column="0" selection-end-line="127" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/botos/templates/default/static/js/scripts.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="36">
-          <caret line="2" column="33" selection-start-line="2" selection-start-column="33" selection-end-line="2" selection-end-column="33" />
         </state>
       </provider>
     </entry>
@@ -1488,27 +1464,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/botos/templates/default/thank-you.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="11" selection-start-line="6" selection-start-column="11" selection-end-line="6" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/botos/modules/voting/views.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4788">
           <caret line="287" column="32" selection-start-line="287" selection-start-column="32" selection-end-line="287" selection-end-column="32" />
-          <folding>
-            <element signature="e#232#243#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/botos/templates/default/voting.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="20" column="16" selection-start-line="20" selection-start-column="16" selection-end-line="20" selection-end-column="16" />
         </state>
       </provider>
     </entry>
@@ -1521,11 +1480,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/botos/modules/admin/controllers.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="367">
-          <caret line="253" column="60" selection-start-line="253" selection-start-column="60" selection-end-line="253" selection-end-column="60" />
-          <folding>
-            <element signature="e#243#256#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="403">
+          <caret line="177" column="51" selection-start-line="177" selection-start-column="51" selection-end-line="177" selection-end-column="51" />
         </state>
       </provider>
     </entry>
@@ -1533,17 +1489,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="216">
           <caret line="13" column="3" selection-start-line="13" selection-start-column="3" selection-end-line="13" selection-end-column="3" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/botos/modules/app_data/controllers.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6678">
+        <state relative-caret-position="6750">
           <caret line="375" column="31" selection-start-line="375" selection-start-column="31" selection-end-line="375" selection-end-column="31" />
-          <folding>
-            <element signature="e#269#300#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1551,25 +1503,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4320">
           <caret line="243" column="2" selection-start-line="243" selection-start-column="2" selection-end-line="243" selection-end-column="2" />
-          <folding>
-            <element signature="e#262#311#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/botos/templates/default/admin/index_admin.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="9" selection-start-line="0" selection-start-column="9" selection-end-line="0" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/botos/templates/default/admin/index_viewer.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="23" selection-start-line="0" selection-start-column="23" selection-end-line="0" selection-end-column="23" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1581,21 +1514,82 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/botos/templates/default/base.html">
+    <entry file="file://$PROJECT_DIR$/botos/modules/admin/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="9" column="76" selection-start-line="9" selection-start-column="76" selection-end-line="9" selection-end-column="76" />
+        <state relative-caret-position="2412">
+          <caret line="134" column="29" selection-start-line="134" selection-start-column="29" selection-end-line="134" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/botos/templates/default/voting.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="20" column="16" selection-start-line="20" selection-start-column="16" selection-end-line="20" selection-end-column="16" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/botos/modules/admin/views.py">
+    <entry file="file://$PROJECT_DIR$/botos/templates/default/static/js/scripts.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2034">
-          <caret line="134" column="29" selection-start-line="134" selection-start-column="29" selection-end-line="134" selection-end-column="29" />
-          <folding>
-            <element signature="e#267#290#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="36">
+          <caret line="2" column="33" selection-start-line="2" selection-start-column="33" selection-end-line="2" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/botos/templates/default/static/js/jquery-3.1.0.min.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/botos/templates/default/thank-you.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="6" column="11" selection-start-line="6" selection-start-column="11" selection-end-line="6" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/botos/templates/default/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="11" column="12" selection-start-line="11" selection-start-column="12" selection-end-line="11" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/botos/templates/default/base.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="196">
+          <caret line="16" column="23" selection-start-line="16" selection-start-column="23" selection-end-line="16" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/botos/templates/default/admin/index_viewer.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="3" column="108" selection-start-line="3" selection-start-column="108" selection-end-line="3" selection-end-column="108" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/botos/templates/default/admin/index_admin.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="44" selection-start-line="6" selection-start-column="44" selection-end-line="6" selection-end-column="44" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/botos/templates/default/static/css/styles.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="385">
+          <caret line="44" column="23" selection-start-line="44" selection-start-column="23" selection-end-line="44" selection-end-column="23" />
+          <folding />
         </state>
       </provider>
     </entry>
