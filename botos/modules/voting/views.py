@@ -98,7 +98,7 @@ def generate_option_images(level_num,
     :return: Return a markup of the option images.
     """
     return Markup(
-        "<a href=\"javascript:set_radio('{0}-{1}');\" id=\"{0}-{1}\" "
+        "<a href=\"javascript:void(0);\" id=\"{0}-{1}\" "
         "class=\"radio-picture {3}\" style=\"background: url('{2}') no"
         "-repeat scroll 0 0 white;\">&nbsp;</a><br/>"
         "<h3 class='candidate-name'>{4} {5}<br><small>{6}</small></h3>".format(level_num,
@@ -123,9 +123,19 @@ def generate_candidate_script_code(candidate_position):
     return Markup(
         '<script type="text/javascript">\n'
         '\t\t\t$("a.' + str_position + '").click(function() {\n'
-        '\t\t\t\tvar $id = $(this).attr("id");\n'
-        '\t\t\t\t$("a.' + str_position + '").removeClass("selected-glow");\n'
-        '\t\t\t\t$(this).addClass("selected-glow");\n'
+        '\t\t\t\tvar input_clicked = $(this).parent().siblings("input");\n'
+        '\t\t\t\tif (input_clicked.is(":checked")) {\n'
+        'console.log("Clicked before.");'
+        'console.log(input_clicked);'
+        '\t\t\t\t\t$("a.' + str_position + '").removeClass("selected-glow");\n'
+        '\t\t\t\t\tinput_clicked.prop("checked", false);\n'
+        '\t\t\t\t} else {\n'
+        'console.log("Oh really?");'
+        'console.log(input_clicked);'
+        '\t\t\t\t\tinput_clicked.prop("checked", true);\n'
+        '\t\t\t\t\t$("a.' + str_position + '").removeClass("selected-glow");\n'
+        '\t\t\t\t\t$(this).addClass("selected-glow");\n'
+        '\t\t\t\t}\n'
         '\t\t\t})\n'
         '\t\t</script>\n'
     )
