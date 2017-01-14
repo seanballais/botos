@@ -33,6 +33,7 @@ class ActivityLogObserver(object):
         if level == 0:
             level = 20
 
+        # TODO: OMG THERE'S A BUG! The log is not being written to 'app.log.' Please fix. TY. :)
         self.logger.log(level,
                         message,
                         *args,

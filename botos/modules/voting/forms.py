@@ -11,10 +11,7 @@
 from flask_wtf import Form
 from wtforms import StringField
 from wtforms import PasswordField
-from wtforms import RadioField
 from wtforms.validators import DataRequired
-
-from botos.modules.admin.controllers import Utility
 
 
 class LoginForm(Form):

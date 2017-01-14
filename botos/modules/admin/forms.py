@@ -16,7 +16,7 @@ from wtforms import IntegerField
 from wtforms import FileField
 from wtforms.validators import DataRequired
 
-from botos.modules.admin.controllers import Utility
+from botos.modules.admin.utility import Utility
 
 
 class AdminCreationForm(Form):
@@ -47,12 +47,11 @@ class AdminCreationForm(Form):
 
 class VoterCreationForm(Form):
     """Form for creating voters."""
-    num_voters = IntegerField('num_voters',
-                              validators=[DataRequired()],
-                              render_kw={
-                                  'id': "register-admin-username",
-                                  'placeholder': "Enter the number of voters"
-                              })
+    voters     = FileField('voters',
+                           validators=[DataRequired()],
+                           render_kw={
+                               'id': "register-voters"
+                           })
 
     section    = SelectField('role',
                              choices=[],

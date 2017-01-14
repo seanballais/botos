@@ -28,7 +28,7 @@ from botos import login_manager
 from botos.modules.activity_log import ActivityLogObservable
 from botos.modules.app_data.controllers import Settings
 from botos.modules.app_data.models import User
-from botos.modules.admin.controllers import Utility
+from botos.modules.admin.utility import Utility
 from botos.modules.voting.forms import LoginForm
 from botos.modules.voting.forms import VotingForm
 

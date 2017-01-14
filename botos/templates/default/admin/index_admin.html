@@ -30,10 +30,11 @@
 
         <div class="col-xs-12 col-md-offset-2 col-md-8">
             <h2>Create a new set of voters</h2>
-            <form class="register-admin-form" action="/admin/register/voters" method="post">
+            <p>Upload an Excel file (.xlsx) containing the voter information. The first two rows in the file are disregarded as those rows are reserved for headers. The first row may be the section of the voters, while the second row may be headers for the information below. The first column should contain the voter IDs, while the second column should contain the passwords.</p>
+            <form class="register-admin-form" action="/admin/register/voters" method="post" enctype="multipart/form-data">
                 {{ voter_register_form.hidden_tag() }}
                 <p>
-                    {{ voter_register_form.num_voters() }}<br>
+                    {{ voter_register_form.voters() }}<br>
                 </p>
                 <p>
                     {{ voter_register_form.section() }}<br>
@@ -75,7 +76,7 @@
 
         <div class="col-xs-12 col-md-offset-2 col-md-8">
             <h2>Create a new Candidate</h2>
-            <form class="register-candidate-form" action="/admin/register/candidate" method="post" enctype=multipart/form-data>
+            <form class="register-candidate-form" action="/admin/register/candidate" method="post" enctype="multipart/form-data">
                 {{ candidate_register_form.hidden_tag() }}
                 <p>
                     {{ candidate_register_form.first_name() }}<br>
@@ -132,6 +133,7 @@
 
         <div class="col-xs-12 col-md-offset-2 col-md-8">
             <h2>Populate vote database</h2>
+            <p>Do not forget to populate the vote database after creating the voters, and candidates.</p>
             <form class="populate-vote-store" action="/admin/populate_votes/" method="post">
                 <p>
                     <input type="submit" value="Populate">
