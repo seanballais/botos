@@ -63,3 +63,6 @@ target/
 
 # PyCharm directories and files
 .idea/
+
+# Ignore local settings.
+botos/settings/local_settings.py

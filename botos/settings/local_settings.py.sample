@@ -1,0 +1,21 @@
+# If you don't have a pre-existing local_settings.py file,
+# duplicate this file and name it as local_settings.py. Fill
+# up the necessary values as necessary. You may remove this comment
+# header.
+
+# Keep this a secret! In production, please change this to something else.
+SECRET_KEY = '6xtu*&k8@)pibt(^c2ox%@#3taw0zp_g05e28g!#0j3gjrf2!f'
+
+# Keep DEBUG as True only in development.
+DEBUG = True
+
+# For working with databases in Django, please refer to this:
+#     https://docs.djangoproject.com/en/2.2/ref/settings/#databases
+#
+# Note that there is no need to change this section except in production.
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
