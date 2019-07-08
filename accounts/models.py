@@ -3,7 +3,33 @@ from django.db import models
 
 
 class User(AbstractUser):
-    pass
+    batch = models.ForeignKey(
+        'Batch',
+        on_delete=models.PROTECT,
+        null=False,
+        blank=False,
+        default=None,
+        unique=False,
+        related_name='users'
+    )
+    section = models.ForeignKey(
+        'Section',
+        on_delete=models.PROTECT,
+        null=False,
+        blank=False,
+        default=None,
+        unique=False,
+        related_name='users'
+    )
+
+    class Meta:
+        indexes = [ models.Index(fields=[ 'username' ]) ]
+        ordering = [ 'username' ]
+        verbose_name = 'user'
+        verbose_name_plural = 'users'
+
+    def __str__(self):
+        return '<User \'{}\'>'.format(self.username)
 
 
 class Batch(models.Model):
@@ -12,7 +38,7 @@ class Batch(models.Model):
         'year',
         null=False,
         blank=False,
-        default=0,
+        default=None,
         unique=True
     )
 
@@ -34,7 +60,7 @@ class Section(models.Model):
         max_length=15,
         null=False,
         blank=False,
-        default='',
+        default=None,
         unique=True
     )
 
