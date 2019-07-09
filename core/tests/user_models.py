@@ -46,10 +46,6 @@ class UserModelTest(TestCase):
             isinstance(self._user_batch_field, models.ForeignKey)
         )
 
-    def test_batch_fk_value_is_as_set(self):
-        batch_fk = self._user.batch
-        self.assertEquals(batch_fk, self._batch)
-
     def test_batch_fk_connected_model(self):
         connected_model = getattr(
             self._user_batch_field.remote_field,
@@ -65,20 +61,16 @@ class UserModelTest(TestCase):
         self.assertEquals(on_delete_policy, models.PROTECT)
 
     def test_batch_fk_null(self):
-        null_value = self._user_batch_field.null
-        self.assertFalse(null_value)
+        self.assertFalse(self._user_batch_field.null)
 
     def test_batch_fk_blank(self):
-        blank_value = self._user_batch_field.blank
-        self.assertFalse(blank_value)
+        self.assertFalse(self._user_batch_field.blank)
 
     def test_batch_fk_default(self):
-        default_value = self._user_batch_field.default
-        self.assertIsNone(default_value)
+        self.assertIsNone(self._user_batch_field.default)
 
     def test_batch_fk_unique(self):
-        unique_value = self._user_batch_field.unique
-        self.assertFalse(unique_value)
+        self.assertFalse(self._user_batch_field.unique)
 
     def test_batch_fk_related_name(self):
         related_name = getattr(
@@ -92,10 +84,6 @@ class UserModelTest(TestCase):
         self.assertTrue(
             isinstance(self._user_section_field, models.ForeignKey)
         )
-
-    def test_section_fk_value_is_as_set(self):
-        section_fk = self._user.section
-        self.assertEquals(section_fk, self._section)
 
     def test_section_fk_connected_model(self):
         connected_model = getattr(
@@ -112,20 +100,16 @@ class UserModelTest(TestCase):
         self.assertEquals(on_delete_policy, models.PROTECT)
 
     def test_section_fk_null(self):
-        null_value = self._user_section_field.null
-        self.assertFalse(null_value)
+        self.assertFalse(self._user_section_field.null)
 
     def test_section_fk_blank(self):
-        blank_value = self._user_section_field.blank
-        self.assertFalse(blank_value)
+        self.assertFalse(self._user_section_field.blank)
 
     def test_section_fk_default(self):
-        default_value = self._user_section_field.default
-        self.assertIsNone(default_value)
+        self.assertIsNone(self._user_section_field.default)
 
     def test_section_fk_unique(self):
-        unique_value = self._user_section_field.unique
-        self.assertFalse(unique_value)
+        self.assertFalse(self._user_section_field.unique)
 
     def test_secection_fk_related_name(self):
         related_name = getattr(
@@ -134,7 +118,7 @@ class UserModelTest(TestCase):
         )
         self.assertEquals(related_name, 'users')
 
-    # Test the meta class of the custom user model.
+    # Test the meta class.
     def test_meta_indexes(self):
         indexes = self._user._meta.indexes
         self.assertEquals(len(indexes), 1)
@@ -172,51 +156,41 @@ class BatchModelTest(TestCase):
         cls._batch = Batch.objects.create(year=2019)
         cls._batch_year_field = cls._batch._meta.get_field('year')
 
+    # Test year field.
     def test_year_is_small_int_field(self):
         self.assertTrue(
             isinstance(self._batch_year_field, models.SmallIntegerField)
         )
 
-    def test_year_is_as_set(self):
-        self.assertEquals(self._batch.year, 2019)
-
     def test_year_null(self):
-        null_value = self._batch_year_field.null
-        self.assertFalse(null_value)
+        self.assertFalse(self._batch_year_field.null)
 
     def test_year_blank(self):
-        blank_value = self._batch_year_field.blank
-        self.assertFalse(blank_value)
+        self.assertFalse(self._batch_year_field.blank)
 
     def test_year_default(self):
-        default_value = self._batch_year_field.default
-        self.assertIsNone(default_value)
+        self.assertIsNone(self._batch_year_field.default)
 
     def test_year_unique(self):
-        unique_value = self._batch_year_field.unique
-        self.assertTrue(unique_value)
+        self.assertTrue(self._batch_year_field.unique)
 
     def test_year_verbose_name(self):
-        verbose_name = self._batch_year_field.verbose_name
-        self.assertEquals(verbose_name, 'year')
+        self.assertEquals(self._batch_year_field.verbose_name, 'year')
 
-    # Test the meta class of the batch model.
+    # Test the meta class.
     def test_meta_indexes(self):
         indexes = self._batch._meta.indexes
         self.assertEquals(len(indexes), 1)
         self.assertEquals(indexes[0].fields, [ 'year' ])
 
     def test_meta_ordering(self):
-        ordering = self._batch._meta.ordering
-        self.assertEquals(ordering, [ 'year' ])
+        self.assertEquals(self._batch._meta.ordering, [ 'year' ])
 
     def test_meta_verbose_name(self):
-        verbose_name = self._batch._meta.verbose_name
-        self.assertEquals(verbose_name, 'batch')
+        self.assertEquals(self._batch._meta.verbose_name, 'batch')
 
     def test_meta_verbose_name_plural(self):
-        verbose_name_plural = self._batch._meta.verbose_name_plural
-        self.assertEquals(verbose_name_plural, 'batches')
+        self.assertEquals(self._batch._meta.verbose_name_plural, 'batches')
 
     def test_str(self):
         self.assertEquals(str(self._batch), '<Batch \'2019\'>')
@@ -239,39 +213,34 @@ class SectionModelTest(TestCase):
         cls._section = Section.objects.create(section_name='Section')
         cls._section_name_field = cls._section._meta.get_field('section_name')
 
+    # Test section_name field.
     def test_section_name_field_is_char_field(self):
         self.assertTrue(
-            isinstance(cls._section_name_field, models.CharField)
+            isinstance(self._section_name_field, models.CharField)
         )
 
-    def test_section_name_field_is_as_set(self):
-        self.assertEquals(self._section.section_name, 'Section')
-
     def test_section_name_field_max_length(self):
-        max_length = self._section_name_field.max_length
-        self.assertEquals(max_length, 15)
+        self.assertEquals(self._section_name_field.max_length, 15)
 
     def test_section_name_field_null(self):
-        null_value = self._section_name_field.null
-        self.assertFalse(null_value)
+        self.assertFalse(self._section_name_field.null)
 
     def test_section_name_field_blank(self):
-        blank_value = self._section_name_field.blank
-        self.assertFalse(blank_value)
+        self.assertFalse(self._section_name_field.blank)
 
     def test_section_name_field_default(self):
-        default_value = self._section_name_field.default
-        self.assertIsNone(default_value)
+        self.assertIsNone(self._section_name_field.default)
 
     def test_section_name_field_unique(self):
-        unique_value = self._section_name_field.unique
-        self.assertTrue(unique_value)
+        self.assertTrue(self._section_name_field.unique)
 
     def test_section_name_field_verbose_name(self):
-        verbose_name = self._section_name_field.verbose_name
-        self.assertEquals(verbose_name, 'section_name')
+        self.assertEquals(
+            self._section_name_field.verbose_name,
+            'section_name'
+        )
 
-    # Test the meta class of the section model.
+    # Test the meta class.
     def test_meta_indexes(self):
         indexes = self._section._meta.indexes
         self.assertEquals(len(indexes), 1)
