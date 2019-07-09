@@ -120,4 +120,4 @@ class BaseModelTest(TestCase):
 
     # Test the meta class.
     def test_meta_abstract(self):
-        self.assertTrue(Base()._meta.abstract)
+        self.assertTrue(Base._meta.abstract)
