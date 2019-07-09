@@ -2,9 +2,9 @@ from django.db import IntegrityError
 from django.db import models
 from django.test import TestCase
 
-from accounts.models import User
-from accounts.models import Batch
-from accounts.models import Section
+from core.models import (
+    User, Batch, Section
+)
 
 
 class UserModelTest(TestCase):
