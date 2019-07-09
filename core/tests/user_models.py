@@ -14,6 +14,18 @@ class UserModelTest(TestCase):
     Note that we are not testing the other fields such as the username
     since they are provided by Django. We should only test code that is
     our own, e.g. the batch foreign key field.
+
+    The batch and section foreign keys must have the following settings:
+        - on_delete = models.PROTECT
+        - null = False
+        - blank = False
+        - default = None
+        - unique = False
+        - related_name = 'users
+
+    This model must have its username field set be the index and its
+    ordering based on the aforementioned field. The verbose name and
+    the plural equivalent must be 'user' and 'users' respectively.
     """
     @classmethod
     def setUpTestData(cls):
@@ -29,6 +41,11 @@ class UserModelTest(TestCase):
         cls._user_section_field = cls._user._meta.get_field('section')
 
     # Test batch foreign key.
+    def test_batch_fk_is_fk(self):
+        self.assertTrue(
+            isinstance(self._user_batch_field, models.ForeignKey)
+        )
+
     def test_batch_fk_value_is_as_set(self):
         batch_fk = self._user.batch
         self.assertEquals(batch_fk, self._batch)
@@ -71,6 +88,11 @@ class UserModelTest(TestCase):
         self.assertEquals(related_name, 'users')
 
     # Test section foreign key.
+    def test_section_fk_is_fk(self):
+        self.assertTrue(
+            isinstance(self._user_section_field, models.ForeignKey)
+        )
+
     def test_section_fk_value_is_as_set(self):
         section_fk = self._user.section
         self.assertEquals(section_fk, self._section)
@@ -135,11 +157,25 @@ class UserModelTest(TestCase):
 
 
 class BatchModelTest(TestCase):
-    """ Tests the Batch model. """
+    """
+    Tests the Batch model.
+
+    The year field must be a small integer field and has the following
+    settings:
+        - null = False
+        - blank = False
+        - default = None
+        - unique = True
+    """
     @classmethod
     def setUpTestData(cls):
         cls._batch = Batch.objects.create(year=2019)
         cls._batch_year_field = cls._batch._meta.get_field('year')
+
+    def test_year_is_small_int_field(self):
+        self.assertTrue(
+            isinstance(self._batch_year_field, models.SmallIntegerField)
+        )
 
     def test_year_is_as_set(self):
         self.assertEquals(self._batch.year, 2019)
@@ -187,11 +223,26 @@ class BatchModelTest(TestCase):
 
 
 class SectionModelTest(TestCase):
-    """ Tests the Section model. """
+    """
+    Tests the Section model.
+
+    The section name field must be a character field and the following
+    settings:
+        - max_length = 15
+        - null = False
+        - blank = False
+        - default = None
+        - unique = True
+    """
     @classmethod
     def setUpTestData(cls):
         cls._section = Section.objects.create(section_name='Section')
         cls._section_name_field = cls._section._meta.get_field('section_name')
+
+    def test_section_name_field_is_char_field(self):
+        self.assertTrue(
+            isinstance(cls._section_name_field, models.CharField)
+        )
 
     def test_section_name_field_is_as_set(self):
         self.assertEquals(self._section.section_name, 'Section')
