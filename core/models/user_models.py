@@ -1,8 +1,11 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from .base_model import Base
 
-class User(AbstractUser):
+
+class User(AbstractUser, Base):
+    """ Custom model for users. """
     batch = models.ForeignKey(
         'Batch',
         on_delete=models.PROTECT,
@@ -32,7 +35,7 @@ class User(AbstractUser):
         return '<User \'{}\'>'.format(self.username)
 
 
-class Batch(models.Model):
+class Batch(Base):
     """ Model for batches. """
     year = models.SmallIntegerField(
         'year',
@@ -53,7 +56,7 @@ class Batch(models.Model):
         return '<Batch \'{}\'>'.format(self.year)
 
 
-class Section(models.Model):
+class Section(Base):
     """ Model for sections. """
     section_name = models.CharField(
         'section_name',

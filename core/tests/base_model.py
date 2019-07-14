@@ -3,6 +3,7 @@ from django.db import models
 from django.db.models.base import ModelBase
 from django.db.utils import ProgrammingError
 from django.test import TestCase
+from django.utils import timezone
 
 from core.models.base_model import Base
 
@@ -22,10 +23,12 @@ class BaseModelTest(TestCase):
     should have the following settings:
         - auto_now_add = True
         - auto_now = False
+        - null = True (to allow older data, if any, to have a value)
 
     And date_updated with the following settings:
         - auto_now_add = False
         - auto_now = True
+        - null = True (to allow older data, if any, to have a value)
 
     The verbose names of date_created and date_updated must be
     'date_created' and 'date_updated' respectively.
@@ -91,6 +94,9 @@ class BaseModelTest(TestCase):
     def test_date_created_auto_now_add(self):
         self.assertTrue(self._test_base_date_created_field.auto_now_add)
 
+    def test_date_created_null(self):
+        self.assertTrue(self._test_base_date_created_field.null)
+
     def test_date_created_verbose_name(self):
         self.assertEquals(
             self._test_base_date_created_field.verbose_name,
@@ -111,6 +117,9 @@ class BaseModelTest(TestCase):
 
     def test_date_updated_auto_now_add(self):
         self.assertFalse(self._test_base_date_updated_field.auto_now_add)
+
+    def test_date_updated_null(self):
+        self.assertTrue(self._test_base_date_updated_field.null)
 
     def test_date_created_verbose_name(self):
         self.assertEquals(
