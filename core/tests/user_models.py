@@ -21,11 +21,13 @@ class UserModelTest(TestCase):
         - blank = False
         - default = None
         - unique = False
-        - related_name = 'users
+        - related_name = 'users'
 
     This model must have its username field set be the index and its
     ordering based on the aforementioned field. The verbose name and
     the plural equivalent must be 'user' and 'users' respectively.
+
+    The __str___() method should return "User '{username}'>".
     """
     @classmethod
     def setUpTestData(cls):
@@ -111,7 +113,7 @@ class UserModelTest(TestCase):
     def test_section_fk_unique(self):
         self.assertFalse(self._user_section_field.unique)
 
-    def test_secection_fk_related_name(self):
+    def test_section_fk_related_name(self):
         related_name = getattr(
             self._user_section_field.remote_field,
             'related_name'
@@ -150,6 +152,8 @@ class BatchModelTest(TestCase):
         - blank = False
         - default = None
         - unique = True
+
+    The __str___() method should return "<Batch '{year}'>".
     """
     @classmethod
     def setUpTestData(cls):
@@ -207,6 +211,8 @@ class SectionModelTest(TestCase):
         - blank = False
         - default = None
         - unique = True
+
+    The __str___() method should return "<Section '{section name}'>".
     """
     @classmethod
     def setUpTestData(cls):

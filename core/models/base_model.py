@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Base(models.Model):
-    """  """
+    """ Base model for all Botos models. """
     date_created = models.DateTimeField(
         'date_created',
         auto_now=False,

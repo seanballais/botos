@@ -1,5 +1,5 @@
 from .election_models import (
-    ElectionSetting
+    Vote, Candidate, CandidateParty, CandidatePosition, ElectionSetting
 )
 from .user_models import (
     User, Batch, Section
@@ -7,5 +7,7 @@ from .user_models import (
 
 
 __all__ = [
-    'User', 'Batch', 'Section', 'ElectionSetting'
+    'User', 'Batch', 'Section',
+    'Vote', 'Candidate', 'CandidateParty', 'CandidatePosition',
+    'ElectionSetting'
 ]

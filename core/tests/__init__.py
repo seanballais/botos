@@ -2,7 +2,7 @@ from .base_model import (
     BaseModelTest
 )
 from .election_models import (
-    ElectionSettingsTest
+    Candidate, CandidateParty, CandidatePosition, ElectionSettingTest
 )
 from .user_models import (
     UserModelTest, BatchModelTest, SectionModelTest
@@ -10,5 +10,6 @@ from .user_models import (
 
 __all__ = [
     'UserModelTest', 'BatchModelTest', 'SectionModelTest',
-    'ElectionSettingsTest', 'BaseModelTest'
+    'Candidate', 'CandidateParty', 'CandidatePosition',
+    'ElectionSettingTest', 'BaseModelTest'
 ]
