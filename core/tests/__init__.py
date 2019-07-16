@@ -2,8 +2,9 @@ from .base_model import (
     BaseModelTest
 )
 from .election_models import (
-    Candidate, CandidateParty, CandidatePosition, ElectionSettingTest
+    CandidateTest, CandidatePartyTest, CandidatePositionTest
 )
+from .settings_model import SettingTest
 from .user_models import (
     UserModelTest, BatchModelTest, SectionModelTest
 )
