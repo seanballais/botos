@@ -68,6 +68,13 @@ class Candidate(Base):
         related_name='+'  # It doesn't make sense to have a reverse
                           # relationship in an is-a relationship.
     )
+    avatar = models.ImageField(
+        upload_to='avatars/',
+        null=True,
+        blank=True,
+        default='avatars/default.png',
+        unique=False
+    )
     party = models.ForeignKey(
         CandidateParty,
         on_delete=models.PROTECT,

@@ -8,9 +8,10 @@ from .settings_model import SettingTest
 from .user_models import (
     UserModelTest, BatchModelTest, SectionModelTest
 )
+from .utils import AppSettingsTest
 
 __all__ = [
     'UserModelTest', 'BatchModelTest', 'SectionModelTest',
     'Candidate', 'CandidateParty', 'CandidatePosition',
-    'ElectionSettingTest', 'BaseModelTest'
+    'ElectionSettingTest', 'AppSettingsTest', 'BaseModelTest'
 ]

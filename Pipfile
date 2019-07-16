@@ -9,6 +9,7 @@ verify_ssl = true
 django = "*"
 psycopg2 = "*"
 freezegun = "*"
+pillow = "*"
 
 [requires]
 python_version = "3.5"

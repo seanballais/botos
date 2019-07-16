@@ -216,6 +216,7 @@ class CandidateTest(TestCase):
 
     The Candidate model must have the following custom fields:
         - user_id (foreign key)
+        - avatar
         - party_id (foreign key)
         - position_id (foreign key)
 
@@ -231,6 +232,13 @@ class CandidateTest(TestCase):
         - default = None
         - related_name = '+' (it doesn't make sense to have a reverse
                               relationship in an is-a relationship)
+
+    The avatar field must be a image field and have the following settings:
+        - upload_to = 'avatars/'
+        - null = True
+        - blank = True
+        - default = 'avatars/default.png'
+        - unique = False
 
     The party must be a foreign key and have the following settings:
         - to = 'CandidateParty'
@@ -280,6 +288,7 @@ class CandidateTest(TestCase):
             position=cls._position
         )
         cls._candidate_user_field = cls._candidate._meta.get_field('user')
+        cls._candidate_avatar_field = cls._candidate._meta.get_field('avatar')
         cls._candidate_party_field = cls._candidate._meta.get_field('party')
         cls._candidate_position_field = cls._candidate._meta.get_field(
             'position'
@@ -320,6 +329,39 @@ class CandidateTest(TestCase):
             'related_name'
         )
         self.assertEquals(related_name, '+')
+
+    # Test avatar image field.
+    def test_avatar_is_image_field(self):
+        self.assertTrue(
+            isinstance(self._candidate_avatar_field, models.ImageField)
+        )
+
+    def test_avatar_upload_to(self):
+        self.assertEquals(
+            self._candidate_avatar_field.upload_to,
+            'avatars/'
+        )
+
+    def test_avatar_null(self):
+        self.assertTrue(self._candidate_avatar_field.null)
+
+    def test_avatar_blank(self):
+        self.assertTrue(self._candidate_avatar_field.blank)
+
+    def test_avatar_default(self):
+        self.assertEquals(
+            self._candidate_avatar_field.default,
+            'avatars/default.png'
+        )
+
+    def test_avatar_unique(self):
+        self.assertFalse(self._candidate_avatar_field.unique)
+
+    def tesr_avatar_verbose_name(self):
+        self.assertEquals(
+            self._candidate_avatar_field.verbose_name,
+            'avatar'
+        )
 
     # Test party foreign key.
     def test_party_fk_is_fk(self):
