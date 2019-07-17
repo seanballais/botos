@@ -1,3 +1,4 @@
+from .management import CreateSuperUserTest
 from .base_model import (
     BaseModelTest
 )
@@ -13,5 +14,6 @@ from .utils import AppSettingsTest
 __all__ = [
     'UserModelTest', 'BatchModelTest', 'SectionModelTest',
     'Candidate', 'CandidateParty', 'CandidatePosition',
-    'ElectionSettingTest', 'AppSettingsTest', 'BaseModelTest'
+    'ElectionSettingTest', 'AppSettingsTest', 'BaseModelTest',
+    'AdminViewTest'
 ]
