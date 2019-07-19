@@ -1,8 +1,7 @@
 from django.contrib import admin
 
 from core.models import (
-    User, Batch, Section, Candidate, CandidateParty,
-    CandidatePosition, Setting
+    User, Batch, Section, Candidate, CandidateParty, CandidatePosition
 )
 
 admin.site.register(User)
