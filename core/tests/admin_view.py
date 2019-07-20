@@ -186,7 +186,7 @@ class ElectionSettingsElectionsStateViewTest(BaseElectionSettingsViewTest):
         self.assertRedirects(response, '/admin/election')
 
     def test_view_with_invalid_post_requests(self):
-        AppSettings().set('is_elections_open', True)
+        AppSettings().set('election_state', 'open')
 
         # Return an error message to the view we'll be redirected to.
         response = self.client.post(self._view_url, {})
@@ -195,21 +195,21 @@ class ElectionSettingsElectionsStateViewTest(BaseElectionSettingsViewTest):
             'You attempted to change the '
             + 'election state with invalid data.' in response.content
         )
-        self.assertEquals(AppSettings().get('is_elections_open'), 'True')
+        self.assertEquals(AppSettings().get('election_state'), 'open')
 
     def test_view_with_valid_post_requests(self):
-        AppSettings().set('is_elections_open', True)
+        AppSettings().set('election_state', 'open')
 
         # Return a success message to the view we'll be redirected to.
         response = self.client.post(
             self._view_url,
-            { 'state': 'False' }
+            { 'state': 'closed' }
         )
 
         self.assertTrue(
             'Election state changed successfully.' in response.content
         )
-        self.assertEquals(AppSettings().get('template'), 'False')
+        self.assertEquals(AppSettings().get('template'), 'closed')
 
 
 class ElectionSettingsPubPrivKeysViewTest(BaseElectionSettingsViewTest):

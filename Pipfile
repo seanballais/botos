@@ -10,6 +10,7 @@ django = "*"
 psycopg2 = "*"
 freezegun = "*"
 pillow = "*"
+beautifulsoup4 = "*"
 
 [requires]
 python_version = "3.5"

@@ -1,12 +1,14 @@
+from abc import ABC
 import os
 from unittest import mock
+
+from bs4 import BeautifulSoup
 
 from django.conf import settings
 from django.test import TestCase
 
 from core.forms.admin import (
-    ElectionSettingsCurrentTemplateForm, ElectionSettingsElectionStateForm,
-    ElectionSettingsPubPrivKeysForm
+    ElectionSettingsCurrentTemplateForm, ElectionSettingsElectionStateForm
 )
 from core.models (
     User, Batch, Section
@@ -14,13 +16,10 @@ from core.models (
 from core.utils import AppSettings
 
 
-class ElectionSettingsCurrentTemplateFormTest(TestCase):
+@abstractmethod
+class BaseAdminFormTest(ABC, TestCase):
     """
-    Tests the current template form of the election settings.
-
-    This form must only contain a single dropdown field. The default value for
-    the text field must be 'default' or whatever is set in the app settings,
-    but with higher priority on the latter.
+    Base test for all admin forms.
     """
     @classmethod
     def setUpClass(cls):
@@ -37,7 +36,18 @@ class ElectionSettingsCurrentTemplateFormTest(TestCase):
             section=cls._admin_section
         )
 
-        self.client.login(username='admin', password='root')
+
+class ElectionSettingsCurrentTemplateFormTest(BaseAdminFormTest):
+    """
+    Tests the current template form of the election settings.
+
+    This form must only contain a single dropdown field. The default value for
+    the text field must be 'default' or whatever is set in the app settings,
+    but with higher priority on the latter.
+    """
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
 
     def test_valid_data(self):
         form = ElectionSettingsCurrentTemplateForm(
@@ -154,19 +164,115 @@ class ElectionSettingsCurrentTemplateFormTest(TestCase):
             mocked_isdir.assert_called_with(*dir_contents)
 
 
-class ElectionSettingsElectionStateFormTest(TestCase):
+class ElectionSettingsElectionStateFormTest(BaseAdminFormTest):
+    """
+    Tests the current template form of the election settings.
+
+    This form must only contain a single radio box.
+    """
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+    def test_valid_data(self):
+        form = ElectionSettingsElectionStateForm(
+            data={
+                'state': 'open'
+            }
+        )
+        self.assertTrue(form.is_valid())
+
+    def test_invalid_data(self):
+        form = ElectionSettingsElectionStateForm(
+            data={
+                'state': 'x'
+            }
+        )
+        self.assertFalse(form.is_valid())
+
+    def test_value_of_radio_box_if_state_have_not_been_set_yet(self):
+        # State should default to closed.
+        response = self.client.get('/admin/election')
+        self.assertEquals(
+            response.context['current_election_state_form'].initial['state'],
+            'closed'
+        )
+
+    def test_value_of_radio_box_if_state_have_been_set(self):
+        AppSettings().set('election_state', 'open')
+
+        # Dropdown field should have a value of `yes-or-yes`.
+        response = self.client.get('/admin/election')
+        self.assertEquals(
+            response.context['current_election_state_form'].initial['state'],
+            'open'
+        )
+
+
+class ElectionSettingsPubPrivKeysFormTest(BaseAdminFormTest):
     """
     Tests the current template form of the election settings.
 
     This form must only contain a single text field.
     """
-    pass
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
 
+    def test_button_is_active_if_there_are_no_votes(self):
+        response = self.client.get('/admin/election')
+        self.assertTrue(self._is_form_button_enabled(response.content))
 
-class ElectionSettingsPubPrivKeysFormTest(TestCase):
-    """
-    Tests the current template form of the election settings.
+    def test_button_is_disabled_if_votes_are_present(self):
+        # Create the test non-superuser.
+        _batch = Batch.objects.create(year=2019)
+        _section = Section.objects.create(section_name='Emerald')
+        _user = User.objects.create(
+            username='juan',
+            batch=cls._batch,
+            section=cls._section
+        )
+        _party = CandidateParty.objects.create(party_name='Awesome Party')
+        _position = CandidatePosition.objects.create(
+            position_name='Amazing Position',
+            position_level=0
+        )
+        _candidate = Candidate.objects.create(
+            user=cls._user,
+            party=cls._party,
+            position=cls._position
+        )
 
-    This form must only contain a single text field.
-    """
-    pass
+        # Create a dummy vote.
+        _vote = Vote.objects.create(
+            user=cls._user,
+            candidate=cls._candidate,
+            vote_cipher=json.dumps(dict())
+        )
+
+        # Now test.
+        response = self.client.get('/admin/election')
+        self.assertFalse(self._is_form_button_enabled(response.content))
+
+    def test_button_is_active_if_elections_are_closed(self):
+        AppSettings().set('election_state', 'closed')
+
+        response = self.client.get('/admin/election')
+        self.assertTrue(self._is_form_button_enabled(response.content))
+
+    def test_button_is_disabled_if_elections_are_open(self):
+        AppSettings().set('election_state', 'open')
+
+        response = self.client.get('/admin/election')
+        self.assertFalse(self._is_form_button_enabled(response.content))
+
+    def _is_form_button_enabled(self, view_html):
+        view_html_soup = BeautifulSoup(view_html, 'html.parser')
+        form_button = view_html_soup.find('form', id='pub-priv-key') \
+                                    .find('button', type='submit')
+
+        # Sure, we can just check if "disabled" is inside the HTML string of
+        # form_button. However, the output would be incorrect if the button is
+        # not actually disabled, but its HTML string has a substring
+        # "disabled".
+        return not form_button.has_attr('disabled')
