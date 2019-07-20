@@ -1,3 +1,7 @@
+from .admin_view import (
+    ElectionSettingsViewTest, ElectionSettingsCurrentTemplateViewTest,
+    ElectionSettingsElectionsStateViewTest, ElectionSettingsPubPrivKeysViewTest
+)
 from .management import CreateSuperUserTest
 from .base_model import (
     BaseModelTest
@@ -14,6 +18,8 @@ from .utils import AppSettingsTest
 __all__ = [
     'UserModelTest', 'BatchModelTest', 'SectionModelTest',
     'Candidate', 'CandidateParty', 'CandidatePosition',
-    'ElectionSettingTest', 'AppSettingsTest', 'BaseModelTest',
-    'AdminViewTest'
+    'AppSettingsTest', 'BaseModelTest', 'ElectionSettingsViewTest',
+    'ElectionSettingsCurrentTemplateViewTest',
+    'ElectionSettingsElectionsStateViewTest',
+    'ElectionSettingsPubPrivKeysViewTest'
 ]

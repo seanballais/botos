@@ -147,7 +147,7 @@ class ElectionSettingsCurrentTemplateViewTest(BaseElectionSettingsViewTest):
         # Return a success message to the view we'll be redirected to.
         response = self.client.post(
             self._view_url,
-            { 'new_template_name': 'my-little-pony' }
+            { 'template_name': 'my-little-pony' }
         )
 
         self.assertTrue(
@@ -203,7 +203,7 @@ class ElectionSettingsElectionsStateViewTest(BaseElectionSettingsViewTest):
         # Return a success message to the view we'll be redirected to.
         response = self.client.post(
             self._view_url,
-            { 'new_state': 'False' }
+            { 'state': 'False' }
         )
 
         self.assertTrue(
