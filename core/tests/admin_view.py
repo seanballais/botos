@@ -4,10 +4,7 @@ from abc import (
 
 from django.test import TestCase
 
-from core.forms.admin import (
-    CurrentTemplateForm, ElectionStateForm, GenerateElectionKeysForm
-)
-from core.models (
+from core.models import (
     User, Batch, Section
 )
 from core.utils import AppSettings
@@ -19,7 +16,7 @@ class BaseElectionSettingsViewTest(ABC, TestCase):
     This is the base class for the rest of the election settings view tests.
     """
     @classmethod
-    def setUpClass(cls):
+    def setUpTestData(cls):
         cls._batch = Batch.objects.create(year=2019)
         cls._section = Section.objects.create(section_name='Section')
         cls._admin_batch = Batch.objects.create(year=0)
@@ -30,7 +27,8 @@ class BaseElectionSettingsViewTest(ABC, TestCase):
             email='admin@admin.com',
             password='root',
             batch=cls._admin_batch,
-            section=cls._admin_section
+            section=cls._admin_section,
+            is_superuser=True
         )
 
         cls._view_url = ''
@@ -89,8 +87,8 @@ class ElectionSettingsViewTest(BaseElectionSettingsViewTest):
     intact.
     """
     @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    def setUpTestData(cls):
+        super().setUpTestData()
         
         cls._view_url = '/admin/election'
 
@@ -101,7 +99,9 @@ class ElectionSettingsViewTest(BaseElectionSettingsViewTest):
         self.assertEquals(response.status_code, 200)
         self.assertTemplateUsed(
             response,
-            '{}/admin_election.html'.format(cls._current_template)
+            'default/admin/election.html'  # Default template is expected
+                                           # since we did not set the template
+                                           # in this test.
         )
 
 
@@ -113,13 +113,14 @@ class ElectionSettingsCurrentTemplateViewTest(BaseElectionSettingsViewTest):
     POST requests. GET requests from superusers will result in a redirection
     to `/admin/election`, while non-superusers and anonymoous users to `/`.
     """
+    def setUp(self):
+        self.client.login(username='admin', password='root')
+
     @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    def setUpTestData(cls):
+        super().setUpTestData()
 
         cls._view_url = '/admin/election/template'
-
-        cls.client.login(username='admin', password='root')
 
     def test_view_accepts_superusers(self):
         response = self.client.get(self._view_url)
@@ -137,7 +138,7 @@ class ElectionSettingsCurrentTemplateViewTest(BaseElectionSettingsViewTest):
 
         self.assertTrue(
             'Template field must not be empty '
-            + 'nor have invalid data.' in response.content
+            + 'nor have invalid data.' in str(response.content)
         )
         self.assertEquals(AppSettings.get('template'), 'default')
 
@@ -151,7 +152,7 @@ class ElectionSettingsCurrentTemplateViewTest(BaseElectionSettingsViewTest):
         )
 
         self.assertTrue(
-            'Current template changed successfully.' in response.content
+            'Current template changed successfully.' in str(response.content)
         )
         self.assertEquals(AppSettings.get('template'), 'my-little-pony')
 
@@ -169,13 +170,14 @@ class ElectionSettingsElectionsStateViewTest(BaseElectionSettingsViewTest):
 
     This view must only accept a value that is either a True or False.
     """
+    def setUp(self):
+        self.client.login(username='admin', password='root')
+
     @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    def setUpTestData(cls):
+        super().setUpTestData()
 
         cls._view_url = '/admin/election/state'
-
-        cls.client.login(username='admin', password='root')
 
     def test_view_accepts_superusers(self):
         response = self.client.get(self._view_url)
@@ -193,7 +195,7 @@ class ElectionSettingsElectionsStateViewTest(BaseElectionSettingsViewTest):
 
         self.assertTrue(
             'You attempted to change the '
-            + 'election state with invalid data.' in response.content
+            + 'election state with invalid data.' in str(response.content)
         )
         self.assertEquals(AppSettings().get('election_state'), 'open')
 
@@ -207,7 +209,7 @@ class ElectionSettingsElectionsStateViewTest(BaseElectionSettingsViewTest):
         )
 
         self.assertTrue(
-            'Election state changed successfully.' in response.content
+            'Election state changed successfully.' in str(response.content)
         )
         self.assertEquals(AppSettings().get('template'), 'closed')
 
@@ -229,13 +231,14 @@ class ElectionSettingsPubPrivKeysViewTest(BaseElectionSettingsViewTest):
     open, then calling this view will just simply send back a message that the
     operation cannot be performed due to the aformentioned conditions.
     """
+    def setUp(self):
+        self.client.login(username='admin', password='root')
+    
     @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    def setUpTestData(cls):
+        super().setUpTestData()
 
         cls._view_url = '/admin/election/keys'
-
-        cls.client.login(username='admin', password='root')
 
     def test_view_accepts_superusers(self):
         response = self.client.get(self._view_url)
@@ -259,12 +262,12 @@ class ElectionSettingsPubPrivKeysViewTest(BaseElectionSettingsViewTest):
 
     def test_view_but_with_votes_present(self):
         # Create the test non-superuser.
-        _batch = Batch.objects.create(year=2019)
+        _batch = Batch.objects.create(year=2020)
         _section = Section.objects.create(section_name='Emerald')
         _user = User.objects.create(
             username='juan',
-            batch=cls._batch,
-            section=cls._section
+            batch=_batch,
+            section=_section
         )
         _party = CandidateParty.objects.create(party_name='Awesome Party')
         _position = CandidatePosition.objects.create(
@@ -272,15 +275,15 @@ class ElectionSettingsPubPrivKeysViewTest(BaseElectionSettingsViewTest):
             position_level=0
         )
         _candidate = Candidate.objects.create(
-            user=cls._user,
-            party=cls._party,
-            position=cls._position
+            user=_user,
+            party=_party,
+            position=_position
         )
 
         # Create a dummy vote.
         _vote = Vote.objects.create(
-            user=cls._user,
-            candidate=cls._candidate,
+            user=_user,
+            candidate=_candidate,
             vote_cipher=json.dumps(dict())
         )
 

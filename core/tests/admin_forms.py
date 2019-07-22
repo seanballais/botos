@@ -10,19 +10,18 @@ from django.test import TestCase
 from core.forms.admin import (
     ElectionSettingsCurrentTemplateForm, ElectionSettingsElectionStateForm
 )
-from core.models (
+from core.models import (
     User, Batch, Section
 )
 from core.utils import AppSettings
 
 
-@abstractmethod
 class BaseAdminFormTest(ABC, TestCase):
     """
     Base test for all admin forms.
     """
     @classmethod
-    def setUpClass(cls):
+    def setUpTestData(cls):
         cls._batch = Batch.objects.create(year=2019)
         cls._section = Section.objects.create(section_name='Section')
         cls._admin_batch = Batch.objects.create(year=0)
@@ -33,7 +32,8 @@ class BaseAdminFormTest(ABC, TestCase):
             email='admin@admin.com',
             password='root',
             batch=cls._admin_batch,
-            section=cls._admin_section
+            section=cls._admin_section,
+            is_superuser=True
         )
 
 
@@ -46,8 +46,8 @@ class ElectionSettingsCurrentTemplateFormTest(BaseAdminFormTest):
     but with higher priority on the latter.
     """
     @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    def setUpTestData(cls):
+        super().setUpTestData()
 
     def test_valid_data(self):
         form = ElectionSettingsCurrentTemplateForm(
@@ -123,31 +123,27 @@ class ElectionSettingsCurrentTemplateFormTest(BaseAdminFormTest):
                 os.path.join(settings.BASE_DIR, 'botos/templates')
             )
 
-    def test_form_shows_correct_template_choices(self):
+    def test_form_skips_admin_folder(self):
         # Assume that we have the following fake templates:
         #    - yes-or-yes
         #    - nothing-at-all
         #    - pink-lemonade
         #
-        # The choices will be based on the list of folders immediately under
-        # the `botos/tempates/` folder. Names of files must not appear in the
-        # choices.
+        # The admin folder in the templates is not intended to be a template.
+        # Rather, it stores the static files of Django Admin. As such, we must
+        # skip it.
 
         # Mock the contents of the template directory.
-        with mock.patch('os.listdir') as mocked_listdir, \
-             mock.patch('os.isdir') as mocked_isdir:
+        with mock.patch('os.listdir') as mocked_listdir
             # Set up mocks.
             dir_contents = [
                 'default',
                 'nothing-at-all',
                 'pink-lemonade',
                 'yes-or-yes',
-                'file123',
-                'h3h3file',
-                'justanotherfile'
+                'admin'
             ]
             mocked_listdir.return_value = dir_contents
-            mocked_isdir.side_effect = lambda f: 'file' not in f
 
             # Now test.
             response = self.client.get('/admin/election')
@@ -161,7 +157,46 @@ class ElectionSettingsCurrentTemplateFormTest(BaseAdminFormTest):
             mocked_listdir.assert_called_with(
                 os.path.join(settings.BASE_DIR, 'botos/templates')
             )
-            mocked_isdir.assert_called_with(*dir_contents)
+
+    def test_form_shows_correct_template_choices(self):
+        # Assume that we have the following fake templates:
+        #    - yes-or-yes
+        #    - nothing-at-all
+        #    - pink-lemonade
+        #
+        # The choices will be based on the list of folders immediately under
+        # the `botos/tempates/` folder. Names of files must not appear in the
+        # choices.
+
+        # Mock the contents of the template directory.
+        with mock.patch('os.listdir') as mocked_listdir, \
+             mock.patch('os.path.isdir') as mocked_path_isdir:
+            # Set up mocks.
+            dir_contents = [
+                'default',
+                'nothing-at-all',
+                'pink-lemonade',
+                'yes-or-yes',
+                'file123',
+                'h3h3file',
+                'justanotherfile'
+            ]
+            mocked_listdir.return_value = dir_contents
+            mocked_path_isdir.side_effect = lambda f: 'file' not in f
+
+            # Now test.
+            response = self.client.get('/admin/election')
+            template_form_context = response.context['current_template_form']
+            self.assertEquals(
+                sorted(template_form_context.choices['template_name']),
+                [ 'default', 'nothing-at-all', 'pink-lemonade', 'yes-or-yes' ]
+            )
+
+            # Make sure the correct directory has been passed to os.listdir().
+            mocked_listdir.assert_called_with(
+                os.path.join(settings.BASE_DIR, 'botos/templates')
+            )
+            mocked_path_isdir.assert_called_with(*dir_contents)
 
 
 class ElectionSettingsElectionStateFormTest(BaseAdminFormTest):
@@ -171,8 +206,8 @@ class ElectionSettingsElectionStateFormTest(BaseAdminFormTest):
     This form must only contain a single radio box.
     """
     @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    def setUpTestData(cls):
+        super().setUpTestData()
 
     def test_valid_data(self):
         form = ElectionSettingsElectionStateForm(
@@ -216,8 +251,8 @@ class ElectionSettingsPubPrivKeysFormTest(BaseAdminFormTest):
     This form must only contain a single text field.
     """
     @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    def setUpTestData(cls):
+        super().setUpTestData()
 
     def test_button_is_active_if_there_are_no_votes(self):
         response = self.client.get('/admin/election')
@@ -225,12 +260,10 @@ class ElectionSettingsPubPrivKeysFormTest(BaseAdminFormTest):
 
     def test_button_is_disabled_if_votes_are_present(self):
         # Create the test non-superuser.
-        _batch = Batch.objects.create(year=2019)
-        _section = Section.objects.create(section_name='Emerald')
         _user = User.objects.create(
             username='juan',
-            batch=cls._batch,
-            section=cls._section
+            batch=self._batch,
+            section=self._section
         )
         _party = CandidateParty.objects.create(party_name='Awesome Party')
         _position = CandidatePosition.objects.create(
@@ -238,15 +271,15 @@ class ElectionSettingsPubPrivKeysFormTest(BaseAdminFormTest):
             position_level=0
         )
         _candidate = Candidate.objects.create(
-            user=cls._user,
-            party=cls._party,
-            position=cls._position
+            user=_user,
+            party=_party,
+            position=_position
         )
 
         # Create a dummy vote.
         _vote = Vote.objects.create(
-            user=cls._user,
-            candidate=cls._candidate,
+            user=_user,
+            candidate=_candidate,
             vote_cipher=json.dumps(dict())
         )
 

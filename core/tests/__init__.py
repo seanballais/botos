@@ -1,7 +1,13 @@
+from .admin_forms import (
+    ElectionSettingsCurrentTemplateFormTest,
+    ElectionSettingsElectionStateFormTest,
+    ElectionSettingsPubPrivKeysFormTest
+)
 from .admin_view import (
     ElectionSettingsViewTest, ElectionSettingsCurrentTemplateViewTest,
     ElectionSettingsElectionsStateViewTest, ElectionSettingsPubPrivKeysViewTest
 )
+from .context_processors import TemplateContextProcessorTest
 from .management import CreateSuperUserTest
 from .base_model import (
     BaseModelTest
@@ -16,10 +22,19 @@ from .user_models import (
 from .utils import AppSettingsTest
 
 __all__ = [
+    # User Models
     'UserModelTest', 'BatchModelTest', 'SectionModelTest',
     'Candidate', 'CandidateParty', 'CandidatePosition',
-    'AppSettingsTest', 'BaseModelTest', 'ElectionSettingsViewTest',
+    'AppSettingsTest', 'BaseModelTest',
+    # Admin Elections Settings Forms
+    'ElectionSettingsCurrentTemplateFormTest',
+    'ElectionSettingsElectionStateFormTest',
+    'ElectionSettingsPubPrivKeysFormTest',
+    # Admin Elections Settings Views
+    'ElectionSettingsViewTest',
     'ElectionSettingsCurrentTemplateViewTest',
     'ElectionSettingsElectionsStateViewTest',
-    'ElectionSettingsPubPrivKeysViewTest'
+    'ElectionSettingsPubPrivKeysViewTest',
+    # Context Processors
+    'TemplateContextProcessorTest'
 ]

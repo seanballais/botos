@@ -20,7 +20,9 @@ except ImportError:
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+)
 
 
 # Quick-start development settings - unsuitable for production
@@ -36,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'django.contrib.staticfiles',
     'django.contrib.messages',
     'django.contrib.admin'
 ]
@@ -63,6 +66,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'core.context_processors.get_template'
             ],
         },
     },
@@ -104,11 +108,11 @@ USE_L10N = True
 USE_TZ = True
 
 
-# No need for STATIC_URL nor STATIC_ROOT since we do not have site-wide static
-# files (e.g. images, like project logos, that is used across the site), and
-# the UI design is defined by custom templates. The inclusion of Botos-related
-# assets (e.g. logo) will be at the prerogative of the template creator.
-
+# Setting the STATIC_ROOT to the templates folder. Templates will have to use
+# `{% get_static_prefix %}{{ template }}`. This is to allow for user-set
+# templates.
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'botos/templates')
 
 # Media URL. Primarily the directory and URL for the user-uploaded files.
 MEDIA_URL = '/media/'
@@ -116,3 +120,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'botos/media')
 
 # Set custom user model.
 AUTH_USER_MODEL = 'core.User'
+
+# Set up login-specific information.
+LOGIN_REQUIRED_URL = '/'
+LOGIN_URL = '/'
