@@ -6,6 +6,14 @@ from core.views.admin.election_settings import (
 )
 
 urlpatterns = [
-    path('admin/election', ElectionSettingsIndexView.as_view()),
-    path('admin/election/template', CurrentTemplateView.as_view())
+    path(
+        'admin/election',
+        ElectionSettingsIndexView.as_view(),
+        name='admin-election-index'
+    ),
+    path(
+        'admin/election/template',
+        CurrentTemplateView.as_view(),
+        name='admin-election-template'
+    )
 ]

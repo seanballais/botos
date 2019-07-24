@@ -1,17 +1,23 @@
 from abc import ABC
+from distutils.dir_util import copy_tree
+import json
 import os
+import shutil
 from unittest import mock
 
 from bs4 import BeautifulSoup
 
 from django.conf import settings
+from django.template.backends.django import DjangoTemplates
+from django.template.base import Template
 from django.test import TestCase
+from django.urls import reverse
 
 from core.forms.admin import (
     ElectionSettingsCurrentTemplateForm, ElectionSettingsElectionStateForm
 )
 from core.models import (
-    User, Batch, Section
+    User, Batch, Section, Candidate, CandidateParty, CandidatePosition, Vote
 )
 from core.utils import AppSettings
 
@@ -45,6 +51,9 @@ class ElectionSettingsCurrentTemplateFormTest(BaseAdminFormTest):
     the text field must be 'default' or whatever is set in the app settings,
     but with higher priority on the latter.
     """
+    def setUp(self):
+        self.client.login(username='admin', password='root')
+
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
@@ -67,28 +76,49 @@ class ElectionSettingsCurrentTemplateFormTest(BaseAdminFormTest):
 
     def test_value_of_dropdown_field_if_no_template_set_yet(self):
         # Dropdown field should have a value of `default`.
-        response = self.client.get('/admin/election')
+        response = self.client.get(reverse('admin-election-index'))
+        form_fields = response.context['current_template_form'].fields
+        form_template_name = form_fields['template_name']
         self.assertEquals(
-            response.context['current_template_form'].initial['template_name'],
+            form_template_name.initial,
             'default'
         )
 
     def test_value_of_dropdown_field_if_template_set(self):
         AppSettings().set('template', 'yes-or-yes')
 
+        # We have to create an actual yes-or-yes template since I still do not
+        # know how to mock a template in Django. Let's just copy the default
+        # template and rename the copied folder as 'yes-or-yes'. This will
+        # remove the need to create a unique template and make this test
+        # simpler. We may do this since this test is just going to test whether
+        # or not the correct template is being rendered by Botos. This test
+        # does not require the creation of a *unique* template. Future
+        # revisions of Botos may choose to redo this in favour of mocking
+        # instead.
+        template_dir = os.path.join(settings.BASE_DIR, 'botos/templates')
+        default_template_dir = os.path.join(template_dir, 'default')
+        new_template_dir = os.path.join(template_dir, 'yes-or-yes')
+        copy_tree(default_template_dir, new_template_dir)
+
         # Dropdown field should have a value of `yes-or-yes`.
-        response = self.client.get('/admin/election')
-        self.assertEquals(
-            response.context['current_template_form'].initial['template_name'],
-            'yes-or-yes'
-        )
+        response = self.client.get(reverse('admin-election-index'))
+        form_fields = response.context['current_template_form'].fields
+        form_template_name = form_fields['template_name']
+        self.assertEquals(form_template_name.initial, 'yes-or-yes')
+
+        # And, of course, we better clean up the mess we did and delete the
+        # 'yes-or-yes' template we created.
+        shutil.rmtree(new_template_dir)
 
     def test_values_of_dropdown_field_if_you_only_have_default_template(self):
         # Dropdown field should only have an option of `default`.
-        response = self.client.get('/admin/election')
+        response = self.client.get(reverse('admin-election-index'))
+        form_fields = response.context['current_template_form'].fields
+        form_template_name = form_fields['template_name']
         self.assertEquals(
-            response.context['current_template_form'].choices['template_name'],
-            [ 'default' ]
+            form_template_name.choices,
+            [ ('default', 'default') ]
         )
 
     def test_values_of_dropdown_field_with_many_templates(self):
@@ -100,8 +130,11 @@ class ElectionSettingsCurrentTemplateFormTest(BaseAdminFormTest):
         # The choices will be based on the list of folders immediately under
         # the `botos/tempates/` folder.
 
+        template_dir = os.path.join(settings.BASE_DIR, 'botos/templates')
+
         # Making "physical" folders is a hassle, so let's mock them instead.
-        with mock.patch('os.listdir') as mocked_listdir:
+        with mock.patch('os.listdir') as mocked_listdir, \
+             mock.patch('os.path.isdir') as mocked_path_isdir:
             # Let's create the folders for the fake templates first.
             mocked_listdir.return_value = [
                 'default',
@@ -109,19 +142,36 @@ class ElectionSettingsCurrentTemplateFormTest(BaseAdminFormTest):
                 'pink-lemonade',
                 'yes-or-yes'
             ]
+            mocked_path_isdir.side_effect = lambda f: 'file' not in f
 
             # Now test.
-            response = self.client.get('/admin/election')
-            template_form_context = response.context['current_template_form']
+            response = self.client.get(reverse('admin-election-index'))
+            response = self.client.get(reverse('admin-election-index'))
+            form_fields = response.context['current_template_form'].fields
+            form_template_name = form_fields['template_name']
             self.assertEquals(
-                sorted(template_form_context.choices['template_name']),
-                [ 'default', 'nothing-at-all', 'pink-lemonade', 'yes-or-yes' ]
+                sorted(form_template_name.choices),
+                [
+                    ('default', 'default'),
+                    ('nothing-at-all', 'nothing-at-all'),
+                    ('pink-lemonade', 'pink-lemonade'),
+                    ('yes-or-yes', 'yes-or-yes')
+                ]
             )
 
             # Make sure the correct directory has been passed to os.listdir().
-            mocked_listdir.assert_called_with(
-                os.path.join(settings.BASE_DIR, 'botos/templates')
-            )
+            # Note that the Django uses os.listdir(). Since we mocked the
+            # aforementioned function, Django will be using the mocked version
+            # of the function. As a result, Django will cause the mocked
+            # os.listdir() to have additional mock calls (e.g. calls to
+            # somewhere in the Django admin folder). This is the reason why we
+            # are using assert_any_call() instead of assert_called_with().
+            # However, this is what I would consider an unstable mock since
+            # this mock can unintentionally and unknowingly alter Django's
+            # behaviour. As such, future revisions of this test must limit
+            # mocking of os.listdir() to just the form,
+            # ElectionSettingsCurrentTemplateForm.
+            mocked_listdir.assert_any_call(template_dir)
 
     def test_form_skips_admin_folder(self):
         # Assume that we have the following fake templates:
@@ -133,8 +183,11 @@ class ElectionSettingsCurrentTemplateFormTest(BaseAdminFormTest):
         # Rather, it stores the static files of Django Admin. As such, we must
         # skip it.
 
+        template_dir = os.path.join(settings.BASE_DIR, 'botos/templates')
+
         # Mock the contents of the template directory.
-        with mock.patch('os.listdir') as mocked_listdir
+        with mock.patch('os.listdir') as mocked_listdir, \
+             mock.patch('os.path.isdir') as mocked_path_isdir:
             # Set up mocks.
             dir_contents = [
                 'default',
@@ -144,19 +197,35 @@ class ElectionSettingsCurrentTemplateFormTest(BaseAdminFormTest):
                 'admin'
             ]
             mocked_listdir.return_value = dir_contents
+            mocked_path_isdir.side_effect = lambda f: 'file' not in f
 
             # Now test.
-            response = self.client.get('/admin/election')
-            template_form_context = response.context['current_template_form']
+            response = self.client.get(reverse('admin-election-index'))
+            form_fields = response.context['current_template_form'].fields
+            form_template_name = form_fields['template_name']
             self.assertEquals(
-                sorted(template_form_context.choices['template_name']),
-                [ 'default', 'nothing-at-all', 'pink-lemonade', 'yes-or-yes' ]
+                sorted(form_template_name.choices),
+                [
+                    ('default', 'default'),
+                    ('nothing-at-all', 'nothing-at-all'),
+                    ('pink-lemonade', 'pink-lemonade'),
+                    ('yes-or-yes', 'yes-or-yes')
+                ]
             )
 
             # Make sure the correct directory has been passed to os.listdir().
-            mocked_listdir.assert_called_with(
-                os.path.join(settings.BASE_DIR, 'botos/templates')
-            )
+            # Note that the Django uses os.listdir(). Since we mocked the
+            # aforementioned function, Django will be using the mocked version
+            # of the function. As a result, Django will cause the mocked
+            # os.listdir() to have additional mock calls (e.g. calls to
+            # somewhere in the Django admin folder). This is the reason why we
+            # are using assert_any_call() instead of assert_called_with().
+            # However, this is what I would consider an unstable mock since
+            # this mock can unintentionally and unknowingly alter Django's
+            # behaviour. As such, future revisions of this test must limit
+            # mocking of os.listdir() to just the form,
+            # ElectionSettingsCurrentTemplateForm.
+            mocked_listdir.assert_any_call(template_dir)
 
     def test_form_shows_correct_template_choices(self):
         # Assume that we have the following fake templates:
@@ -167,6 +236,8 @@ class ElectionSettingsCurrentTemplateFormTest(BaseAdminFormTest):
         # The choices will be based on the list of folders immediately under
         # the `botos/tempates/` folder. Names of files must not appear in the
         # choices.
+
+        template_dir = os.path.join(settings.BASE_DIR, 'botos/templates')
 
         # Mock the contents of the template directory.
         with mock.patch('os.listdir') as mocked_listdir, \
@@ -185,18 +256,40 @@ class ElectionSettingsCurrentTemplateFormTest(BaseAdminFormTest):
             mocked_path_isdir.side_effect = lambda f: 'file' not in f
 
             # Now test.
-            response = self.client.get('/admin/election')
-            template_form_context = response.context['current_template_form']
+            response = self.client.get(reverse('admin-election-index'))
+            form_fields = response.context['current_template_form'].fields
+            form_template_name = form_fields['template_name']
             self.assertEquals(
-                sorted(template_form_context.choices['template_name']),
-                [ 'default', 'nothing-at-all', 'pink-lemonade', 'yes-or-yes' ]
+                sorted(form_template_name.choices),
+                [
+                    ('default', 'default'),
+                    ('nothing-at-all', 'nothing-at-all'),
+                    ('pink-lemonade', 'pink-lemonade'),
+                    ('yes-or-yes', 'yes-or-yes')
+                ]
             )
 
             # Make sure the correct directory has been passed to os.listdir().
-            mocked_listdir.assert_called_with(
-                os.path.join(settings.BASE_DIR, 'botos/templates')
-            )
-            mocked_path_isdir.assert_called_with(*dir_contents)
+            # Note that the Django uses os.listdir(). Since we mocked the
+            # aforementioned function, Django will be using the mocked version
+            # of the function. As a result, Django will cause the mocked
+            # os.listdir() to have additional mock calls (e.g. calls to
+            # somewhere in the Django admin folder). This is the reason why we
+            # are using assert_any_call() instead of assert_called_with().
+            # However, this is what I would consider an unstable mock since
+            # this mock can unintentionally and unknowingly alter Django's
+            # behaviour. As such, future revisions of this test must limit
+            # mocking of os.listdir() to just the form,
+            # ElectionSettingsCurrentTemplateForm.
+            mocked_listdir.assert_any_call(template_dir)
+
+            # We're using assert_any_call() for the same reasons as above.
+            # It should be noted Django will also use the mocked
+            # os.path.isdir() instead of the actuall os.path.isdir().
+            for dir_content in dir_contents:
+                mocked_path_isdir.assert_any_call(
+                    os.path.join(template_dir, dir_content)
+                )
 
 
 class ElectionSettingsElectionStateFormTest(BaseAdminFormTest):
@@ -205,6 +298,9 @@ class ElectionSettingsElectionStateFormTest(BaseAdminFormTest):
 
     This form must only contain a single radio box.
     """
+    def setUp(self):
+        self.client.login(username='admin', password='root')
+
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
@@ -227,7 +323,7 @@ class ElectionSettingsElectionStateFormTest(BaseAdminFormTest):
 
     def test_value_of_radio_box_if_state_have_not_been_set_yet(self):
         # State should default to closed.
-        response = self.client.get('/admin/election')
+        response = self.client.get(reverse('admin-election-index'))
         self.assertEquals(
             response.context['current_election_state_form'].initial['state'],
             'closed'
@@ -237,7 +333,7 @@ class ElectionSettingsElectionStateFormTest(BaseAdminFormTest):
         AppSettings().set('election_state', 'open')
 
         # Dropdown field should have a value of `yes-or-yes`.
-        response = self.client.get('/admin/election')
+        response = self.client.get(reverse('admin-election-index'))
         self.assertEquals(
             response.context['current_election_state_form'].initial['state'],
             'open'
@@ -250,12 +346,15 @@ class ElectionSettingsPubPrivKeysFormTest(BaseAdminFormTest):
 
     This form must only contain a single text field.
     """
+    def setUp(self):
+        self.client.login(username='admin', password='root')
+
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
 
     def test_button_is_active_if_there_are_no_votes(self):
-        response = self.client.get('/admin/election')
+        response = self.client.get(reverse('admin-election-index'))
         self.assertTrue(self._is_form_button_enabled(response.content))
 
     def test_button_is_disabled_if_votes_are_present(self):
@@ -284,19 +383,19 @@ class ElectionSettingsPubPrivKeysFormTest(BaseAdminFormTest):
         )
 
         # Now test.
-        response = self.client.get('/admin/election')
+        response = self.client.get(reverse('admin-election-index'))
         self.assertFalse(self._is_form_button_enabled(response.content))
 
     def test_button_is_active_if_elections_are_closed(self):
         AppSettings().set('election_state', 'closed')
 
-        response = self.client.get('/admin/election')
+        response = self.client.get(reverse('admin-election-index'))
         self.assertTrue(self._is_form_button_enabled(response.content))
 
     def test_button_is_disabled_if_elections_are_open(self):
         AppSettings().set('election_state', 'open')
 
-        response = self.client.get('/admin/election')
+        response = self.client.get(reverse('admin-election-index'))
         self.assertFalse(self._is_form_button_enabled(response.content))
 
     def _is_form_button_enabled(self, view_html):

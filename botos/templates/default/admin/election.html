@@ -1,5 +1,10 @@
-{% extends template|add:'base.html' %}
+{% extends template|add:'/base.html' %}
 
 {% block content %}
-<h1>Hiii!</h1>
+<h2>Current Template</h2>
+<form action="/admin/election/template" method="post">
+    {% csrf_token %}
+    {{ current_template_form }}
+    <input type="submit" value="Save">
+</form>
 {% endblock %}

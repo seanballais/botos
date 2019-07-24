@@ -1,20 +1,34 @@
 from django.contrib import messages
-from django.contrib.auth.decorators import (
-    login_required, user_passes_test
-)
 from django.utils.decorators import method_decorator
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.views import View
 from django.views.generic.base import TemplateView
 
+from core.decorators import (
+    login_required, user_passes_test
+)
 from core.forms.admin import (
     ElectionSettingsCurrentTemplateForm, ElectionSettingsElectionStateForm
 )
 from core.utils import AppSettings
 
 
-@method_decorator(login_required, name='dispatch')
-@method_decorator(user_passes_test(lambda u: u.is_superuser), name='dispatch')
+@method_decorator(
+    login_required(
+        login_url='/admin/login',
+        next='/admin/election'
+    ),
+    name='dispatch',
+)
+@method_decorator(
+    user_passes_test(
+        lambda u: u.is_superuser,
+        login_url='/admin/login',
+        next='/admin/election'
+    ),
+    name='dispatch',
+)
 class ElectionSettingsIndexView(TemplateView):
     """
     This is the index view for the election settings. Only superusers are
@@ -26,9 +40,30 @@ class ElectionSettingsIndexView(TemplateView):
     _template_dir = AppSettings().get('template', 'default')
     template_name = '{}/admin/election.html'.format(_template_dir)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
-@method_decorator(login_required, name='dispatch')
-@method_decorator(user_passes_test(lambda u: u.is_superuser), name='dispatch')
+        current_template_form = ElectionSettingsCurrentTemplateForm()
+        context['current_template_form'] = current_template_form
+
+        return context
+
+
+@method_decorator(
+    login_required(
+        login_url='/admin/login',
+        next='/admin/election'
+    ),
+    name='dispatch',
+)
+@method_decorator(
+    user_passes_test(
+        lambda u: u.is_superuser,
+        login_url='/admin/login',
+        next='/admin/election'
+    ),
+    name='dispatch',
+)
 class CurrentTemplateView(View):
     """
     This view changes the current template being used. This will only accept

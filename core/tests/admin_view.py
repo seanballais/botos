@@ -3,6 +3,7 @@ from abc import (
 )
 
 from django.test import TestCase
+from django.urls import reverse
 
 from core.models import (
     User, Batch, Section
@@ -35,10 +36,16 @@ class BaseElectionSettingsViewTest(ABC, TestCase):
 
     def test_view_denies_anonymous_users(self):
         response = self.client.get(self._view_url, follow=True)
-        self.assertRedirects(response, '/admin')
+        self.assertRedirects(
+            response,
+            '/admin/login/?next=%2Fadmin%2Felection'
+        )
 
         response = self.client.post(self._view_url, follow=True)
-        self.assertRedirects(response, '/admin')
+        self.assertRedirects(
+            response,
+            '/admin/login/?next=%2Fadmin%2Felection'
+        )
 
     def test_view_denies_non_superusers(self):
         User.objects.create_user(
@@ -52,10 +59,16 @@ class BaseElectionSettingsViewTest(ABC, TestCase):
         self.client.login(username='juan', password='123')
 
         response = self.client.get(self._view_url, follow=True)
-        self.assertRedirects(response, '/admin')
+        self.assertRedirects(
+            response,
+            '/admin/login/?next=%2Fadmin%2Felection'
+        )
 
         response = self.client.post(self._view_url, follow=True)
-        self.assertRedirects(response, '/admin')
+        self.assertRedirects(
+            response,
+            '/admin/login/?next=%2Fadmin%2Felection'
+        )
 
     @abstractmethod
     def test_view_accepts_superusers(self):
@@ -95,7 +108,10 @@ class ElectionSettingsViewTest(BaseElectionSettingsViewTest):
     def test_view_accepts_superusers(self):
         self.client.login(username='admin', password='root')
 
-        response = self.client.get('/admin/election', follow=True)
+        response = self.client.get(
+            reverse('admin-election-index'),
+            follow=True
+        )
         self.assertEquals(response.status_code, 200)
         self.assertTemplateUsed(
             response,
@@ -103,6 +119,14 @@ class ElectionSettingsViewTest(BaseElectionSettingsViewTest):
                                            # since we did not set the template
                                            # in this test.
         )
+
+
+# MBUI (Might Be Useful Info):
+# (Jul. 23, 2019)
+#     The classes below used to implement setUp(). The setUp() code logs in
+#     an admin account in the test client. However, this is a bad idea since
+#     the client will also log in with an admin account in tests that should
+#     not have an admin logged in, including the tests in the base test class.
 
 
 class ElectionSettingsCurrentTemplateViewTest(BaseElectionSettingsViewTest):
@@ -113,27 +137,27 @@ class ElectionSettingsCurrentTemplateViewTest(BaseElectionSettingsViewTest):
     POST requests. GET requests from superusers will result in a redirection
     to `/admin/election`, while non-superusers and anonymoous users to `/`.
     """
-    def setUp(self):
-        self.client.login(username='admin', password='root')
-
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
 
-        cls._view_url = '/admin/election/template'
+        cls._view_url = reverse('admin-election-template')
 
     def test_view_accepts_superusers(self):
+        self.client.login(username='admin', password='root')
         response = self.client.get(self._view_url)
-        self.assertRedirects(response, '/admin/election')
+        self.assertRedirects(response, reverse('admin-election-index'))
 
     def test_view_properly_redirects_get_requests(self):
+        self.client.login(username='admin', password='root')
         response = self.client.get(self._view_url)
-        self.assertRedirects(response, '/admin/election')
+        self.assertRedirects(response, reverse('admin-election-index'))
 
     def test_view_with_invalid_post_requests(self):
         AppSettings().set('template', 'default')
 
         # Return an error message to the view we'll be redirected to.
+        self.client.login(username='admin', password='root')
         response = self.client.post(self._view_url, {})
 
         self.assertTrue(
@@ -146,6 +170,7 @@ class ElectionSettingsCurrentTemplateViewTest(BaseElectionSettingsViewTest):
         AppSettings().set('template', 'default')
 
         # Return a success message to the view we'll be redirected to.
+        self.client.login(username='admin', password='root')
         response = self.client.post(
             self._view_url,
             { 'template_name': 'my-little-pony' }
@@ -170,27 +195,27 @@ class ElectionSettingsElectionsStateViewTest(BaseElectionSettingsViewTest):
 
     This view must only accept a value that is either a True or False.
     """
-    def setUp(self):
-        self.client.login(username='admin', password='root')
-
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
 
-        cls._view_url = '/admin/election/state'
+        cls._view_url = reverse('admin-election-state')
 
     def test_view_accepts_superusers(self):
+        self.client.login(username='admin', password='root')
         response = self.client.get(self._view_url)
-        self.assertRedirects(response, '/admin/election')
+        self.assertRedirects(response, reverse('admin-election-index'))
 
     def test_view_properly_redirects_get_requests(self):
+        self.client.login(username='admin', password='root')
         response = self.client.get(self._view_url)
-        self.assertRedirects(response, '/admin/election')
+        self.assertRedirects(response, reverse('admin-election-index'))
 
     def test_view_with_invalid_post_requests(self):
         AppSettings().set('election_state', 'open')
 
         # Return an error message to the view we'll be redirected to.
+        self.client.login(username='admin', password='root')
         response = self.client.post(self._view_url, {})
 
         self.assertTrue(
@@ -203,6 +228,7 @@ class ElectionSettingsElectionsStateViewTest(BaseElectionSettingsViewTest):
         AppSettings().set('election_state', 'open')
 
         # Return a success message to the view we'll be redirected to.
+        self.client.login(username='admin', password='root')
         response = self.client.post(
             self._view_url,
             { 'state': 'closed' }
@@ -238,25 +264,29 @@ class ElectionSettingsPubPrivKeysViewTest(BaseElectionSettingsViewTest):
     def setUpTestData(cls):
         super().setUpTestData()
 
-        cls._view_url = '/admin/election/keys'
+        cls._view_url = reverse('admin-election-keys')
 
     def test_view_accepts_superusers(self):
+        self.client.login(username='admin', password='root')
         response = self.client.get(self._view_url)
-        self.assertRedirects(response, '/admin/election')
+        self.assertRedirects(response, reverse('admin-election-index'))
 
     def test_view_properly_redirects_get_requests(self):
+        self.client.login(username='admin', password='root')
         response = self.client.get(self._view_url)
-        self.assertRedirects(response, '/admin/election')
+        self.assertRedirects(response, reverse('admin-election-index'))
 
     def test_view_disregards_params_in_post_requests(self):
         # View should still perform its task even if there are parameters in
         # the post request.
+        self.client.login(username='admin', password='root')
         self.client.post(self._view_url, { 'this is a': 'param' })
         self.assertIsNotNone(AppSettings().get('public_election_key'))
         self.assertIsNotNone(AppSettings().get('private_election_key'))
 
     def test_view_with_empty_params_in_post_requests(self):
         self.client.post(self._view_url, {})
+        self.client.login(username='admin', password='root')
         self.assertIsNotNone(AppSettings().get('public_election_key'))
         self.assertIsNotNone(AppSettings().get('private_election_key'))
 
@@ -292,6 +322,7 @@ class ElectionSettingsPubPrivKeysViewTest(BaseElectionSettingsViewTest):
         AppSettings().set('public_election_key', 'am a barbie girl')
         AppSettings().set('private_election_key', 'in a barbie world')
 
+        self.client.login(username='admin', password='root')
         self.client.post(self._view_url, {})
 
         self.assertEquals(
@@ -313,6 +344,7 @@ class ElectionSettingsPubPrivKeysViewTest(BaseElectionSettingsViewTest):
         AppSettings().set('public_election_key', 'all we hear is')
         AppSettings().set('private_election_key', 'radio gaga')
 
+        self.client.login(username='admin', password='root')
         self.client.post(self._view_url, {})
 
         self.assertNotEquals(
@@ -335,6 +367,7 @@ class ElectionSettingsPubPrivKeysViewTest(BaseElectionSettingsViewTest):
         AppSettings().set('public_election_key', 'break break break')
         AppSettings().set('private_election_key', 'breakthrough')
 
+        self.client.login(username='admin', password='root')
         self.client.post(self._view_url, {})
 
         self.assertEquals(
@@ -357,6 +390,7 @@ class ElectionSettingsPubPrivKeysViewTest(BaseElectionSettingsViewTest):
         AppSettings().set('public_election_key', 'years from now, i be like')
         AppSettings().set('private_election_key', 'wtf was i thinking')
 
+        self.client.login(username='admin', password='root')
         self.client.post(self._view_url, {})
 
         self.assertNotEquals(
