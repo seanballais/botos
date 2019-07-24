@@ -46,6 +46,9 @@ class ElectionSettingsIndexView(TemplateView):
         current_template_form = ElectionSettingsCurrentTemplateForm()
         context['current_template_form'] = current_template_form
 
+        current_election_state_form = ElectionSettingsElectionStateForm()
+        context['current_election_state_form'] = current_election_state_form
+
         return context
 
 
@@ -76,10 +79,11 @@ class CurrentTemplateView(View):
         return redirect('/admin/election')
 
     def post(self, request):
-        # Only accept POST requests but we must validate first.
+        # Let's validate the data we got first.
         form = ElectionSettingsCurrentTemplateForm(request.POST)
         if form.is_valid():
             # Okay, good data. Process the data, then send the success message.
+            AppSettings.set('template', request.POST['template_name'])
             messages.success(request, 'Current template changed successfully.')
         else:
             # Oh no, bad data. Do not process the data, and send an error
@@ -87,6 +91,51 @@ class CurrentTemplateView(View):
             messages.error(
                 request,
                 'Template field must not be empty nor have invalid data.'
+            )
+
+        return redirect('/admin/election')
+
+
+@method_decorator(
+    login_required(
+        login_url='/admin/login',
+        next='/admin/election'
+    ),
+    name='dispatch',
+)
+@method_decorator(
+    user_passes_test(
+        lambda u: u.is_superuser,
+        login_url='/admin/login',
+        next='/admin/election'
+    ),
+    name='dispatch',
+)
+class ElectionStateView(View):
+    """
+    This view changes the state of the election from closed to open and vice
+    versa. This will only accept POST requests. GET requests from superusers
+    will result in a redirection to `/admin/election`, while non-superusers
+    and anonymoous users to `/`.
+
+    View URL: `/admin/election/state`
+    """
+    def get(self, request):
+        return redirect('/admin/election')
+
+    def post(self, request):
+        # Let's validate the data we got first.
+        form = ElectionSettingsElectionStateForm(request.POST)
+        if form.is_valid():
+            # Okay, good data. Now, process the data, then a success message.
+            AppSettings().set('election_state', request.POST['state'])
+            messages.success(request, 'Election state changed successfully.')
+        else:
+            # Oh no, bad data! Abort mission. Do not process the data. Just
+            # send an error message back.
+            messages.error(
+                request,
+                'You attempted to change the election state with invalid data.'
             )
 
         return redirect('/admin/election')

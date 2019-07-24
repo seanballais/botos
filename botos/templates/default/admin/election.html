@@ -1,10 +1,27 @@
 {% extends template|add:'/base.html' %}
 
 {% block content %}
+{% if messages %}
+<div class="information">
+    <ul class="messages">
+        {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
 <h2>Current Template</h2>
 <form action="/admin/election/template" method="post">
     {% csrf_token %}
     {{ current_template_form }}
+    <input type="submit" value="Save">
+</form>
+
+<h2>Election State</h2>
+<form action="/admin/election/state" method="post">
+    {% csrf_token %}
+    {{ current_election_state_form }}
     <input type="submit" value="Save">
 </form>
 {% endblock %}

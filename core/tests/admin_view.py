@@ -1,6 +1,8 @@
 from abc import (
     ABC, abstractmethod
 )
+from distutils.dir_util import copy_tree
+import shutil
 
 from django.test import TestCase
 from django.urls import reverse
@@ -156,30 +158,52 @@ class ElectionSettingsCurrentTemplateViewTest(BaseElectionSettingsViewTest):
     def test_view_with_invalid_post_requests(self):
         AppSettings().set('template', 'default')
 
-        # Return an error message to the view we'll be redirected to.
+        # Must return a success message to the view we'll be redirected to.
         self.client.login(username='admin', password='root')
-        response = self.client.post(self._view_url, {})
+        response = self.client.post(self._view_url, {}, follow=True)
+        response_messages = list(response.context['messages'])
 
-        self.assertTrue(
-            'Template field must not be empty '
-            + 'nor have invalid data.' in str(response.content)
+        self.assertEquals(
+            str(response_messages[0]),
+            'Template field must not be empty nor have invalid data.'
         )
-        self.assertEquals(AppSettings.get('template'), 'default')
+        self.assertEquals(AppSettings().get('template'), 'default')
 
     def test_view_with_valid_post_requests(self):
         AppSettings().set('template', 'default')
 
-        # Return a success message to the view we'll be redirected to.
+        # We have to create an actual my-little-pony template since I still do
+        # not know how to mock a template in Django. Let's just copy the
+        # default template and rename the copied folder as 'yes-or-yes'. This
+        # will remove the need to create a unique template and make this test
+        # simpler. We may do this since this test is just going to test whether
+        # or not the correct template is being rendered by Botos. This test
+        # does not require the creation of a *unique* template. Future
+        # revisions of Botos may choose to redo this in favour of mocking
+        # instead.
+        template_dir = os.path.join(settings.BASE_DIR, 'botos/templates')
+        default_template_dir = os.path.join(template_dir, 'default')
+        new_template_dir = os.path.join(template_dir, 'my-little-pony')
+        copy_tree(default_template_dir, new_template_dir)
+
+        # Must return a success message to the view we'll be redirected to.
         self.client.login(username='admin', password='root')
         response = self.client.post(
             self._view_url,
-            { 'template_name': 'my-little-pony' }
+            { 'template_name': 'my-little-pony' },
+            follow=True
         )
+        response_messages = list(response.context['messages'])
 
-        self.assertTrue(
-            'Current template changed successfully.' in str(response.content)
+        self.assertEquals(
+            str(response_messages[0]),
+            'Current template changed successfully.'
         )
-        self.assertEquals(AppSettings.get('template'), 'my-little-pony')
+        self.assertEquals(AppSettings().get('template'), 'my-little-pony')
+
+        # And, of course, we better clean up the mess we did and delete the
+        # 'yes-or-yes' template we created.
+        shutil.rmtree(new_template_dir)
 
 
 class ElectionSettingsElectionsStateViewTest(BaseElectionSettingsViewTest):
@@ -214,30 +238,34 @@ class ElectionSettingsElectionsStateViewTest(BaseElectionSettingsViewTest):
     def test_view_with_invalid_post_requests(self):
         AppSettings().set('election_state', 'open')
 
-        # Return an error message to the view we'll be redirected to.
+        # Must return a success message to the view we'll be redirected to.
         self.client.login(username='admin', password='root')
-        response = self.client.post(self._view_url, {})
+        response = self.client.post(self._view_url, {}, follow=True)
+        response_messages = list(response.context['messages'])
 
-        self.assertTrue(
-            'You attempted to change the '
-            + 'election state with invalid data.' in str(response.content)
+        self.assertEquals(
+            str(response_messages[0]),
+            'You attempted to change the election state with invalid data.'
         )
         self.assertEquals(AppSettings().get('election_state'), 'open')
 
     def test_view_with_valid_post_requests(self):
         AppSettings().set('election_state', 'open')
 
-        # Return a success message to the view we'll be redirected to.
+        # Must return a success message to the view we'll be redirected to.
         self.client.login(username='admin', password='root')
         response = self.client.post(
             self._view_url,
-            { 'state': 'closed' }
+            { 'state': 'closed' },
+            follow=True
         )
+        response_messages = list(response.context['messages'])
 
-        self.assertTrue(
-            'Election state changed successfully.' in str(response.content)
+        self.assertEquals(
+            str(response_messages[0]),
+            'Election state changed successfully.'
         )
-        self.assertEquals(AppSettings().get('template'), 'closed')
+        self.assertEquals(AppSettings().get('election_state'), 'closed')
 
 
 class ElectionSettingsPubPrivKeysViewTest(BaseElectionSettingsViewTest):
@@ -275,6 +303,17 @@ class ElectionSettingsPubPrivKeysViewTest(BaseElectionSettingsViewTest):
         self.client.login(username='admin', password='root')
         response = self.client.get(self._view_url)
         self.assertRedirects(response, reverse('admin-election-index'))
+
+    def test_view_messages_from_post_request(self):
+        # Must return a success message to the view we'll be redirected to.
+        self.client.login(username='admin', password='root')
+        response = self.client.post(self._view_url, {}, follow=True)
+        response_messages = list(response.context['messages'])
+
+        self.assertEquals(
+            str(response_messages[0]),
+            'New public and private election keys created successfully.'
+        )
 
     def test_view_disregards_params_in_post_requests(self):
         # View should still perform its task even if there are parameters in

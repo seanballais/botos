@@ -324,20 +324,18 @@ class ElectionSettingsElectionStateFormTest(BaseAdminFormTest):
     def test_value_of_radio_box_if_state_have_not_been_set_yet(self):
         # State should default to closed.
         response = self.client.get(reverse('admin-election-index'))
-        self.assertEquals(
-            response.context['current_election_state_form'].initial['state'],
-            'closed'
-        )
+        form_fields = response.context['current_election_state_form'].fields
+        form_state = form_fields['state']
+        self.assertEquals(form_state.initial, 'closed')
 
     def test_value_of_radio_box_if_state_have_been_set(self):
         AppSettings().set('election_state', 'open')
 
         # Dropdown field should have a value of `yes-or-yes`.
         response = self.client.get(reverse('admin-election-index'))
-        self.assertEquals(
-            response.context['current_election_state_form'].initial['state'],
-            'open'
-        )
+        form_fields = response.context['current_election_state_form'].fields
+        form_state = form_fields['state']
+        self.assertEquals(form_state.initial, 'open')
 
 
 class ElectionSettingsPubPrivKeysFormTest(BaseAdminFormTest):

@@ -36,12 +36,16 @@ class ElectionSettingsCurrentTemplateForm(forms.Form):
 
 class ElectionSettingsElectionStateForm(forms.Form):
     """
-    Form for toggling between the open and close state of the election.
+    Form for toggling between the open and close state of the election. The
+    elections are closed by default.
     """
-    state = forms.ChoiceField(
-        choices=[
-            ('open', 'Open'),
-            ('closed', 'Closed')
-        ],
-        widget=forms.RadioSelect
-    )
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['state'] = forms.ChoiceField(
+            choices=[
+                ('open', 'Open'),
+                ('closed', 'Closed')
+            ],
+            widget=forms.RadioSelect,
+            initial=AppSettings().get('election_state', 'closed')
+        )

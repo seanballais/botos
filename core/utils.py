@@ -1,5 +1,3 @@
-from django.db import IntegrityError
-
 from core.models import Setting
 
 
@@ -46,13 +44,30 @@ class AppSettings(object):
         if value is not None:
             value = str(value)
 
+        # It is unlikely that a write operation will occur when there will
+        # be a lot of read operations. Thus, we don't do the following
+        # operations in a transaction.
+        #
+        # Used to do the following code with:
+        # try:
+        #     Setting.objects.create(key=key, value=value)
+        # except IntegrityError, UniqueViolation (the psycopg2 exception):
+        #     setting = Setting.objects.get(key=key)
+        #     setting.value = value
+        #     setting.save()
+        #
+        # However, those two exceptions cannot be captured here, even though
+        # it looks like the exceptions are raised here. As such, I switched
+        # the code to the one below. In the future, we might want to
+        # investigate the incident and find out the reasons why the
+        # aforementioned exceptions are not being captured.
         try:
-            Setting.objects.create(key=key, value=value)
-        except IntegrityError:
-            # This means that the unique constraint of `key` has been violated.
             setting = Setting.objects.get(key=key)
+        except Setting.DoesNotExist:
+            Setting.objects.create(key=key, value=value)
+        else:
             setting.value = value
-            setting.save()
+            setting.save()          
 
     def get(self, key, default=None):
         """
