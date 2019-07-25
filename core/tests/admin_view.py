@@ -2,13 +2,16 @@ from abc import (
     ABC, abstractmethod
 )
 from distutils.dir_util import copy_tree
+import json
+import os
 import shutil
 
+from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
 
 from core.models import (
-    User, Batch, Section
+    User, Batch, Section, Candidate, CandidateParty, CandidatePosition, Vote
 )
 from core.utils import AppSettings
 
@@ -284,10 +287,7 @@ class ElectionSettingsPubPrivKeysViewTest(BaseElectionSettingsViewTest):
     decrypt votes. However, if there are votes already or the elections are
     open, then calling this view will just simply send back a message that the
     operation cannot be performed due to the aformentioned conditions.
-    """
-    def setUp(self):
-        self.client.login(username='admin', password='root')
-    
+    """    
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
@@ -312,7 +312,7 @@ class ElectionSettingsPubPrivKeysViewTest(BaseElectionSettingsViewTest):
 
         self.assertEquals(
             str(response_messages[0]),
-            'New public and private election keys created successfully.'
+            'New public and private election keys generated successfully.'
         )
 
     def test_view_disregards_params_in_post_requests(self):
@@ -324,8 +324,8 @@ class ElectionSettingsPubPrivKeysViewTest(BaseElectionSettingsViewTest):
         self.assertIsNotNone(AppSettings().get('private_election_key'))
 
     def test_view_with_empty_params_in_post_requests(self):
-        self.client.post(self._view_url, {})
         self.client.login(username='admin', password='root')
+        self.client.post(self._view_url, {})
         self.assertIsNotNone(AppSettings().get('public_election_key'))
         self.assertIsNotNone(AppSettings().get('private_election_key'))
 
@@ -362,19 +362,22 @@ class ElectionSettingsPubPrivKeysViewTest(BaseElectionSettingsViewTest):
         AppSettings().set('private_election_key', 'in a barbie world')
 
         self.client.login(username='admin', password='root')
-        self.client.post(self._view_url, {})
+        response = self.client.post(self._view_url, {}, follow=True)
+        response_messages = list(response.context['messages'])
 
         self.assertEquals(
-            AppSettings().get(
-                'public_election_key',
-                'am a barbie girl'
-            )
+            str(response_messages[0]),
+            'Cannot generate public and private election keys since'
+            + ' elections are open or votes have already been cast.'
+        )
+
+        self.assertEquals(
+            AppSettings().get('public_election_key'),
+            'am a barbie girl'
         )
         self.assertEquals(
-            AppSettings().get(
-                'private_election_key',
-                'in a barbie world'
-            )
+            AppSettings().get('private_election_key'),
+            'in a barbie world'
         )
 
     def test_view_but_with_votes_not_present(self):
@@ -387,22 +390,18 @@ class ElectionSettingsPubPrivKeysViewTest(BaseElectionSettingsViewTest):
         self.client.post(self._view_url, {})
 
         self.assertNotEquals(
-            AppSettings().get(
-                'public_election_key',
-                'all we hear is'
-            )
+            AppSettings().get('public_election_key'),
+            'all we hear is'
         )
         self.assertNotEquals(
-            AppSettings().get(
-                'private_election_key',
-                'radio gaga'
-            )
+            AppSettings().get('private_election_key'),
+            'radio gaga'
         )
 
     def test_view_but_with_elections_open(self):
         # public_election_key`and`private_election_key`must not change,
         # since the elections are open.
-        AppSettings().set('is_elections_open', True)
+        AppSettings().set('election_state', 'open')
         AppSettings().set('public_election_key', 'break break break')
         AppSettings().set('private_election_key', 'breakthrough')
 
@@ -410,22 +409,18 @@ class ElectionSettingsPubPrivKeysViewTest(BaseElectionSettingsViewTest):
         self.client.post(self._view_url, {})
 
         self.assertEquals(
-            AppSettings().get(
-                'public_election_key',
-                'break break break'
-            )
+            AppSettings().get('public_election_key'),
+            'break break break'
         )
         self.assertEquals(
-            AppSettings().get(
-                'private_election_key',
-                'breakthrough'
-            )
+            AppSettings().get('private_election_key'),
+            'breakthrough'
         )
 
     def test_view_but_with_elections_closed(self):
         # public_election_key`and`private_election_key`must change,
         # since the elections are closed.
-        AppSettings().set('is_elections_open', False)
+        AppSettings().set('election_state', 'closed')
         AppSettings().set('public_election_key', 'years from now, i be like')
         AppSettings().set('private_election_key', 'wtf was i thinking')
 
@@ -433,14 +428,10 @@ class ElectionSettingsPubPrivKeysViewTest(BaseElectionSettingsViewTest):
         self.client.post(self._view_url, {})
 
         self.assertNotEquals(
-            AppSettings().get(
-                'public_election_key',
-                'years from now, i be like'
-            )
+            AppSettings().get('public_election_key'),
+            'years from now, i be like'
         )
         self.assertNotEquals(
-            AppSettings().get(
-                'private_election_key',
-                'wtf was i thinking'
-            )
+            AppSettings().get('private_election_key'),
+            'wtf was i thinking'
         )

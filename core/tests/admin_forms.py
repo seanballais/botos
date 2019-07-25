@@ -322,7 +322,7 @@ class ElectionSettingsElectionStateFormTest(BaseAdminFormTest):
         self.assertFalse(form.is_valid())
 
     def test_value_of_radio_box_if_state_have_not_been_set_yet(self):
-        # State should default to closed.
+        # State should default to "closed".
         response = self.client.get(reverse('admin-election-index'))
         form_fields = response.context['current_election_state_form'].fields
         form_state = form_fields['state']
@@ -353,7 +353,7 @@ class ElectionSettingsPubPrivKeysFormTest(BaseAdminFormTest):
 
     def test_button_is_active_if_there_are_no_votes(self):
         response = self.client.get(reverse('admin-election-index'))
-        self.assertTrue(self._is_form_button_enabled(response.content))
+        self.assertTrue(self._is_form_button_enabled(str(response.content)))
 
     def test_button_is_disabled_if_votes_are_present(self):
         # Create the test non-superuser.
@@ -382,24 +382,24 @@ class ElectionSettingsPubPrivKeysFormTest(BaseAdminFormTest):
 
         # Now test.
         response = self.client.get(reverse('admin-election-index'))
-        self.assertFalse(self._is_form_button_enabled(response.content))
+        self.assertFalse(self._is_form_button_enabled(str(response.content)))
 
     def test_button_is_active_if_elections_are_closed(self):
         AppSettings().set('election_state', 'closed')
 
         response = self.client.get(reverse('admin-election-index'))
-        self.assertTrue(self._is_form_button_enabled(response.content))
+        self.assertTrue(self._is_form_button_enabled(str(response.content)))
 
     def test_button_is_disabled_if_elections_are_open(self):
         AppSettings().set('election_state', 'open')
 
         response = self.client.get(reverse('admin-election-index'))
-        self.assertFalse(self._is_form_button_enabled(response.content))
+        self.assertFalse(self._is_form_button_enabled(str(response.content)))
 
     def _is_form_button_enabled(self, view_html):
         view_html_soup = BeautifulSoup(view_html, 'html.parser')
         form_button = view_html_soup.find('form', id='pub-priv-key') \
-                                    .find('button', type='submit')
+                                    .find('input', type='submit')
 
         # Sure, we can just check if "disabled" is inside the HTML string of
         # form_button. However, the output would be incorrect if the button is

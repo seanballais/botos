@@ -2,6 +2,7 @@ from django.urls import path
 
 from core.views.admin.election_settings import (
     CurrentTemplateView,
+    ElectionPubPrivKeysView,
     ElectionSettingsIndexView,
     ElectionStateView
 )
@@ -21,5 +22,10 @@ urlpatterns = [
         'admin/election/state',
         ElectionStateView.as_view(),
         name='admin-election-state'
+    ),
+    path(
+        'admin/election/keys',
+        ElectionPubPrivKeysView.as_view(),
+        name='admin-election-keys'
     )
 ]

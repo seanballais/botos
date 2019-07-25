@@ -11,6 +11,7 @@ psycopg2 = "*"
 freezegun = "*"
 pillow = "*"
 beautifulsoup4 = "*"
+phe = "*"
 
 [requires]
 python_version = "3.5"
