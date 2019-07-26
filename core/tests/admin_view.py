@@ -100,9 +100,10 @@ class ElectionSettingsViewTest(BaseElectionSettingsViewTest):
             - Note: This setting will be disabled if there are vote set
                     already, or the elections are open.
 
-    This view also has a button that will purge votes, essentially resetting
-    the elections. However, candidates, parties, and positions will remain
-    intact.
+    TODO: - Add a button for this view that will purge votes, essentially
+            resetting the elections. However, candidates, parties, and
+            positions will remain intact.
+          - Create a TODO.md file where the TODO items will be found in.
     """
     @classmethod
     def setUpTestData(cls):
