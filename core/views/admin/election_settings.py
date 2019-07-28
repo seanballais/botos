@@ -27,7 +27,7 @@ from core.utils import AppSettings
 )
 @method_decorator(
     user_passes_test(
-        lambda u: u.is_superuser,
+        lambda u: u.is_superuser(),
         login_url='/admin/login',
         next='/admin/election'
     ),
@@ -72,7 +72,7 @@ class ElectionSettingsIndexView(TemplateView):
 )
 @method_decorator(
     user_passes_test(
-        lambda u: u.is_superuser,
+        lambda u: u.is_superuser(),
         login_url='/admin/login',
         next='/admin/election'
     ),
@@ -116,7 +116,7 @@ class CurrentTemplateView(View):
 )
 @method_decorator(
     user_passes_test(
-        lambda u: u.is_superuser,
+        lambda u: u.is_superuser(),
         login_url='/admin/login',
         next='/admin/election'
     ),
@@ -161,7 +161,7 @@ class ElectionStateView(View):
 )
 @method_decorator(
     user_passes_test(
-        lambda u: u.is_superuser,
+        lambda u: u.is_superuser(),
         login_url='/admin/login',
         next='/admin/election'
     ),

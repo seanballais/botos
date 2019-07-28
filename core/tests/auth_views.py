@@ -87,11 +87,11 @@ class LogoutViewTest(TestCase):
         )
 
     def test_anonymous_users_redirected_to_index(self):
-        response = self.client.get(reverse('auth-logout'))
+        response = self.client.get(reverse('auth-logout'), follow=True)
         self.assertRedirects(response, reverse('index'))
 
     def test_logout_implementation(self):
         self.client.login(username='juan', password='pepito')
 
-        response = self.client.post(reverse('auth'))
+        response = self.client.post(reverse('auth-logout'), follow=True)
         self.assertTrue(response_user.is_anonymous())

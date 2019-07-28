@@ -6,8 +6,13 @@ from core.views.admin.election_settings import (
     ElectionSettingsIndexView,
     ElectionStateView
 )
+from core.views.auth import (
+    LoginView, LogoutView
+)
 
 urlpatterns = [
+    path('auth/login', LoginView.as_view(), name='auth-login'),
+    path('auth/logout', LogoutView.as_view(), name='auth-logout'),
     path(
         'admin/election',
         ElectionSettingsIndexView.as_view(),

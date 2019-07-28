@@ -18,3 +18,7 @@ Here is a list of things that still needs to be done to improve Botos.
  * Add a test in VotedSubviewTest in core/tests/index_views.py that will make
    sure that users are shown the voted sub-view immediately after they have
    voted.
+ * Add tests for the authentication views to test whether or not the proper
+   message has been sent back after the user has entered the wrong
+   username/password combination.
+ * Add tests to make sure that the logging out gives back a message.

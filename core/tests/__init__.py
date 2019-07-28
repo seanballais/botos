@@ -7,25 +7,36 @@ from .admin_view import (
     ElectionSettingsViewTest, ElectionSettingsCurrentTemplateViewTest,
     ElectionSettingsElectionsStateViewTest, ElectionSettingsPubPrivKeysViewTest
 )
-from .context_processors import TemplateContextProcessorTest
-from .management import CreateSuperUserTest
+from .auth_views import (
+    LoginViewTest, LogoutViewTest
+)
 from .base_model import (
     BaseModelTest
 )
+from .context_processors import TemplateContextProcessorTest
 from .election_models import (
     CandidateTest, CandidatePartyTest, CandidatePositionTest
 )
+from .index_views import (
+    LoginSubviewTest, VotingSubviewTest, VotedSubviewTest
+)
+from .management import CreateSuperUserTest
 from .settings_model import SettingTest
 from .user_models import (
     UserModelTest, BatchModelTest, SectionModelTest
 )
 from .utils import AppSettingsTest
+from .vote_view import VoteProcessingView
 
 __all__ = [
     # User Models
     'UserModelTest', 'BatchModelTest', 'SectionModelTest',
     'Candidate', 'CandidateParty', 'CandidatePosition',
     'AppSettingsTest', 'BaseModelTest',
+    # Index Views
+    'LoginSubviewTest', 'VotingSubviewTest', 'VotedSubviewTest',
+    # Vote Views
+    'VoteProcessingView',
     # Admin Elections Settings Forms
     'ElectionSettingsCurrentTemplateFormTest',
     'ElectionSettingsElectionStateFormTest',
@@ -35,6 +46,8 @@ __all__ = [
     'ElectionSettingsCurrentTemplateViewTest',
     'ElectionSettingsElectionsStateViewTest',
     'ElectionSettingsPubPrivKeysViewTest',
+    # Auth Views
+    'LoginViewTest', 'LogoutViewTest',
     # Context Processors
     'TemplateContextProcessorTest'
 ]
