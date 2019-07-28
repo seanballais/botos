@@ -1,6 +1,10 @@
 from django.test import TestCase
 from django.urls import reverse
 
+from core.models import (
+    User, Batch, Section
+)
+
 
 class LoginViewTest(TestCase):
     """

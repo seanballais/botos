@@ -1,3 +1,5 @@
+import json
+
 from bs4 import BeautifulSoup
 
 from django.test import TestCase
@@ -40,7 +42,7 @@ class LoginSubviewTest(TestCase):
 
     def test_index_uses_correct_template(self):
         response = self.client.get('/')
-        self.assertTemplatedUsed(response, 'default/index.html')
+        self.assertTemplateUsed(response, 'default/index.html')
 
     def _get_login_form(self, view_html):
         view_html_soup = BeautifulSoup(view_html, 'html.parser')
@@ -109,7 +111,8 @@ class VotingSubviewTest(TestCase):
             position=_position
         )
 
-        cls.client.login(username='pasta', password='sample')
+    def setUp(self):
+        self.client.login(username='pasta', password='sample')
 
     def test_logged_in_users_voting_subview(self):
         response = self.client.get('/')
@@ -117,12 +120,12 @@ class VotingSubviewTest(TestCase):
 
     def test_voting_subview_form_has_correct_action_URL(self):
         response = self.client.get('/')
-        form = self._get_login_form(str(response.content))
-        self.assertEquals(form.get('action'), reverse('auth-login'))
+        form = self._get_voting_form(str(response.content))
+        self.assertEquals(form.get('action'), reverse('vote-processing'))
 
     def test_voting_subview_form_has_correct_method(self):
         response = self.client.get('/')
-        form = self._get_login_form(str(response.content))
+        form = self._get_voting_form(str(response.content))
         self.assertEquals(form.get('method').lower(), 'post')
 
     def test_index_uses_correct_template(self):
@@ -195,7 +198,7 @@ class VotedSubviewTest(TestCase):
 
         Vote.objects.create(
             user=_user3,
-            candidate=_candidate1,
+            candidate=cls._candidate1,
             vote_cipher=json.dumps(dict())
         )
 
@@ -207,12 +210,12 @@ class VotedSubviewTest(TestCase):
 
     def test_voted_subview_form_has_correct_action_URL(self):
         response = self.client.get('/')
-        form = self._get_login_form(str(response.content))
+        form = self._get_logout_form(str(response.content))
         self.assertEquals(form.get('action'), reverse('auth-logout'))
 
     def test_voted_subview_form_has_correct_method(self):
         response = self.client.get('/')
-        form = self._get_login_form(str(response.content))
+        form = self._get_logout_form(str(response.content))
         self.assertEquals(form.get('method').lower(), 'post')
 
     def test_index_uses_correct_template(self):

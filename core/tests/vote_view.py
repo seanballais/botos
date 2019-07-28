@@ -3,6 +3,10 @@ import json
 from django.test import TestCase
 from django.urls import reverse
 
+from core.models import (
+    User, Batch, Section, Candidate, CandidateParty, CandidatePosition, Vote
+)
+
 
 class VoteProcessingView(TestCase):
     """
@@ -14,7 +18,7 @@ class VoteProcessingView(TestCase):
 
     The data format for any POST requests is:
         {
-            'candidate_voted': [
+            'candidates_voted': [
                 <id of candidate voted>,
                 <id of another candidate voted>,
                 ...
@@ -60,7 +64,7 @@ class VoteProcessingView(TestCase):
 
         Vote.objects.create(
             user=_voted_user,
-            candidate=_candidate,
+            candidate=cls._candidate,
             vote_cipher=json.dumps(dict())
         )
 
@@ -90,12 +94,12 @@ class VoteProcessingView(TestCase):
         )
 
         # Generate the election keys first.
-        self.client.post(reverse('admin-election-keys'))
+        self.client.post(reverse('admin-election-keys'), follow=True)
 
         response = self.client.post(
             reverse('vote-processing'),
             {
-                'candidate_voted': [ _candidate.id ]
+                'candidates_voted': [ _candidate.id ]
             },
             follow=True
         )
@@ -144,7 +148,7 @@ class VoteProcessingView(TestCase):
         response = self.client.post(
             reverse('vote-processing'),
             {
-                'candidate_voted': [ _candidate.id ]
+                'candidates_voted': [ _candidate.id ]
             },
             follow=True
         )
@@ -165,9 +169,7 @@ class VoteProcessingView(TestCase):
 
         response = self.client.post(
             reverse('vote-processing'),
-            {
-                'candidate_voted': [ _candidate.id ]
-            },
+            {},
             follow=True
         )
         response_messages = list(response.context['messages'])

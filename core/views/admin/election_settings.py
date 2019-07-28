@@ -27,7 +27,7 @@ from core.utils import AppSettings
 )
 @method_decorator(
     user_passes_test(
-        lambda u: u.is_superuser(),
+        lambda u: u.is_superuser,
         login_url='/admin/login',
         next='/admin/election'
     ),
@@ -41,8 +41,8 @@ class ElectionSettingsIndexView(TemplateView):
     View URL: `/admin/election`
     Template: `{ current template }/admin/election.html`
     """
-    _template_dir = AppSettings().get('template', 'default')
-    template_name = '{}/admin/election.html'.format(_template_dir)
+    _template_name = AppSettings().get('template', 'default')
+    template_name = '{}/admin/election.html'.format(_template_name)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -72,7 +72,7 @@ class ElectionSettingsIndexView(TemplateView):
 )
 @method_decorator(
     user_passes_test(
-        lambda u: u.is_superuser(),
+        lambda u: u.is_superuser,
         login_url='/admin/login',
         next='/admin/election'
     ),
@@ -116,7 +116,7 @@ class CurrentTemplateView(View):
 )
 @method_decorator(
     user_passes_test(
-        lambda u: u.is_superuser(),
+        lambda u: u.is_superuser,
         login_url='/admin/login',
         next='/admin/election'
     ),
@@ -161,7 +161,7 @@ class ElectionStateView(View):
 )
 @method_decorator(
     user_passes_test(
-        lambda u: u.is_superuser(),
+        lambda u: u.is_superuser,
         login_url='/admin/login',
         next='/admin/election'
     ),

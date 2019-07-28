@@ -3,6 +3,7 @@ from django.contrib.auth import (
     authenticate, login, logout
 )
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views import View
 
@@ -14,9 +15,10 @@ from core.models import User
 
 @method_decorator(
     user_passes_test(
-        lambda u: u.is_anonymous(),
-        login_url=reverse('index'),  # This should probably be redirect_url.
+        lambda u: u.is_anonymous,
+        login_url='/',  # This should probably be redirect_url.
         next='',
+        redirect_field_name=None
     ),
     name='dispatch'
 )
@@ -58,8 +60,9 @@ class LoginView(View):
 
 @method_decorator(
     login_required(
-        login_url=reverse('index'),
-        next=''
+        login_url='/',
+        next='',
+        redirect_field_name=None
     ),
     name='dispatch',
 )
