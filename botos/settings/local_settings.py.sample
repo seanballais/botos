@@ -23,3 +23,6 @@ DATABASES = {
 
 # In production, uncomment and set STATIC_ROOT to the template directory.
 # STATIC_ROOT = '/path/to/template/directory'
+
+# In production, uncomment and set STATIC_ROOT to the media directory.
+# MEDIA_ROOT = '/path/to/media/directory'

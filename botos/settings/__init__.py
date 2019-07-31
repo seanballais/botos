@@ -119,7 +119,6 @@ STATICFILES_DIRS = [
 
 # Media URL. Primarily the directory and URL for the user-uploaded files.
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'botos/media')
 
 # Set custom user model.
 AUTH_USER_MODEL = 'core.User'

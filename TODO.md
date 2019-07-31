@@ -9,11 +9,17 @@ Here is a list of things that still needs to be done to improve Botos.
 ## Voting
  * Disallow superusers/admins from voting.
 
+## Models
+ * Change `__str__()` of models so that they return a human-friendly string. For example, instead of `<User 'seanballais'>`, return a string with the format `<user's last name>, <user's first name>`.
+
 ## Election Settings
  * Only allow opening of elections if the election keys have been generated already.
 
 ## Settings
  * Move static and media URLs and directories settings to `local_settings.py`.
+
+## System Integrity
+ * Add feature where we can check if the voting sub-view/ballot has been illegally tampered with. If it so, let the voter vote again. Otherwise, count the votes in the ballot.
 
 ## Utilities
  * Maybe create a utility that will handle serialization and deserialization of the election keys and votes.
@@ -30,6 +36,8 @@ Here is a list of things that still needs to be done to improve Botos.
 ### Default Template
  * Make the template more mobile-friendly.
    * Make the login form in the login subview of the index view transform into a vertically-stacked form, from its original horizontally-stacked form.
+ * Refactor the template CSS to remove duplication of code.
+ * Refactor template so that **all** elements have a **unique** ID.
 
 ## Performance
  * For the `_cast_votes()` function of `VoteProcessingView`, located in `core/views/vote.py`, we need to do a benchmark to confirm if calling to the database to check if a candidate is part of the candidates voted takes more time to perform than iterating through an evaluated list of candidates voted.

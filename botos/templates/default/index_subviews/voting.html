@@ -1,0 +1,30 @@
+{% load static %}
+{% get_media_prefix as MEDIA_PREFIX %}
+
+<header id="voting">
+    <h1>Vote For Your Next Set of Officials</h1>
+    <p>Click on the 'Vote' button to vote on a candidate. Click the same button to unvote.</p>
+</header>
+<article id="voting">
+    {% for position, candidates in candidates.items %}
+    <section>
+        <h2>{{ position }}</h2>
+        <div class="candidates">
+            {% for candidate in candidates %}
+            <div class="candidate">
+                <img src="{{ MEDIA_PREFIX }}{{ candidate.avatar }}" alt="Candidate: {{ candidate.user.first_name }} {{ candidate.user.last_name }}" />
+                <h3>{{ candidate.user.last_name }}, {{ candidate.user.first_name }}</h3>
+                <h4>{{ candidate.party.party_name }}</h4>
+                <button class="vote-btn" value="{{ candidate.id }}">Vote</button>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endfor %}
+    <div id="voting-actions">
+        <form id="voting" action="/vote" method="post">
+            <input type="submit" value="Cast Votes" />
+        </form>
+        <p><a id="meme-1">Whaaat?</a> Not you or you don't want to vote? <a id="logout-link">Log out</a>.</p>
+    </div>
+</article>

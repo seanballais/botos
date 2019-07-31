@@ -1,3 +1,9 @@
+/* CSS Classes */
+.opaque {
+    opacity: 1.0 !important;
+}
+
+/* View CSS Definition */
 html {
     background-color: hsl(220, 100%, 70%);
     background: linear-gradient(40deg, rgba(71, 198, 121, 1) 0%, rgba(41, 161, 185, 1) 41%, rgba(36, 97, 203, 1) 100%);
@@ -16,6 +22,7 @@ body {
     margin: 5%;
 }
 
+/* Login Sub-View CSS Definitions */
 header#login {
     display: flex;
     flex-direction: column;
@@ -80,7 +87,7 @@ article#login form#login input[type=password] {
 }
 
 article#login form#login input[type=submit] {
-    /* For some reason, at least in Firefox, HSL does not work here. RGB does work. */
+    /* We used RGB here because I thought there was a bug with regards to hsl(). Turns out, I was just using it incorrectly. */
     background: rgb(71, 198, 121);
     background: linear-gradient(236deg, rgba(71, 198, 121, 1) 0%, rgba(41, 161, 185, 1) 54%, rgba(36, 97, 203, 1) 100%);
     color: rgb(255, 255, 255);
@@ -152,4 +159,214 @@ footer#login p a {
 
 footer#login p a:hover {
     color: hsl(0, 0%, 87%);
+}
+
+/* Voting Sub-View CSS Definitions */
+header#voting h1,
+header#voting p,
+article#voting section {
+    text-align: center;
+}
+
+header#voting h1 {
+    font-family: 'PT Sans', sans-serif;
+    font-size: 2.25em;
+    font-weight: 700;
+}
+
+header#voting p {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1.25em;
+    font-weight: 300;
+
+    margin-top: -4%;
+}
+
+article#voting section h2 {
+    font-family: 'PT Sans', sans-serif;
+    font-size: 1.75em;
+    font-weight: 700;
+
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+article#voting section div.candidates {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    min-width: 100%;
+}
+
+article#voting section div.candidates div.candidate {
+    font-family: 'Source Sans Pro', sans-serif;
+
+    background: rgb(198, 198, 198);
+    background: linear-gradient(70deg, rgba(198, 198, 198, 1) 0%, rgba(247, 247, 247, 1) 40%);
+    color: hsl(0, 0%, 40%);
+
+    border-radius: 15px;
+
+    box-shadow: 0 4px 20px 1px hsl(0, 0%, 60%);
+
+    min-width: 50%;
+
+    padding: 8%;
+    margin: 5%;
+
+    opacity: 0.3;
+
+    transition: 0.15s opacity linear;
+}
+
+article#voting section div.candidates div.candidate:hover {
+    opacity: 1.0;
+}
+
+article#voting section div.candidates div.candidate h3 {
+    font-size: 1.5em;
+    font-weight: 400;
+
+    margin-top: 3%;
+}
+
+article#voting section div.candidates div.candidate h4 {
+    font-size: 1.25em;
+    font-weight: 300;
+
+    margin-top: -18%;
+}
+
+article#voting section div.candidates div.candidate img {
+    border-radius: 100%;
+
+    width: 150px;
+    height: 150px;
+}
+
+article#voting section div.candidates div.candidate button {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1em;
+    color: rgb(255, 255, 255);
+
+    border: 0;
+    border-radius: 3px;
+
+    cursor: pointer;
+
+    padding: 5%;
+    width: 100%;
+}
+
+article#voting section div.candidates div.candidate button.vote-btn {
+    background: rgb(71, 198, 121);
+    background: linear-gradient(236deg, rgba(71, 198, 121, 1) 0%, rgba(41, 161, 185, 1) 54%, rgba(36, 97, 203, 1) 100%);
+    box-shadow: 0 0 5px 1px hsl(0, 0%, 50%);
+}
+
+article#voting section div.candidates div.candidate button.vote-btn:hover,
+article#voting section div.candidates div.candidate button.depressed-vote-btn:hover {
+    background: rgb(75, 204, 126);
+    background: linear-gradient(236deg, rgba(75, 204, 126, 1) 0%, rgba(53, 171, 194, 1) 54%, rgba(39, 97, 198, 1) 100%);
+}
+
+article#voting section div.candidates div.candidate button.vote-btn:active,
+article#voting section div.candidates div.candidate button.depressed-vote-btn,
+article#voting section div.candidates div.candidate button.depressed-vote-btn:active {
+    background: rgb(71, 198, 121);
+    background: linear-gradient(236deg, rgba(71, 198, 121, 1) 0%, rgba(41, 161, 185, 1) 54%, rgba(36, 97, 203, 1) 100%);
+
+    box-shadow: 0 0 5px 1px rgb(128, 128, 128) inset;
+}
+
+article#voting section div.candidates div.candidate button.depressed-vote-btn {
+    box-shadow: none;
+}
+
+article#voting div#voting-actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    min-width: 100%;
+
+    margin-top: 15%;
+}
+
+article#voting div#voting-actions form#voting {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    min-width: 50%;
+}
+
+article#voting div#voting-actions form#voting input[type=submit] {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1em;
+
+    background: rgb(208, 54, 54);
+    background: linear-gradient(56deg, rgba(208, 54, 54, 1) 0%, rgba(215, 73, 43, 1) 34%, rgba(217, 98, 21, 1) 100%);
+    color: rgb(255, 255, 255);
+
+    border: 0;
+    border-radius: 5px;
+    box-shadow: 0 0 5px 1px hsl(0, 0%, 50%);
+
+    cursor: pointer;
+
+    padding: 7%;
+    width: 100%;
+}
+
+article#voting div#voting-actions form#voting input[type=submit]:hover {
+    background: rgb(224, 59, 59);
+    background: linear-gradient(56deg, rgba(224, 59, 59, 1) 0%, rgba(233, 81, 48, 1) 34%, rgba(228, 103, 22, 1) 100%);
+}
+
+article#voting div#voting-actions form#voting input[type=submit]:active {
+    background: rgb(186, 39, 39);
+    background: linear-gradient(56deg, rgba(186, 39, 39, 1) 0%, rgba(194, 61, 32, 1) 34%, rgba(189, 80, 10, 1) 100%);
+
+    box-shadow: 0 0 5px 1px hsl(0, 0%, 27%) inset;
+}
+
+article#voting div#voting-actions p {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 0.9em;
+
+    margin-top: 2%;
+
+    color: hsl(0, 0%, 95%);
+}
+
+article#voting div#voting-actions p a {
+    font-weight: 600;
+    color: hsl(0, 0%, 95%);
+
+    cursor: pointer;
+    text-decoration: underline;
+
+    transition: color 0.15s ease-in;
+}
+
+article#voting div#voting-actions p a:hover {
+    color: hsl(0, 0%, 87%);
+}
+
+article#voting div#voting-actions p a:active {
+    color: hsl(0, 0%, 80%);
+}
+
+footer#voting p {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 0.9em;
+
+    margin-top: 2%;
+
+    color: hsl(0, 0%, 95%);
 }

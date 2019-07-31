@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.views.generic.base import TemplateView
@@ -53,7 +55,18 @@ class IndexView(TemplateView):
                 # Note: The desired ordering of candidates has already been
                 #       defined in the ordering option Candidate's Meta class.
                 #       So, no need to specify the ordering here.
-                context['candidates'] = Candidate.objects.all()
+                candidates = Candidate.objects.all()
+                # TODO: Refactor this to use queries instead of looping through
+                #       the candidate list.
+                candidates_by_position = OrderedDict()
+                for candidate in candidates:
+                    position = str(candidate.position.position_name)
+                    if position in candidates_by_position:
+                        candidates_by_position[position] += [ candidate ]
+                    else:
+                        candidates_by_position[position] = [ candidate ]
+
+                context['candidates'] = candidates_by_position
         else:
             context['subview'] = 'login'
 
