@@ -1,0 +1,27 @@
+{% load static %}
+
+<header id="login">
+    <img id="botos-logo" src="{% static template|add:'/static/img/logo.png' %}" alt="Botos Logo" />
+    <div id="title-text">
+        <h1>Vote Now</h1>
+        <h2>Exercise your democratic rights.</h2>
+    </div>
+</header>
+<article id="login">
+    <form id="login" action="/auth/login" method="post">
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="Username" required />
+        <input type="password" name="password" placeholder="Password" required />
+        <input type="submit" value="Login" />
+    </form>
+    {% if messages %}
+    <div id="messages">
+        {% for message in messages %}
+        <p class="{{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+</article>
+<footer id="login">
+    <p>This election is powered by <a href="https://github.com/seanballais/botos">Botos</a>, an open source election system by <a href="https://seanballais.github.io">Sean Ballais</a> (<a href="https://twitter.com/seanballais">@seanballais</a>).</p>
+</footer>

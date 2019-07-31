@@ -113,7 +113,9 @@ USE_TZ = True
 # `{% get_static_prefix %}{{ template }}`. This is to allow for user-set
 # templates.
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'botos/templates')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'botos/templates/'),
+]
 
 # Media URL. Primarily the directory and URL for the user-uploaded files.
 MEDIA_URL = '/media/'

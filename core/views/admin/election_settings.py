@@ -6,6 +6,7 @@ from django.utils.decorators import method_decorator
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views import View
+from django.views.decorators.csrf import csrf_protect
 from django.views.generic.base import TemplateView
 
 from core.decorators import (
@@ -63,6 +64,7 @@ class ElectionSettingsIndexView(TemplateView):
         return context
 
 
+@method_decorator(csrf_protect, name='dispatch')
 @method_decorator(
     login_required(
         login_url='/admin/login',
@@ -107,6 +109,7 @@ class CurrentTemplateView(View):
         return redirect('/admin/election')
 
 
+@method_decorator(csrf_protect, name='dispatch')
 @method_decorator(
     login_required(
         login_url='/admin/login',
@@ -152,6 +155,7 @@ class ElectionStateView(View):
         return redirect('/admin/election')
 
 
+@method_decorator(csrf_protect, name='dispatch')
 @method_decorator(
     login_required(
         login_url='/admin/login',

@@ -8,6 +8,7 @@ from django.db.models import Q
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.csrf import csrf_protect
 
 from core.decorators import login_required
 from core.models import (
@@ -15,6 +16,8 @@ from core.models import (
 )
 from core.utils import AppSettings
 
+
+@method_decorator(csrf_protect, name='dispatch')
 @method_decorator(
     login_required(
         login_url='/',

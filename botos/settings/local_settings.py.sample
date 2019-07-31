@@ -6,7 +6,8 @@
 # Keep this a secret! In production, please change this to something else.
 SECRET_KEY = '6xtu*&k8@)pibt(^c2ox%@#3taw0zp_g05e28g!#0j3gjrf2!f'
 
-# Keep DEBUG as True only in development.
+# This should be True when in development. Only disable this in
+# staging/production.
 DEBUG = True
 
 # For working with databases in Django, please refer to this:
@@ -19,3 +20,6 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+# In production, uncomment and set STATIC_ROOT to the template directory.
+# STATIC_ROOT = '/path/to/template/directory'

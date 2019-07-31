@@ -1,0 +1,155 @@
+html {
+    background-color: hsl(220, 100%, 70%);
+    background: linear-gradient(40deg, rgba(71, 198, 121, 1) 0%, rgba(41, 161, 185, 1) 41%, rgba(36, 97, 203, 1) 100%);
+
+    min-height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    color: hsl(0, 0%, 95%);
+
+    margin: 5%;
+}
+
+header#login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+}
+
+header#login img#botos-logo {
+    width: 30%;
+}
+
+header#login div#title-text h1 {
+    font-family: 'PT Sans', sans-serif;
+    font-size: 5em;
+    font-weight: 700;
+
+    margin-top: 1%;
+    margin-bottom: 0%;
+}
+
+header#login div#title-text h2 {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1.5em;
+    font-weight: 300;
+
+    margin-top: -5%;
+}
+
+article#login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    min-width: 100%;
+}
+
+article#login form#login {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+article#login form#login input {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1em;
+
+    border: 1px solid rgb(140, 140, 140);
+
+    padding: 2.5%;
+    margin-left: 0.75%;
+    margin-right: 0.75%;
+}
+
+article#login form#login input[type=text],
+article#login form#login input[type=password] {
+    border-radius: 7px;
+    box-shadow: 0 0 9px 3px rgb(160, 160, 160) inset;
+}
+
+article#login form#login input[type=submit] {
+    /* For some reason, at least in Firefox, HSL does not work here. RGB does work. */
+    background: rgb(71, 198, 121);
+    background: linear-gradient(236deg, rgba(71, 198, 121, 1) 0%, rgba(41, 161, 185, 1) 54%, rgba(36, 97, 203, 1) 100%);
+    color: rgb(255, 255, 255);
+
+    border-radius: 5px;
+    box-shadow: 0 0 5px 1px rgb(128, 128, 128);
+
+    cursor: pointer;
+}
+
+article#login form#login input[type=submit]:hover {
+    background: rgb(75, 204, 126);
+    background: linear-gradient(236deg, rgba(75, 204, 126, 1) 0%, rgba(53, 171, 194, 1) 54%, rgba(39, 97, 198, 1) 100%);
+}
+
+article#login form#login input[type=submit]:active {
+    background: rgb(71, 198, 121);
+    background: linear-gradient(236deg, rgba(71, 198, 121, 1) 0%, rgba(41, 161, 185, 1) 54%, rgba(36, 97, 203, 1) 100%);
+
+    box-shadow: 0 0 5px 1px rgb(128, 128, 128) inset;
+}
+
+article#login form#login input[type=submit]:disabled {
+    background: rgb(59, 185, 109);
+    background: linear-gradient(236deg, rgba(59, 185, 109, 1) 0%, rgba(31, 146, 170, 1) 54%, rgba(27, 86, 190, 1) 100%);
+
+    cursor: default;
+    box-shadow: none;
+}
+
+article#login div#messages {
+    min-width: 40%;
+}
+
+article#login div#messages p {
+    border-radius: 5px;
+}
+
+article#login div#messages p.error {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1em;
+    font-weight: 300;
+
+    background: rgb(230, 77, 77);
+    background: linear-gradient(45deg, rgba(230, 77, 77, 1) 0%, rgba(198, 39, 108, 1) 100%);
+
+    color: hsl(0%, 0%, 95%);
+
+    text-align: center;
+
+    margin: 3%;
+    margin-bottom: 0;
+
+    padding: 3%;
+}
+
+footer#login p {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 0.9em;
+    color: hsl(0, 0%, 95%);
+}
+
+footer#login p a {
+    font-weight: 600;
+    color: hsl(0, 0%, 95%);
+
+    transition: color 0.15s ease-in;
+}
+
+footer#login p a:hover {
+    color: hsl(0, 0%, 87%);
+}

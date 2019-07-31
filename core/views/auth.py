@@ -6,6 +6,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.csrf import csrf_protect
 
 from core.decorators import (
     login_required, user_passes_test
@@ -13,6 +14,7 @@ from core.decorators import (
 from core.models import User
 
 
+@method_decorator(csrf_protect, name='dispatch')
 @method_decorator(
     user_passes_test(
         lambda u: u.is_anonymous,
@@ -58,6 +60,7 @@ class LoginView(View):
         return redirect(reverse('index'))
 
 
+@method_decorator(csrf_protect, name='dispatch')
 @method_decorator(
     login_required(
         login_url='/',
