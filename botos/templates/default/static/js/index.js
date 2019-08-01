@@ -69,4 +69,17 @@ ready(function() {
             window.scrollTo(0, 0);
         });
     }
+
+    var logoutLink = document.getElementById('logout-link');
+    if (logoutLink != null) {
+        logoutLink.addEventListener('click', function() {
+            var request = new XMLHttpRequest();
+            request.onreadystatechange = function() {
+                document.location.reload(true);
+            };
+            request.open('POST', '/auth/logout', true);
+            request.setRequestHeader('X-CSRFToken', window.CSRF_TOKEN);
+            request.send({});
+        });
+    }
 })

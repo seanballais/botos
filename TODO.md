@@ -38,6 +38,7 @@ Here is a list of things that still needs to be done to improve Botos.
    * Make the login form in the login subview of the index view transform into a vertically-stacked form, from its original horizontally-stacked form.
  * Refactor the template CSS to remove duplication of code.
  * Refactor template so that **all** elements have a **unique** ID.
+ * Add a "Are you sure?" dialog when clicking on the "cast vote" button in the voting suview in the index. This is to prevent accidental casting.
 
 ## Performance
  * For the `_cast_votes()` function of `VoteProcessingView`, located in `core/views/vote.py`, we need to do a benchmark to confirm if calling to the database to check if a candidate is part of the candidates voted takes more time to perform than iterating through an evaluated list of candidates voted.

@@ -123,16 +123,9 @@ article#login div#messages {
 }
 
 article#login div#messages p {
-    border-radius: 5px;
-}
-
-article#login div#messages p.error {
     font-family: 'Source Sans Pro', sans-serif;
     font-size: 1em;
     font-weight: 300;
-
-    background: rgb(230, 77, 77);
-    background: linear-gradient(45deg, rgba(230, 77, 77, 1) 0%, rgba(198, 39, 108, 1) 100%);
 
     color: hsl(0%, 0%, 95%);
 
@@ -142,7 +135,19 @@ article#login div#messages p.error {
     margin-bottom: 0;
 
     padding: 3%;
+
+    border-radius: 5px;
 }
+
+article#login div#messages p.error {
+    background: rgb(230, 77, 77);
+    background: linear-gradient(45deg, rgba(230, 77, 77, 1) 0%, rgba(198, 39, 108, 1) 100%);
+}
+
+article#login div#messages p.success {
+    background: rgb(39, 115, 186);
+    background: linear-gradient(56deg, rgba(39, 115, 186, 1) 0%, rgba(96, 32, 194, 1) 47%, rgba(189, 10, 120, 1) 100%);
+} 
 
 footer#login p {
     font-family: 'Source Sans Pro', sans-serif;

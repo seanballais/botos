@@ -22,7 +22,11 @@
     </section>
     {% endfor %}
     <div id="voting-actions">
+        <script type="text/javascript">
+            window.CSRF_TOKEN = '{{ csrf_token }}';
+        </script>
         <form id="voting" action="/vote" method="post">
+            {% csrf_token %}
             <input type="submit" value="Cast Votes" />
         </form>
         <p><a id="meme-1">Whaaat?</a> Not you or you don't want to vote? <a id="logout-link">Log out</a>.</p>

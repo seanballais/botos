@@ -99,4 +99,5 @@ class LogoutView(View):
 
         messages.success(request, 'Logged out successfully.')
 
-        return redirect(reverse('index'))
+        # No redirecting to index view here. Doing so causes the index view to
+        # render the same subview during force refresh.
