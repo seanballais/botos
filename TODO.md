@@ -8,6 +8,7 @@ Here is a list of things that still needs to be done to improve Botos.
 
 ## Voting
  * Disallow superusers/admins from voting.
+ * Disallow voting when the elections are set to closed.
 
 ## Models
  * Change `__str__()` of models so that they return a human-friendly string. For example, instead of `<User 'seanballais'>`, return a string with the format `<user's last name>, <user's first name>`.

@@ -6,6 +6,7 @@ from phe import paillier
 from django.contrib import messages
 from django.db.models import Q
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_protect
@@ -57,7 +58,8 @@ class VoteProcessingView(View):
         user = self.request.user
         has_user_voted = Vote.objects.filter(user__id=user.id).exists()
         try:
-            candidates_voted = request.POST['candidates_voted']
+            # `candidates_voted` is expected to be a JSON-stringified array.
+            candidates_voted = json.loads(request.POST['candidates_voted'])
         except KeyError:
             if has_user_voted:
                 messages.error(
@@ -79,11 +81,18 @@ class VoteProcessingView(View):
                     'already.'
                 )
             else:
-                # No need for the private election key since we only need
-                # to encrypt the votes. We only need the private key if we
-                # need to decrypt votes.
-                public_key = self._get_public_election_key()
-                self._cast_votes(user, candidates_voted, public_key)
+                if type(candidates_voted) is list:
+                    # No need for the private election key since we only need
+                    # to encrypt the votes. We only need the private key if we
+                    # need to decrypt votes.
+                    public_key = self._get_public_election_key()
+                    self._cast_votes(user, candidates_voted, public_key)
+                else:
+                    messages.error(
+                        request,
+                        'The votes you sent were invalid. Please try voting '
+                        'again, and/or contact the system administrator.'
+                    )
 
         return redirect(reverse('index'))
 
@@ -97,7 +106,7 @@ class VoteProcessingView(View):
         else:
             public_key_json = json.loads(public_election_key_str)
 
-            return paillier.PaillierPublicKey(n=public_key_json.n)
+            return paillier.PaillierPublicKey(n=public_key_json['n'])
 
     def _cast_votes(self, user, candidates_voted, public_key):
         candidates_voted = Candidate.objects.filter(

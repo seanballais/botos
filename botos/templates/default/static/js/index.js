@@ -26,9 +26,9 @@ function resetAllVotingButtonsInSameCandidatePosition(btn) {
 
 ready(function() {
     // Login sub-view.
-    var login_form = document.querySelector('form#login');
-    if (login_form != null) {
-        login_form.addEventListener('submit', function() {
+    var loginForm = document.querySelector('form#login');
+    if (loginForm != null) {
+        loginForm.addEventListener('submit', function() {
             this.querySelector('input[type=submit]').disabled = true;
         });
     }
@@ -80,6 +80,20 @@ ready(function() {
             request.open('POST', '/auth/logout', true);
             request.setRequestHeader('X-CSRFToken', window.CSRF_TOKEN);
             request.send({});
+        });
+    }
+
+    var castVoteForm = document.querySelector('form#voting');
+    if (castVoteForm != null) {
+        castVoteForm.addEventListener('submit', function() {
+            var votedCandidates = [];
+            var votingButtons = document.querySelectorAll('button.depressed-vote-btn');
+            votingButtons.forEach(btn => {
+                votedCandidates.push(btn.value);
+            });
+            
+            var candidatesVotedInput = castVoteForm.querySelector('input#candidates-voted');
+            candidatesVotedInput.value = JSON.stringify(votedCandidates);
         });
     }
 })

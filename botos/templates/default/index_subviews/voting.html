@@ -4,6 +4,13 @@
 <header id="voting">
     <h1>Vote For Your Next Set of Officials</h1>
     <p>Click on the 'Vote' button to vote on a candidate. Click the same button to unvote.</p>
+    {% if messages %}
+    <div id="messages">
+        {% for message in messages %}
+        <p class="{{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
 </header>
 <article id="voting">
     {% for position, candidates in candidates.items %}
@@ -27,6 +34,7 @@
         </script>
         <form id="voting" action="/vote" method="post">
             {% csrf_token %}
+            <input id="candidates-voted" name="candidates_voted" type="hidden" value="" />
             <input type="submit" value="Cast Votes" />
         </form>
         <p><a id="meme-1">Whaaat?</a> Not you or you don't want to vote? <a id="logout-link">Log out</a>.</p>
