@@ -15,5 +15,7 @@
     {% include template|add:'/index_subviews/login.html' %}
 {% elif subview == 'voting' %}
     {% include template|add:'/index_subviews/voting.html' %}
+{% elif subview == 'voted' %}
+    {% include template|add:'/index_subviews/voted.html' %}
 {% endif %}
 {% endblock %}

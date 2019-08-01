@@ -1,0 +1,35 @@
+{% load static %}
+<script type="text/javascript">
+    window.CSRF_TOKEN = '{{ csrf_token }}';
+</script>
+
+<header id="voted">
+    <img id="header-symbol" src="{% static template|add:'/static/img/vote-casted.png' %}" alt="Botos Logo" />
+    <div id="title-text">
+        <h1>Votes Casted</h1>
+        <h2>Your votes have been casted and auto-counted.</h2>
+    </div>
+</header>
+<article id="voted">
+    {% if messages %}
+    <div id="messages">
+        {% for message in messages %}
+        <p class="{{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div id="view-actions">
+        <button class="logout-btn">Log out</button>
+        <p><a id="meme-2">Edit election results.</a> (<-- Do not click this please. Debugging purposes only. Thanks.)</p>
+    </div>
+</article>
+<article id="meme-block">
+    <h1>Still wanna edit the results? :-)</h1>
+    <video src="{% static template|add:'/static/videos/good-luck-charm.mp4' %}" preload="auto" loop></video>
+    <button id="meme-2-exit">Let me out!</button>
+    <h2>You right now:</h2>
+    <img src="{% static template|add:'/static/img/let-me-out.jpg' %}" alt="Let me out meme." />
+</article>
+<footer id="voted">
+    <p>This election is powered by <a href="https://github.com/seanballais/botos">Botos</a>, an open source election system by <a href="https://seanballais.github.io">Sean Ballais</a> (<a href="https://twitter.com/seanballais">@seanballais</a>).</p>
+</footer>

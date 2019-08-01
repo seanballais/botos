@@ -5,6 +5,7 @@ Here is a list of things that still needs to be done to improve Botos.
  * **[ PRIORITY ]** Add public bulletin board feature where voters can confirm if their votes have been tampered or not.
  * Find the rest of the TODO items and move them to here.
  * Maybe add a MBUI file, and add the MBUI texts and the project file path of the file it is residing in to it.
+ * Add logging.
 
 ## Voting
  * Disallow superusers/admins from voting.
@@ -30,6 +31,7 @@ Here is a list of things that still needs to be done to improve Botos.
    if need be, to the POST functions of views.
  * Maybe we should not redirect unallowed GETs or POSTs to some URL? Or just show an error 404 page?
  * **[ REFACTOR ]** POST function in `VoteProcessingView`, located in `core/views/vote.py`, _may_ still be improved.
+ * Set the logout view to redirect back to the index page after logging the user out.
 
 ## Templates
  * Allow for setting the page title on a per sub-view basis.
@@ -40,6 +42,8 @@ Here is a list of things that still needs to be done to improve Botos.
  * Refactor the template CSS to remove duplication of code.
  * Refactor template so that **all** elements have a **unique** ID.
  * Add a "Are you sure?" dialog when clicking on the "cast vote" button in the voting suview in the index. This is to prevent accidental casting.
+ * Make an error subview for the index view. This error subview should only appear if an unexpected subview name appears in the context.
+ * When `POST`ing to the logout view from the index, make sure that the correct subview gets rendered.
 
 ## Performance
  * For the `_cast_votes()` function of `VoteProcessingView`, located in `core/views/vote.py`, we need to do a benchmark to confirm if calling to the database to check if a candidate is part of the candidates voted takes more time to perform than iterating through an evaluated list of candidates voted.
@@ -60,3 +64,6 @@ Here is a list of things that still needs to be done to improve Botos.
  * Add tests for the index view. We only have tests for the subviews of index.
  * We need more integration tests.
  * Add unit tests for the private functions in VoteProcessingView, located in `core/views/vote.py`.
+
+## For Deeper Understanding
+ * **[ For Sean Ballais ]** (Had to defer this to another time due to time constraints) Understand why having a `return redirect(...)` in the logout view causes the index to just seemingly refresh the index view from the page when an AJAX call `request` to the view has `request.onreadystatechange = function() { document.location.reload(true); }`. Also explore what would happen if we `return redirect(...)` in the view but the AJAX call `request` having `request.onreadystatechange = function() {};`. The default template's `static/js/index.js` and `index_subviews/voting.html` are the relevant files for understanding the aforementioned behaviour.

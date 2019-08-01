@@ -109,12 +109,18 @@ class VoteProcessingView(View):
             return paillier.PaillierPublicKey(n=public_key_json['n'])
 
     def _cast_votes(self, user, candidates_voted, public_key):
-        candidates_voted = Candidate.objects.filter(
-            reduce(
-                lambda x, y: x | y,
-                [ Q(id=candidate_id) for candidate_id in candidates_voted ]
+        try:
+            candidates_voted = Candidate.objects.filter(
+                reduce(
+                    lambda x, y: x | y,
+                    [ Q(id=candidate_id) for candidate_id in candidates_voted ]
+                )
             )
-        )
+        except TypeError:
+            # No candidates were voted. Thus, candidates_voted is empty and
+            # reduce throws a TypeError.
+            candidates_voted = []
+
         candidates = Candidate.objects.all()
 
         for candidate in candidates:

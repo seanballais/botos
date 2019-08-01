@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import (
     authenticate, login, logout
 )
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
@@ -100,4 +101,6 @@ class LogoutView(View):
         messages.success(request, 'Logged out successfully.')
 
         # No redirecting to index view here. Doing so causes the index view to
-        # render the same subview during force refresh.
+        # render the same subview during force refresh. We should fix this at
+        # a later time.
+        return HttpResponse(status=204)

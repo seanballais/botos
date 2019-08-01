@@ -1,14 +1,24 @@
+/* DevNote (@seanballais): Don't do CSS in the way most elements in this file has been defined. */
+
 /* CSS Classes */
 .opaque {
     opacity: 1.0 !important;
 }
 
+.hide {
+    display: none !important;
+}
+
 /* View CSS Definition */
+*::-moz-focus-inner {
+    border: 0;
+}
+
 html {
     background-color: hsl(220, 100%, 70%);
     background: linear-gradient(40deg, rgba(71, 198, 121, 1) 0%, rgba(41, 161, 185, 1) 41%, rgba(36, 97, 203, 1) 100%);
 
-    min-height: 100%;
+    min-height: 100vh;
 }
 
 body {
@@ -344,6 +354,14 @@ article#voting div#voting-actions form#voting input[type=submit]:active {
     box-shadow: 0 0 5px 1px hsl(0, 0%, 27%) inset;
 }
 
+article#voting div#voting-actions form#voting input[type=submit]:disabled {
+    background: rgb(195, 51, 51);
+    background: linear-gradient(56deg, rgba(195, 51, 51, 1) 0%, rgba(198, 68, 40, 1) 47%, rgba(196, 89, 20, 1) 100%);
+
+    cursor: default;
+    box-shadow: none;
+}
+
 article#voting div#voting-actions p {
     font-family: 'Source Sans Pro', sans-serif;
     font-size: 0.9em;
@@ -378,4 +396,240 @@ footer#voting p {
     margin-top: 2%;
 
     color: hsl(0, 0%, 95%);
+}
+
+/* Voted Sub-View CSS Definitions */
+header#voted {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+}
+
+header#voted img#header-symbol {
+    width: 30%;
+}
+
+header#voted div#title-text h1 {
+    font-family: 'PT Sans', sans-serif;
+    font-size: 5em;
+    font-weight: 700;
+
+    margin-top: 1%;
+    margin-bottom: 0%;
+}
+
+header#voted div#title-text h2 {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1.5em;
+    font-weight: 300;
+
+    margin-top: -3%;
+}
+
+article#voted {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    min-width: 100%;
+}
+
+article#voted div#messages {
+    min-width: 40%;
+}
+
+article#voted div#messages p {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1em;
+    font-weight: 300;
+
+    color: hsl(0%, 0%, 95%);
+
+    text-align: center;
+
+    margin: 3%;
+    margin-bottom: 0;
+
+    padding: 3%;
+
+    border-radius: 5px;
+}
+
+article#voted div#messages p.error {
+    background: rgb(230, 77, 77);
+    background: linear-gradient(45deg, rgba(230, 77, 77, 1) 0%, rgba(198, 39, 108, 1) 100%);
+}
+
+article#voted div#messages p.success {
+    background: rgb(39, 115, 186);
+    background: linear-gradient(56deg, rgba(39, 115, 186, 1) 0%, rgba(96, 32, 194, 1) 47%, rgba(189, 10, 120, 1) 100%);
+}
+
+article#voted div#view-actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+article#voted div#view-actions button.logout-btn {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1em;
+
+    background: rgb(208, 54, 54);
+    background: linear-gradient(56deg, rgba(208, 54, 54, 1) 0%, rgba(215, 73, 43, 1) 34%, rgba(217, 98, 21, 1) 100%);
+    color: rgb(255, 255, 255);
+
+    border: 0;
+    border-radius: 5px;
+    box-shadow: 0 0 5px 1px hsl(0, 0%, 50%);
+
+    cursor: pointer;
+
+    padding: 3%;
+    width: 35%;
+}
+
+article#voted div#view-actions button.logout-btn:hover {
+    background: rgb(224, 59, 59);
+    background: linear-gradient(56deg, rgba(224, 59, 59, 1) 0%, rgba(233, 81, 48, 1) 34%, rgba(228, 103, 22, 1) 100%);
+}
+
+article#voted div#view-actions button.logout-btn:active {
+    background: rgb(186, 39, 39);
+    background: linear-gradient(56deg, rgba(186, 39, 39, 1) 0%, rgba(194, 61, 32, 1) 34%, rgba(189, 80, 10, 1) 100%);
+
+    box-shadow: 0 0 5px 1px hsl(0, 0%, 27%) inset;
+}
+
+article#voted div#view-actions button.logout-btn:disabled {
+    background: rgb(195, 51, 51);
+    background: linear-gradient(56deg, rgba(195, 51, 51, 1) 0%, rgba(198, 68, 40, 1) 47%, rgba(196, 89, 20, 1) 100%);
+
+    cursor: default;
+    box-shadow: none;
+}
+
+article#voted div#view-actions p {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 0.9em;
+
+    margin-top: 2%;
+
+    color: hsl(0, 0%, 95%);
+}
+
+article#voted div#view-actions p a {
+    font-weight: 600;
+    color: hsl(0, 0%, 95%);
+
+    cursor: pointer;
+    text-decoration: underline;
+
+    transition: color 0.15s ease-in;
+}
+
+article#voted div#view-actions p a:hover {
+    color: hsl(0, 0%, 87%);
+}
+
+article#voted div#view-actions p a:active {
+    color: hsl(0, 0%, 80%);
+}
+
+article#meme-block {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    min-width: 100%;
+
+    display: none;
+}
+
+article#meme-block h1 {
+    font-family: 'PT Sans', sans-serif;
+    font-size: 3em;
+    font-weight: 700;
+
+    margin-top: 1%;
+    margin-bottom: 0%;
+}
+
+article#meme-block h2 {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1.5em;
+
+    margin-top: 2%;
+
+    color: hsl(0, 0%, 95%);
+}
+
+article#meme-block button#meme-2-exit {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1em;
+
+    background: rgb(71, 198, 121);
+    background: linear-gradient(236deg, rgba(71, 198, 121, 1) 0%, rgba(41, 161, 185, 1) 54%, rgba(36, 97, 203, 1) 100%);
+    color: rgb(255, 255, 255);
+
+    border: 0;
+    border-radius: 7px;
+    box-shadow: 0 0 5px 1px hsl(0, 0%, 50%);
+
+    cursor: pointer;
+
+    padding: 1.5%;
+    width: 35%;
+}
+
+article#meme-block button#meme-2-exit:hover {
+    background: rgb(75, 204, 126);
+    background: linear-gradient(236deg, rgba(75, 204, 126, 1) 0%, rgba(53, 171, 194, 1) 54%, rgba(39, 97, 198, 1) 100%);
+}
+
+article#meme-block button#meme-2-exit:active {
+    background: rgb(71, 198, 121);
+    background: linear-gradient(236deg, rgba(71, 198, 121, 1) 0%, rgba(41, 161, 185, 1) 54%, rgba(36, 97, 203, 1) 100%);
+
+    box-shadow: 0 0 5px 1px rgb(128, 128, 128) inset;
+}
+
+article#meme-block button#meme-2-exit:disabled {
+    background: rgb(59, 185, 109);
+    background: linear-gradient(236deg, rgba(59, 185, 109, 1) 0%, rgba(31, 146, 170, 1) 54%, rgba(27, 86, 190, 1) 100%);
+
+    cursor: default;
+    box-shadow: none;
+}
+
+article#meme-block video {
+    padding: 3%;
+    padding-top: 1%;
+}
+
+article#meme-block video:focus {
+    outline: none;
+}
+
+footer#voted p {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 0.9em;
+    color: hsl(0, 0%, 95%);
+}
+
+footer#voted p a {
+    font-weight: 600;
+    color: hsl(0, 0%, 95%);
+
+    transition: color 0.15s ease-in;
+}
+
+footer#voted p a:hover {
+    color: hsl(0, 0%, 87%);
 }
