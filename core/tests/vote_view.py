@@ -1,11 +1,14 @@
 import json
 
-from django.test import TestCase
+from django.test import (
+    Client, TestCase
+)
 from django.urls import reverse
 
 from core.models import (
     User, Batch, Section, Candidate, CandidateParty, CandidatePosition, Vote
 )
+from core.utils import AppSettings
 
 
 class VoteProcessingView(TestCase):
@@ -39,17 +42,19 @@ class VoteProcessingView(TestCase):
         _section = Section.objects.create(section_name='Emerald')
         cls._non_voted_user = User.objects.create(
             username='juan',
-            password='pepito',
             batch=_batch,
             section=_section
         )
+        cls._non_voted_user.set_password('pepito')
+        cls._non_voted_user.save()
 
         cls._voted_user = User.objects.create(
             username='pedro',
-            password='pendoko',
             batch=_batch,
             section=_section
         )
+        cls._voted_user.set_password('pendoko')
+        cls._voted_user.save()
 
         _party = CandidateParty.objects.create(party_name='Awesome Party')
         _position = CandidatePosition.objects.create(
@@ -57,13 +62,29 @@ class VoteProcessingView(TestCase):
             position_level=0
         )
         cls._candidate = Candidate.objects.create(
-            user=_non_voted_user,
+            user=cls._non_voted_user,
             party=_party,
             position=_position
         )
 
+        cls._admin = User.objects.create(
+            username='admin',
+            batch=_batch,
+            section=_section,
+            is_staff=True,
+            is_superuser=True
+        )
+        cls._admin.set_password('root')
+        cls._admin.save()
+
+        # The keys should only be generated once.
+        client = Client()
+        client.login(username='admin', password='root')
+        client.post(reverse('admin-election-keys'), follow=True)
+
+        # Time to add a vote for the _voted_user..
         Vote.objects.create(
-            user=_voted_user,
+            user=cls._voted_user,
             candidate=cls._candidate,
             vote_cipher=json.dumps(dict())
         )
@@ -86,20 +107,12 @@ class VoteProcessingView(TestCase):
         self.assertRedirects(response, reverse('index'))
 
     def test_non_voted_logged_in_post_requests_with_valid_data(self):
-        # (July 27, 2019)
-        # Why haven't I thought of logging in the test user this way before?
-        self.client.login(
-            username=self._non_voted_user.username,
-            password=self._non_voted_user.password
-        )
-
-        # Generate the election keys first.
-        self.client.post(reverse('admin-election-keys'), follow=True)
+        self.client.login(username='juan', password='pepito')
 
         response = self.client.post(
             reverse('vote-processing'),
             {
-                'candidates_voted': [ _candidate.id ]
+                'candidates_voted': str([ self._candidate.id ])
             },
             follow=True
         )
@@ -107,8 +120,8 @@ class VoteProcessingView(TestCase):
         # Let's make sure the right vote got casted.
         try:
             Vote.objects.get(
-                user__id=self._non_voted_user.id,
-                candidate__id=self._candidate.id
+                user=self._non_voted_user,
+                candidate=self._candidate
             )
         except Vote.DoesNotExist:
             self.fail('Vote for test candidate was not casted successfully.')
@@ -116,10 +129,7 @@ class VoteProcessingView(TestCase):
         self.assertRedirects(response, reverse('index'))
 
     def test_non_voted_logged_in_post_requests_with_invalid_data(self):
-        self.client.login(
-            username=self._non_voted_user.username,
-            password=self._non_voted_user.password
-        )
+        self.client.login(username='juan', password='pepito')
 
         response = self.client.post(
             reverse('vote-processing'),
@@ -128,7 +138,7 @@ class VoteProcessingView(TestCase):
         )
         response_messages = list(response.context['messages'])
         self.assertEquals(
-            response_messages[0],
+            response_messages[0].message,
             'The votes you sent were invalid. Please try voting again, and/or '
             'contact the system administrator.'
         )
@@ -140,21 +150,18 @@ class VoteProcessingView(TestCase):
         self.assertRedirects(response, reverse('index'))
 
     def test_voted_logged_in_post_requests_with_valid_data(self):
-        self.client.login(
-            username=self._voted_user.username,
-            password=self._voted_user.password
-        )
+        self.client.login(username='pedro', password='pendoko')
 
         response = self.client.post(
             reverse('vote-processing'),
             {
-                'candidates_voted': [ _candidate.id ]
+                'candidates_voted': str([ self._candidate.id ])
             },
             follow=True
         )
         response_messages = list(response.context['messages'])
         self.assertEquals(
-            response_messages[0],
+            response_messages[0].message,
             'You are no longer allowed to vote since you have voted already.'
         )
 
@@ -162,10 +169,7 @@ class VoteProcessingView(TestCase):
 
 
     def test_voted_logged_in_post_requests_with_invalid_data(self):
-        self.client.login(
-            username=self._voted_user.username,
-            password=self._voted_user.password
-        )
+        self.client.login(username='pedro', password='pendoko')
 
         response = self.client.post(
             reverse('vote-processing'),
@@ -174,7 +178,7 @@ class VoteProcessingView(TestCase):
         )
         response_messages = list(response.context['messages'])
         self.assertEquals(
-            response_messages[0],
+            response_messages[0].message,
             'You are no longer allowed to vote since you have voted already.'
             ' Additionally, the votes you were invalid too.'
         )

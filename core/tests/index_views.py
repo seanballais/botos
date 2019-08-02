@@ -76,24 +76,31 @@ class VotingSubviewTest(TestCase):
         # Set up the users.
         _batch = Batch.objects.create(year=2020)
         _section = Section.objects.create(section_name='Emerald')
+        
         _user1 = User.objects.create(
             username='juan',
-            password='sample',
             batch=_batch,
             section=_section
         )
+        _user1.set_password('sample')
+        _user1.save()
+
         _user2 = User.objects.create(
             username='pedro',
-            password='sample',
             batch=_batch,
             section=_section
         )
+        _user2.set_password('sample')
+        _user2.save()
+
         _user3 = User.objects.create(
             username='pasta',
             password='sample',
             batch=_batch,
             section=_section
         )
+        _user3.set_password('sample')
+        _user3.save()
 
         _party = CandidateParty.objects.create(party_name='Awesome Party')
         _position = CandidatePosition.objects.create(
@@ -130,7 +137,7 @@ class VotingSubviewTest(TestCase):
 
     def test_index_uses_correct_template(self):
         response = self.client.get('/')
-        self.assertTemplatedUsed(response, 'default/index.html')
+        self.assertTemplateUsed(response, 'default/index.html')
 
     def test_candidates_are_in_the_subview(self):
         response = self.client.get('/')
@@ -161,24 +168,30 @@ class VotedSubviewTest(TestCase):
         # Set up the users.
         _batch = Batch.objects.create(year=2020)
         _section = Section.objects.create(section_name='Emerald')
+
         _user1 = User.objects.create(
             username='juan',
-            password='sample',
             batch=_batch,
             section=_section
         )
+        _user1.set_password('sample')
+        _user1.save()
+
         _user2 = User.objects.create(
             username='pedro',
-            password='sample',
             batch=_batch,
             section=_section
         )
+        _user2.set_password('sample')
+        _user2.save()
+
         _user3 = User.objects.create(
             username='pasta',
-            password='sample',
             batch=_batch,
             section=_section
         )
+        _user3.set_password('sample')
+        _user3.save()
 
         _party = CandidateParty.objects.create(party_name='Awesome Party')
         _position = CandidatePosition.objects.create(
@@ -202,28 +215,19 @@ class VotedSubviewTest(TestCase):
             vote_cipher=json.dumps(dict())
         )
 
-    def test_logged_in_users_voted_subview(self):
+    def setUp(self):
         self.client.login(username='pasta', password='sample')
 
+    def test_logged_in_users_voted_subview(self):
         response = self.client.get('/')
-        self.assertIsNotNone(self._get_logout_form(str(response.content)))
-
-    def test_voted_subview_form_has_correct_action_URL(self):
-        response = self.client.get('/')
-        form = self._get_logout_form(str(response.content))
-        self.assertEquals(form.get('action'), reverse('auth-logout'))
-
-    def test_voted_subview_form_has_correct_method(self):
-        response = self.client.get('/')
-        form = self._get_logout_form(str(response.content))
-        self.assertEquals(form.get('method').lower(), 'post')
+        self.assertIsNotNone(self._get_logout_button(str(response.content)))
 
     def test_index_uses_correct_template(self):
         response = self.client.get('/')
-        self.assertTemplatedUsed(response, 'default/index.html')
+        self.assertTemplateUsed(response, 'default/index.html')
 
-    def _get_logout_form(self, view_html):
+    def _get_logout_button(self, view_html):
         view_html_soup = BeautifulSoup(view_html, 'html.parser')
-        form = view_html_soup.find('form', id='logout')
+        button = view_html_soup.find('button', class_='logout-btn')
 
-        return form
+        return button

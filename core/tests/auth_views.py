@@ -21,12 +21,14 @@ class LoginViewTest(TestCase):
         # Set up the test user.
         _batch = Batch.objects.create(year=2020)
         _section = Section.objects.create(section_name='Emerald')
+
         _user = User.objects.create(
             username='juan',
-            password='pepito',
             batch=_batch,
             section=_section
         )
+        _user.set_password('pepito')
+        _user.save()
 
     def test_get_requests_redirected_to_index(self):
         response = self.client.get(reverse('auth-login'), follow=True)
@@ -40,9 +42,9 @@ class LoginViewTest(TestCase):
     def test_login_implementation(self):
         self.client.post(
             reverse('auth-login'),
-            { 'username': 'juan', 'password': 'pepito' }
+            { 'username': 'juan', 'password': 'pepito' },
+            follow=True
         )
-
         response = self.client.get(reverse('index'))
 
         # Well, yeah, sure. We can test if the user gets properly logged in
@@ -52,7 +54,7 @@ class LoginViewTest(TestCase):
         # username of the user we logged in. The latter also tests and makes
         # sure that we log in the correct user.
         response_user = response.context['user']
-        self.assertTrue(response_user.is_authenticated())
+        self.assertTrue(response_user.is_authenticated)
         self.assertEquals(response_user.username, 'juan')
 
 
@@ -97,5 +99,7 @@ class LogoutViewTest(TestCase):
     def test_logout_implementation(self):
         self.client.login(username='juan', password='pepito')
 
-        response = self.client.post(reverse('auth-logout'), follow=True)
-        self.assertTrue(response_user.is_anonymous())
+        self.client.post(reverse('auth-logout'), follow=True)
+        response = self.client.get(reverse('index'), follow=True)
+        response_user = response.context['user']
+        self.assertTrue(response_user.is_anonymous)

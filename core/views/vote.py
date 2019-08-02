@@ -12,6 +12,7 @@ from django.views import View
 from django.views.decorators.csrf import csrf_protect
 
 from core.decorators import login_required
+from core.exceptions import MissingSecurityKeyException
 from core.models import (
     User, Candidate, Vote
 )
@@ -22,9 +23,10 @@ from core.utils import AppSettings
 @method_decorator(
     login_required(
         login_url='/',
-        next=''
+        next='',
+        redirect_field_name=None
     ),
-    name='dispatch'
+    name='dispatch',
 )
 class VoteProcessingView(View):
     """
@@ -75,7 +77,7 @@ class VoteProcessingView(View):
                 )
         else:
             if has_user_voted:
-                message.error(
+                messages.error(
                     request,
                     'You are no longer allowed to vote since you have voted '
                     'already.'
@@ -85,8 +87,15 @@ class VoteProcessingView(View):
                     # No need for the private election key since we only need
                     # to encrypt the votes. We only need the private key if we
                     # need to decrypt votes.
-                    public_key = self._get_public_election_key()
-                    self._cast_votes(user, candidates_voted, public_key)
+                    try:
+                        public_key = self._get_public_election_key()
+                    except MissingSecurityKeyException:
+                        messages.error(
+                            request,
+                            'Election keys have not been generated yet.'
+                        )
+                    else:
+                        self._cast_votes(user, candidates_voted, public_key)
                 else:
                     messages.error(
                         request,
@@ -99,10 +108,8 @@ class VoteProcessingView(View):
     def _get_public_election_key(self):
         public_election_key_str = AppSettings().get('public_election_key')
         if public_election_key_str is None:
-            messages.error(
-                request,
-                'Election keys have not been generated yet.'
-            )
+            raise MissingSecurityKeyException(
+                'Election keys have not been generated yet.')
         else:
             public_key_json = json.loads(public_election_key_str)
 

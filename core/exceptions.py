@@ -1,0 +1,2 @@
+class MissingSecurityKeyException(Exception):
+    pass

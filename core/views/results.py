@@ -157,7 +157,7 @@ class ResultsView(TemplateView):
         public_election_key_str = AppSettings().get('public_election_key')
         if public_election_key_str is None:
             messages.error(
-                request,
+                self.request,
                 'Election keys have not been generated yet.'
             )
         else:
