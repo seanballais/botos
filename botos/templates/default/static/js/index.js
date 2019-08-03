@@ -1,11 +1,3 @@
-function ready(fn) {
-    if (document.readyState != 'loading') {
-        fn();
-    } else {
-        document.addEventListener('DOMContentLoaded', fn);
-    }
-}
-
 function resetVotingButton(btn) {
     btn.textContent = 'Vote';
     btn.classList.add('vote-btn');

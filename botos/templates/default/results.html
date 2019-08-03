@@ -6,9 +6,11 @@
 {% block title %}Election Results - Powered by Botos{% endblock %}
 
 {% block custom_head %}
+<meta http-equiv="refresh" content="900">
 <link rel="stylesheet" href="{% static template|add:'/static/css/fonts.css' %}">
 <link rel="stylesheet" href="{% static template|add:'/static/css/base.css' %}">
 <link rel="stylesheet" href="{% static template|add:'/static/css/results.css' %}">
+<script type="text/javascript" src="{% static template|add:'/static/js/index.js' %}" async></script>
 <script type="text/javascript" src="{% static template|add:'/static/js/results.js' %}" async></script>
 {% endblock %}
 
@@ -16,6 +18,7 @@
 <header>
     <h1>Election Results</h1>
     <p>{% if election_state == 'open' %}Tentative {% endif %}Results of the elections as of {{ current_time|date:'h:i:s A eO F d, Y D' }}.</p>
+    <p><small>(Auto-updated every 15 minutes.)</small></p>
     {% if messages %}
     <div id="messages">
         {% for message in messages %}
