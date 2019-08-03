@@ -1,0 +1,44 @@
+{% extends template|add:'/base.html' %}
+
+{% load static %}
+{% get_media_prefix as MEDIA_PREFIX %}
+
+{% block title %}Election Results - Powered by Botos{% endblock %}
+
+{% block custom_head %}
+<link rel="stylesheet" href="{% static template|add:'/static/css/fonts.css' %}">
+<link rel="stylesheet" href="{% static template|add:'/static/css/base.css' %}">
+<link rel="stylesheet" href="{% static template|add:'/static/css/results.css' %}">
+<script type="text/javascript" src="{% static template|add:'/static/js/results.js' %}" async></script>
+{% endblock %}
+
+{% block content %}
+<header>
+    <h1>Election Results</h1>
+    <p>{% if election_state == 'open' %}Tentative {% endif %}Results of the elections as of {{ current_time|date:'h:i:s A eO F d, Y D' }}.</p>
+    {% if messages %}
+    <div id="messages">
+        {% for message in messages %}
+        <p class="{{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+</header>
+<article>
+    {% for position, candidates in results.items %}
+    <section>
+        <h2>{{ position }}</h2>
+        <div class="candidates">
+            {% for candidate in candidates %}
+            <div class="candidate">
+                <img src="{{ candidate.avatar_url }}" alt="Candidate: {{ candidate.name }}" />
+                <h3>{{ candidate.name }}</h3>
+                <h4>{{ candidate.party_name }}</h4>
+                <p>Number of Votes: {{ candidate.total_votes }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endfor %}
+</article>
+{% endblock %}

@@ -66,3 +66,7 @@ target/
 
 # Ignore local settings.
 botos/settings/local_settings.py
+
+# Ignore files in `botos/media/avatar/` except the default avatar image.
+botos/media/avatars
+!botos/media/avatars/default.png

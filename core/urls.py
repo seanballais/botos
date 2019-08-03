@@ -10,12 +10,14 @@ from core.views.auth import (
     LoginView, LogoutView
 )
 from core.views.index import IndexView
+from core.views.results import ResultsView
 from core.views.vote import VoteProcessingView
 
 
 urlpatterns = [
     path('', IndexView.as_view(), name='index'),
     path('vote', VoteProcessingView.as_view(), name='vote-processing'),
+    path('results', ResultsView.as_view(), name='results'),
     path('auth/login', LoginView.as_view(), name='auth-login'),
     path('auth/logout', LogoutView.as_view(), name='auth-logout'),
     path(

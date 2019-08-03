@@ -1,0 +1,21 @@
+*::-moz-focus-inner {
+    border: 0;
+}
+
+html {
+    background-color: hsl(220, 100%, 70%);
+    background: linear-gradient(40deg, rgba(71, 198, 121, 1) 0%, rgba(41, 161, 185, 1) 41%, rgba(36, 97, 203, 1) 100%);
+
+    min-height: 100vh;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    color: hsl(0, 0%, 95%);
+
+    margin: 5%;
+}

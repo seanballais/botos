@@ -7,7 +7,7 @@ from core.models import (
 from core.utils import AppSettings
 
 
-class ResultsView(TestCase):
+class ResultsViewTest(TestCase):
     """
     Tests the results view.
 
@@ -18,12 +18,15 @@ class ResultsView(TestCase):
     The format of the results must be this way:
         {
             'results': {
-                '<position>': [
-                    [ <candidate name>, <candidate party>, <number of votes> ]
-                    ...
-                ]
+                '<position>': [ <candidate>, ... ],
             }
         }
+
+    <candidate> is a named tuple with the following properties:
+        - name
+        - party name
+        - avatar URL
+        - total votes
 
     The candidates and parties will be given a random name if the elections are
     open.
@@ -127,12 +130,14 @@ class ResultsView(TestCase):
         self.assertEquals(results['Amazing Position'][2][2], 2)
 
     def test_results_candidate_name_elections_open(self):
+        AppSettings().set('election_state', 'open')
         response = self.client.get(reverse('results'))
         results = response.context['results']
 
         self.assertNotEquals(results['Amazing Position'][0][0], 'Pepito, Juan')
 
     def test_results_candidate_party_name_elections_open(self):
+        AppSettings().set('election_state', 'open')
         response = self.client.get(reverse('results'))
         results = response.context['results']
 
@@ -142,12 +147,14 @@ class ResultsView(TestCase):
         )
 
     def test_results_candidate_name_elections_closed(self):
+        AppSettings().set('election_state', 'closed')
         response = self.client.get(reverse('results'))
         results = response.context['results']
 
         self.assertEquals(results['Amazing Position'][0][0], 'Pepito, Juan')
 
     def test_results_candidate_party_name_elections_open(self):
+        AppSettings().set('election_state', 'closed')
         response = self.client.get(reverse('results'))
         results = response.context['results']
 

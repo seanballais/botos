@@ -1,0 +1,86 @@
+header h1,
+header p,
+article section {
+    text-align: center;
+}
+
+header h1 {
+    font-family: 'PT Sans', sans-serif;
+    font-size: 2.25em;
+    font-weight: 700;
+}
+
+header p {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1.25em;
+    font-weight: 300;
+
+    margin-top: -4%;
+}
+
+article section h2 {
+    font-family: 'PT Sans', sans-serif;
+    font-size: 1.75em;
+    font-weight: 700;
+
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+article section div.candidates {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    min-width: 100%;
+}
+
+article section div.candidates div.candidate {
+    font-family: 'Source Sans Pro', sans-serif;
+
+    background: rgb(198, 198, 198);
+    background: linear-gradient(70deg, rgba(198, 198, 198, 1) 0%, rgba(247, 247, 247, 1) 40%);
+    color: hsl(0, 0%, 40%);
+
+    border-radius: 15px;
+
+    box-shadow: 0 4px 20px 1px hsl(0, 0%, 60%);
+
+    min-width: 60%;
+
+    padding: 8%;
+    margin: 5%;
+
+    transition: 0.15s opacity linear;
+}
+
+article section div.candidates div.candidate h3 {
+    font-size: 1.5em;
+    font-weight: 400;
+
+    margin-top: 3%;
+}
+
+article section div.candidates div.candidate h4 {
+    font-size: 1.25em;
+    font-weight: 300;
+
+    margin-top: -13%;
+}
+
+article section div.candidates div.candidate img {
+    border-radius: 100%;
+
+    width: 150px;
+    height: 150px;
+}
+
+footer p {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 0.9em;
+
+    margin-top: 2%;
+
+    color: hsl(0, 0%, 95%);
+}

@@ -9,29 +9,6 @@
     display: none !important;
 }
 
-/* View CSS Definition */
-*::-moz-focus-inner {
-    border: 0;
-}
-
-html {
-    background-color: hsl(220, 100%, 70%);
-    background: linear-gradient(40deg, rgba(71, 198, 121, 1) 0%, rgba(41, 161, 185, 1) 41%, rgba(36, 97, 203, 1) 100%);
-
-    min-height: 100vh;
-}
-
-body {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    color: hsl(0, 0%, 95%);
-
-    margin: 5%;
-}
-
 /* Login Sub-View CSS Definitions */
 header#login {
     display: flex;
@@ -230,7 +207,7 @@ article#voting section div.candidates div.candidate {
 
     box-shadow: 0 4px 20px 1px hsl(0, 0%, 60%);
 
-    min-width: 50%;
+    min-width: 60%;
 
     padding: 8%;
     margin: 5%;
@@ -255,7 +232,7 @@ article#voting section div.candidates div.candidate h4 {
     font-size: 1.25em;
     font-weight: 300;
 
-    margin-top: -18%;
+    margin-top: -13%;
 }
 
 article#voting section div.candidates div.candidate img {

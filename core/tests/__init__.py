@@ -21,6 +21,7 @@ from .index_views import (
     LoginSubviewTest, VotingSubviewTest, VotedSubviewTest
 )
 from .management import CreateSuperUserTest
+from .results_view import ResultsViewTest
 from .settings_model import SettingTest
 from .user_models import (
     UserModelTest, BatchModelTest, SectionModelTest
@@ -35,6 +36,8 @@ __all__ = [
     'AppSettingsTest', 'BaseModelTest',
     # Index Views
     'LoginSubviewTest', 'VotingSubviewTest', 'VotedSubviewTest',
+    # Results View
+    'ResultsViewTest',
     # Vote Views
     'VoteProcessingView',
     # Admin Elections Settings Forms
