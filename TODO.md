@@ -64,7 +64,11 @@ Here is a list of things that still needs to be done to improve Botos.
  * Add tests for the index view. We only have tests for the subviews of index.
  * We need more integration tests.
  * Add unit tests for the private functions in VoteProcessingView, located in `core/views/vote.py`.
+<<<<<<< HEAD
  * Fix all the failing tests. These tests all do a POST call. It seems that the POST call doesn't modify the database.
+=======
+ * Add tests for the custom user admin-related classes in `core/admin.py`.
+>>>>>>> develop
 
 ## For Deeper Understanding
  * **[ For Sean Ballais ]** (Had to defer this to another time due to time constraints) Understand why having a `return redirect(...)` in the logout view causes the index to just seemingly refresh the index view from the page when an AJAX call `request` to the view has `request.onreadystatechange = function() { document.location.reload(true); }`. Also explore what would happen if we `return redirect(...)` in the view but the AJAX call `request` having `request.onreadystatechange = function() {};`. The default template's `static/js/index.js` and `index_subviews/voting.html` are the relevant files for understanding the aforementioned behaviour.
