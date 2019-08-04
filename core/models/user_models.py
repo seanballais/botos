@@ -32,7 +32,7 @@ class User(AbstractUser, Base):
         verbose_name_plural = 'users'
 
     def __str__(self):
-        return '<User \'{}\'>'.format(self.username)
+        return '{}, {}'.format(self.last_name, self.first_name)
 
 
 class Batch(Base):
@@ -53,7 +53,7 @@ class Batch(Base):
 
 
     def __str__(self):
-        return '<Batch \'{}\'>'.format(self.year)
+        return str(self.year)
 
 
 class Section(Base):
@@ -74,4 +74,4 @@ class Section(Base):
         verbose_name_plural = 'sections'
 
     def __str__(self):
-        return '<Section \'{}\'>'.format(self.section_name)
+        return self.section_name

@@ -274,6 +274,8 @@ class CandidateTest(TestCase):
         cls._section = Section.objects.create(section_name='Emerald')
         cls._user = User.objects.create(
             username='juan',
+            first_name='Juan',
+            last_name='Pedro',
             batch=cls._batch,
             section=cls._section
         )
@@ -468,8 +470,7 @@ class CandidateTest(TestCase):
     def test_str(self):
         self.assertEquals(
             str(self._candidate),
-            '<Candidate \'juan\' '
-            + '(\'Amazing Position\' candidate of \'Awesome Party\')>'
+            'Pedro, Juan'
         )
 
 
@@ -544,7 +545,7 @@ class CandidatePartyTest(TestCase):
     def test_str(self):
         self.assertEquals(
             str(self._party),
-            '<CandidateParty \'Awesome Party\'>'
+            'Awesome Party'
         )
 
 
@@ -666,5 +667,5 @@ class CandidatePositionTest(TestCase):
     def test_str(self):
         self.assertEquals(
             str(self._position),
-            '<CandidatePosition \'Amazing Position\' (level 0)>'
+            'Amazing Position'
         )

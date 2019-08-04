@@ -35,6 +35,8 @@ class UserModelTest(TestCase):
         cls._section = Section.objects.create(section_name='Emerald')
         cls._user = User.objects.create(
             username='juan',
+            first_name='Juan',
+            last_name='Pedro',
             batch=cls._batch,
             section=cls._section
         )
@@ -139,7 +141,7 @@ class UserModelTest(TestCase):
         self.assertEquals(verbose_name_plural, 'users')
 
     def test_str(self):
-        self.assertEquals(str(self._user), '<User \'juan\'>')
+        self.assertEquals(str(self._user), 'Pedro, Juan')
 
 
 class BatchModelTest(TestCase):
@@ -197,7 +199,7 @@ class BatchModelTest(TestCase):
         self.assertEquals(self._batch._meta.verbose_name_plural, 'batches')
 
     def test_str(self):
-        self.assertEquals(str(self._batch), '<Batch \'2019\'>')
+        self.assertEquals(str(self._batch), '2019')
 
 
 class SectionModelTest(TestCase):
@@ -265,4 +267,4 @@ class SectionModelTest(TestCase):
         self.assertEquals(verbose_name_plural, 'sections')
 
     def test_str(self):
-        self.assertEquals(str(self._section), '<Section \'Section\'>')
+        self.assertEquals(str(self._section), 'Section')

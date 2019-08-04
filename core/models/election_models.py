@@ -23,7 +23,7 @@ class CandidateParty(Base):
         verbose_name_plural = 'parties'
 
     def __str__(self):
-        return '<CandidateParty \'{}\'>'.format(self.party_name)
+        return self.party_name
 
 
 class CandidatePosition(Base):
@@ -51,10 +51,7 @@ class CandidatePosition(Base):
         verbose_name_plural = 'candidate positions'
 
     def __str__(self):
-        return '<CandidatePosition \'{}\' (level {})>'.format(
-            self.position_name,
-            self.position_level
-        )
+        return self.position_name
 
 
 class Candidate(Base):
@@ -104,11 +101,7 @@ class Candidate(Base):
         verbose_name_plural = 'candidates'
 
     def __str__(self):
-        return '<Candidate \'{}\' (\'{}\' candidate of \'{}\')>'.format(
-            self.user.username,
-            self.position.position_name,
-            self.party.party_name
-        )
+        return '{}, {}'.format(self.user.last_name, self.user.first_name)
 
 
 class Vote(Base):
