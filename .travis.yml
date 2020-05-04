@@ -11,6 +11,7 @@ install:
   - pipenv install
 before_script:
   - psql -c 'CREATE DATABASE botos_ci_db;' -U postgres
+  - ls
   - mv botos/botos/botos/settings/travis_settings.py \
        botos/botos/botos/settings/local_settings.py
   - python manage.py makemigrations
