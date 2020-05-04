@@ -1,3 +1,5 @@
+from django import db
+
 from core.models import Setting
 
 
@@ -80,7 +82,31 @@ class AppSettings(object):
         try:
             setting = Setting.objects.get(key=key)
             value = setting.value
-        except Setting.DoesNotExist:
+        except (Setting.DoesNotExist, db.utils.ProgrammingError):
+            # If the exception we get is the ProgrammingError, then that means
+            # that either the system has just been set-up for the first time or 
+            # the settings was somehow deleted.
+            # 
+            # We can just have this function throw the exception. But, we
+            # shouldn't, because conceptually, we can view AppSettings just as
+            # an unopinionated collection of key- value pairs. It is up to the
+            # functions or classes that use AppSettings to determine whether
+            # the lack of a particular setting is catastrophic or not. For
+            # example, if a setting for a template is not available, we know
+            # that we can just revert to the default template, which we know
+            # we will usually always have. The lack of such a setting is not a
+            # show-stopper. On the other hand, if an encryption key is not
+            # defined and the system is set to use encryption, then it will be
+            # a show-stopper. We can't just create a default encryption key
+            # (for security). But, we can't let this function raise an
+            # exception bacause of the aforementioned case because it would
+            # mean that cases like the lack of specified template would need to
+            # handle the exception, even though they shouldn't worry about it,
+            # and that would result in less elegant code. As such, this
+            # function uses an neutral optimistic approach to dealing with
+            # non-existent settings. Optimistic in the sense that it assumes
+            # that the lack of settings wouldn't necessarily be a bad thing
+            # (i.e., not throwing an exception).
             value = default
 
         return value
