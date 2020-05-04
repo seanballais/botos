@@ -1,0 +1,17 @@
+language: python
+python:
+  - "3.5"
+services:
+  - postgresql
+install:
+  - apt-get install libpq-dev python3-dev
+  - pip install pipenv
+  - pipenv install
+before_script:
+  - psql -c 'CREATE DATABASE botos_ci_db;' -U postgres
+  - mv botos/botos/settings/travis_settings.py \
+       botos/botos/settings/local_settings.py
+  - python manage.py makemigrations
+  - python manage.py migrate
+script:
+  - python manage.py test
