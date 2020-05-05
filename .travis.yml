@@ -4,17 +4,17 @@ python:
 services:
   - postgresql
 env:
-  - BOTOS_DEBUG=True
-  - BOTOS_DATABASE_HOST=localhost
-  - BOTOS_DATABASE_PORT=''
-  - BOTOS_DATABASE_NAME=botos_db
-  - BOTOS_DATABASE_USERNAME=postgres
-  - BOTOS_DATABASE_PASSWORD=''
-  - BOTOS_TEST_DATABASE_NAME=botos_test_db
-  - BOTOS_SECRET_KEY='NO-SPECIFIC-SECRET-KEY-BECAUSE-THIS-IS-IN-DEBUG-MODE>'
-  - BOTOS_STATIC_ROOT=''
-  - BOTOS_MEDIA_ROOT=''
-  - BOTOS_ALLOWED_HOSTS=''
+  - BOTOS_DEBUG=True                                                         \
+    BOTOS_DATABASE_HOST=localhost                                            \
+    BOTOS_DATABASE_PORT=''                                                   \
+    BOTOS_DATABASE_NAME=botos_db                                             \
+    BOTOS_DATABASE_USERNAME=postgres                                         \
+    BOTOS_DATABASE_PASSWORD=''                                               \
+    BOTOS_TEST_DATABASE_NAME=botos_test_db                                   \
+    BOTOS_SECRET_KEY='NO-SPECIFIC-SECRET-KEY-BECAUSE-THIS-IS-IN-DEBUG-MODE>' \
+    BOTOS_STATIC_ROOT=''                                                     \
+    BOTOS_MEDIA_ROOT=''                                                      \
+    BOTOS_ALLOWED_HOSTS=''
 before_install:
   - sudo apt-get update
   - sudo apt-get install -y libpq-dev python3-dev
