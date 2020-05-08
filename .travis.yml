@@ -20,7 +20,7 @@ before_install:
   - sudo apt-get install -y libpq-dev python3-dev
 install:
   - pip install pipenv
-  - pipenv install
+  - pipenv install --dev
 before_script:
   - psql -c 'CREATE DATABASE botos_db;' -U postgres
   - python manage.py migrate
