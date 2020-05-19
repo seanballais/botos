@@ -68,8 +68,21 @@ class ResultsView(TemplateView):
         )
 
         results = OrderedDict()
+
         public_key = self._get_public_election_key()
+        if public_key is None:
+            # The results can only be shown if the keys have been generated
+            # already. Thus, since they're not generated yet, we should just
+            # give back empty results, and an error message.
+            return {}
+
         private_key = self._get_private_election_key()
+        if private_key is None:
+            # The results can only be shown if the keys have been generated
+            # already. Thus, since they're not generated yet, we should just
+            # give back empty results, and an error message.
+            return {}
+
         candidates = Candidate.objects.all()
         for candidate in candidates:
             votes = Vote.objects.filter(candidate=candidate)
@@ -119,12 +132,7 @@ class ResultsView(TemplateView):
         return results
 
     def _create_encrypted_vote_object(self, public_key, vote):
-        if type(vote.vote_cipher) is str:
-            vote_cipher_data = json.loads(vote.vote_cipher)
-        else:
-            # Just copy the JSON to another variable to make things cleaner, 
-            # more consistent, and with fewer duplicate code.
-            vote_cipher_data = vote.vote_cipher
+        vote_cipher_data = vote.vote_cipher
         vote_cipher = vote_cipher_data['ciphertext']
         vote_cipher_exponent = vote_cipher_data['exponent']
 

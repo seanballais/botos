@@ -193,8 +193,7 @@ class VoteTest(TestCase):
             ordering,
             [
                 'candidate__position__position_level',
-                'user__last_name',
-                'user__first_name'
+                'candidate__party__party_name'
             ]
         )
 

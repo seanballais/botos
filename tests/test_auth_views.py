@@ -1,3 +1,7 @@
+from io import StringIO
+
+from django.contrib.messages import get_messages
+from django.core.management import call_command
 from django.test import TestCase
 from django.urls import reverse
 
@@ -39,7 +43,7 @@ class LoginViewTest(TestCase):
         
         self.test_get_requests_redirected_to_index()
 
-    def test_login_implementation(self):
+    def test_successful_login(self):
         self.client.post(
             reverse('auth-login'),
             { 'username': 'juan', 'password': 'pepito' },
@@ -56,6 +60,48 @@ class LoginViewTest(TestCase):
         response_user = response.context['user']
         self.assertTrue(response_user.is_authenticated)
         self.assertEquals(response_user.username, 'juan')
+
+    def test_wrong_username_password_combination_login(self):
+        response = self.client.post(
+            reverse('auth-login'),
+            { 'username': 'juan', 'password': 'wrong password' },
+            follow=True
+        )
+        messages = list(response.context['messages'])
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(
+            str(messages[0]),
+            'Wrong username/password combination.'
+        )
+        self.assertRedirects(response, reverse('index'))
+
+    def test_post_login_no_username(self):
+        response = self.client.post(
+            reverse('auth-login'),
+            { 'password': 'pepito' },
+            follow=True
+        )
+        messages = list(response.context['messages'])
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(
+            str(messages[0]),
+            'Invalid data submitted for authentication.'
+        )
+        self.assertRedirects(response, reverse('index'))
+
+    def test_post_login_no_password(self):
+        response = self.client.post(
+            reverse('auth-login'),
+            { 'username': 'juan' },
+            follow=True
+        )
+        messages = list(response.context['messages'])
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(
+            str(messages[0]),
+            'Invalid data submitted for authentication.'
+        )
+        self.assertRedirects(response, reverse('index'))
 
 
 class LogoutViewTest(TestCase):
@@ -87,19 +133,35 @@ class LogoutViewTest(TestCase):
         _section = Section.objects.create(section_name='Emerald')
         _user = User.objects.create(
             username='juan',
-            password='pepito',
             batch=_batch,
             section=_section
         )
+        _user.set_password('pepito')
+        _user.save()
 
-    def test_anonymous_users_redirected_to_index(self):
+    def test_anonymous_users_get_request_redirected_to_index(self):
         response = self.client.get(reverse('auth-logout'), follow=True)
         self.assertRedirects(response, reverse('index'))
 
-    def test_logout_implementation(self):
+    def test_logged_in_users_get_request_redirected_to_index(self):
         self.client.login(username='juan', password='pepito')
 
-        self.client.post(reverse('auth-logout'), follow=True)
+        response = self.client.get(reverse('auth-logout'), follow=True)
+        self.assertRedirects(response, reverse('index'))
+
+    def test_successful_logout(self):
+        self.client.login(username='juan', password='pepito')
+
+        response = self.client.post(reverse('auth-logout'), follow=True)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(
+            str(messages[0]),
+            'Logged out successfully.'
+        )
+        self.assertEqual(response.status_code, 204)
+
+        # Make sure the user has been logged out.
         response = self.client.get(reverse('index'), follow=True)
         response_user = response.context['user']
         self.assertTrue(response_user.is_anonymous)

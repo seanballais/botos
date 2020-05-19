@@ -4,7 +4,8 @@ from django.test import (
 from django.urls import reverse
 
 from core.models import (
-    User, Batch, Section, Candidate, CandidateParty, CandidatePosition, Vote
+    User, Batch, Section, Candidate, CandidateParty, CandidatePosition, Vote,
+    Setting
 )
 from core.utils import AppSettings
 
@@ -183,3 +184,31 @@ class ResultsViewTest(TestCase):
             results['Amazing Position'][0].party_name,
             'Awesome Party'
         )
+
+    def test_no_public_key_generated_yet(self):
+        Setting.objects.get(key='public_election_key').delete()
+
+        response = self.client.get(reverse('results'))
+        results = response.context['results']
+        messages = list(response.context['messages'])
+
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(
+            str(messages[0]),
+            'Election keys have not been generated yet.'
+        )
+        self.assertEqual(results, {})
+
+    def test_no_private_key_generated_yet(self):
+        Setting.objects.get(key='private_election_key').delete()
+
+        response = self.client.get(reverse('results'))
+        results = response.context['results']
+        messages = list(response.context['messages'])
+
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(
+            str(messages[0]),
+            'Private election key has not been generated yet.'
+        )
+        self.assertEqual(results, {})

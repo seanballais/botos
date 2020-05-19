@@ -148,11 +148,8 @@ class VoteProcessingView(View):
             Vote.objects.create(
                 user=user,
                 candidate=candidate,
-                vote_cipher=self._serialize_vote(encrypted_vote)
+                vote_cipher=({
+                    'ciphertext': encrypted_vote.ciphertext(),
+                    'exponent': encrypted_vote.exponent
+                })
             )
-
-    def _serialize_vote(self, encrypted_vote):
-        return json.dumps({
-            'ciphertext': encrypted_vote.ciphertext(),
-            'exponent': encrypted_vote.exponent
-        })

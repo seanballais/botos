@@ -11,6 +11,80 @@ from core.models import (
 from core.utils import AppSettings
 
 
+class IndexViewTest(TestCase):
+    """
+    Tests the index view, in general. No specific subview is being tested here.
+    """
+    @classmethod
+    def setUpTestData(cls):
+        # Set up the users.
+        _batch = Batch.objects.create(year=2020)
+        _section = Section.objects.create(section_name='Emerald')
+        
+        _user1 = User.objects.create(
+            username='juan',
+            batch=_batch,
+            section=_section
+        )
+        _user1.set_password('sample')
+        _user1.save()
+
+        _user2 = User.objects.create(
+            username='pedro',
+            batch=_batch,
+            section=_section
+        )
+        _user2.set_password('sample')
+        _user2.save()
+
+        cls._user3 = User.objects.create(
+            username='pasta',
+            password='sample',
+            batch=_batch,
+            section=_section
+        )
+        cls._user3.set_password('sample')
+        cls._user3.save()
+
+        _party = CandidateParty.objects.create(party_name='Awesome Party')
+        _position = CandidatePosition.objects.create(
+            position_name='Amazing Position',
+            position_level=0
+        )
+        cls._candidate1 = Candidate.objects.create(
+            user=_user1,
+            party=_party,
+            position=_position
+        )
+        _candidate2 = Candidate.objects.create(
+            user=_user2,
+            party=_party,
+            position=_position
+        )
+
+    def test_anonymous_users_post_index(self):
+        response = self.client.post(reverse('index'), follow=True)
+        self.assertRedirects(response, reverse('index'))
+
+    def test_logged_in_non_voted_users_post_index(self):
+        self.client.login(username='pasta', password='sample')
+
+        response = self.client.post(reverse('index'), follow=True)
+        self.assertRedirects(response, reverse('index'))
+
+    def test_logged_in_voted_users_post_index(self):
+        Vote.objects.create(
+            user=self._user3,
+            candidate=self._candidate1,
+            vote_cipher=json.dumps(dict())
+        )
+
+        self.client.login(username='pasta', password='sample')
+
+        response = self.client.post(reverse('index'), follow=True)
+        self.assertRedirects(response, reverse('index'))
+
+
 class LoginSubviewTest(TestCase):
     """
     Tests the login sub-view in the index view (accessed via `/`).

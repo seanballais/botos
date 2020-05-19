@@ -1,10 +1,12 @@
 [run]
 source = .
 omit = 
+    tests/*
+
+    # Django-generated files.
     manage.py
-    botos/wsgi.py     # Django-generated file
-    core/apps         # Django-generated file
-    core/tests/*
+    botos/wsgi.py
+    core/apps.py
     core/migrations/*
 
 [report]

@@ -22,7 +22,7 @@ from core.models import (
 from core.utils import AppSettings
 
 
-class BaseAdminFormTest(ABC, TestCase):
+class BaseAdminFormTest(ABC):
     """
     Base test for all admin forms.
     """
@@ -43,7 +43,7 @@ class BaseAdminFormTest(ABC, TestCase):
         )
 
 
-class ElectionSettingsCurrentTemplateFormTest(BaseAdminFormTest):
+class ElectionSettingsCurrentTemplateFormTest(BaseAdminFormTest, TestCase):
     """
     Tests the current template form of the election settings.
 
@@ -292,7 +292,7 @@ class ElectionSettingsCurrentTemplateFormTest(BaseAdminFormTest):
                 )
 
 
-class ElectionSettingsElectionStateFormTest(BaseAdminFormTest):
+class ElectionSettingsElectionStateFormTest(BaseAdminFormTest, TestCase):
     """
     Tests the current template form of the election settings.
 
@@ -338,7 +338,7 @@ class ElectionSettingsElectionStateFormTest(BaseAdminFormTest):
         self.assertEquals(form_state.initial, 'open')
 
 
-class ElectionSettingsPubPrivKeysFormTest(BaseAdminFormTest):
+class ElectionSettingsPubPrivKeysFormTest(BaseAdminFormTest, TestCase):
     """
     Tests the current template form of the election settings.
 

@@ -2,6 +2,7 @@ from collections import OrderedDict
 
 from django.contrib import messages
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.views.generic.base import TemplateView
 
 from core.models import (

@@ -144,6 +144,11 @@ class Vote(Base):
         verbose_name_plural = 'votes'
 
     def __str__(self):
+        # Should the need arise, this can be used to determine whose votes were
+        # not properly casted, which can be implemented in the admin panel in
+        # the future. The votes can be listed, and individually checked. Since
+        # we're just checking for existence of votes, the vote count of each
+        # vote does not have to be displayed during this auditing process.
         return '<Vote for \'{}\' by \'{}\'>'.format(
             self.candidate.user.username,
             self.user.username

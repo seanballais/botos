@@ -5,7 +5,14 @@ import sys
 
 
 def main():
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'botos.settings')
+    if 'test' not in sys.argv:
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'botos.settings')
+    else:
+        os.environ.setdefault(
+            'DJANGO_SETTINGS_MODULE',
+            'botos.settings.test_settings'
+        )
+
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

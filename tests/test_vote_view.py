@@ -6,7 +6,8 @@ from django.test import (
 from django.urls import reverse
 
 from core.models import (
-    User, Batch, Section, Candidate, CandidateParty, CandidatePosition, Vote
+    User, Batch, Section, Candidate, CandidateParty,
+    CandidatePosition, Vote, Setting
 )
 from core.utils import AppSettings
 
@@ -86,7 +87,7 @@ class VoteProcessingView(TestCase):
         Vote.objects.create(
             user=cls._voted_user,
             candidate=cls._candidate,
-            vote_cipher=json.dumps(dict())
+            vote_cipher=dict()
         )
 
     def test_anonymous_get_requests_redirected_to_index(self):
@@ -184,3 +185,59 @@ class VoteProcessingView(TestCase):
         )
 
         self.assertRedirects(response, reverse('index'))
+
+    def test_voted_logged_in_post_requests_with_nonlist_data(self):
+        self.client.login(username='juan', password='pepito')
+
+        response = self.client.post(
+            reverse('vote-processing'),
+            { 'candidates_voted': str({}) },
+            follow=True
+        )
+        response_messages = list(response.context['messages'])
+        self.assertEquals(
+            response_messages[0].message,
+            'The votes you sent were invalid. Please try voting '
+            'again, and/or contact the system administrator.'
+        )
+
+        self.assertRedirects(response, reverse('index'))
+
+    def test_casting_votes_with_no_public_key_generated_yet(self):
+        Setting.objects.get(key='public_election_key').delete()
+        self.client.login(username='juan', password='pepito')
+
+        response = self.client.post(
+            reverse('vote-processing'),
+            { 'candidates_voted': str([]) },
+            follow=True
+        )
+        messages = list(response.context['messages'])
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(
+            str(messages[0]),
+            'Election keys have not been generated yet.'
+        )
+
+    def test_casting_no_votes(self):
+        self.client.login(username='juan', password='pepito')
+
+        response = self.client.post(
+            reverse('vote-processing'),
+            { 'candidates_voted': str([]) },
+            follow=True
+        )
+
+        # Let's make sure a vote got casted.
+        try:
+            # This vote should have a vote count of zero, i.e. the user did
+            # not vote for the candidate.
+            Vote.objects.get(
+                user=self._non_voted_user,
+                candidate=self._candidate
+            )
+        except Vote.DoesNotExist:
+            self.fail('Vote for test candidate was not casted successfully.')
+
+        self.assertRedirects(response, reverse('index'))
+        

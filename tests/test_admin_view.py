@@ -17,7 +17,7 @@ from core.utils import AppSettings
 
 
 # Test views.
-class BaseElectionSettingsViewTest(ABC, TestCase):
+class BaseElectionSettingsViewTest(ABC):
     """
     This is the base class for the rest of the election settings view tests.
     """
@@ -80,7 +80,7 @@ class BaseElectionSettingsViewTest(ABC, TestCase):
         pass
 
 
-class ElectionSettingsViewTest(BaseElectionSettingsViewTest):
+class ElectionSettingsViewTest(BaseElectionSettingsViewTest, TestCase):
     """
     Tests the election settings view in the admin.
 
@@ -135,7 +135,9 @@ class ElectionSettingsViewTest(BaseElectionSettingsViewTest):
 #     not have an admin logged in, including the tests in the base test class.
 
 
-class ElectionSettingsCurrentTemplateViewTest(BaseElectionSettingsViewTest):
+class ElectionSettingsCurrentTemplateViewTest(
+        BaseElectionSettingsViewTest,
+        TestCase):
     """
     Tests the election settings current template view.
 
@@ -210,7 +212,9 @@ class ElectionSettingsCurrentTemplateViewTest(BaseElectionSettingsViewTest):
         shutil.rmtree(new_template_dir)
 
 
-class ElectionSettingsElectionsStateViewTest(BaseElectionSettingsViewTest):
+class ElectionSettingsElectionsStateViewTest(
+        BaseElectionSettingsViewTest,
+        TestCase):
     """
     Tests the election settings election state view.
 
@@ -272,7 +276,9 @@ class ElectionSettingsElectionsStateViewTest(BaseElectionSettingsViewTest):
         self.assertEquals(AppSettings().get('election_state'), 'closed')
 
 
-class ElectionSettingsPubPrivKeysViewTest(BaseElectionSettingsViewTest):
+class ElectionSettingsPubPrivKeysViewTest(
+        BaseElectionSettingsViewTest,
+        TestCase):
     """
     Tests the election settings public/private election keys view.
 
