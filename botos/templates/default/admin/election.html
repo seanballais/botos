@@ -24,10 +24,4 @@
     {{ current_election_state_form }}
     <input type="submit" value="Save">
 </form>
-
-<h2>Generate Election Public and Private Keys</h2>
-<form id="pub-priv-key" action="/admin/election/keys" method="post">
-    {% csrf_token %}
-    <input type="submit" value="Generate Keys" {{ elections_genkey_button_state }}>
-</form>
 {% endblock %}

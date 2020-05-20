@@ -73,11 +73,7 @@ class IndexViewTest(TestCase):
         self.assertRedirects(response, reverse('index'))
 
     def test_logged_in_voted_users_post_index(self):
-        Vote.objects.create(
-            user=self._user3,
-            candidate=self._candidate1,
-            vote_cipher=json.dumps(dict())
-        )
+        Vote.objects.create(user=self._user3, candidate=self._candidate1)
 
         self.client.login(username='pasta', password='sample')
 
@@ -283,11 +279,7 @@ class VotedSubviewTest(TestCase):
             position=_position
         )
 
-        Vote.objects.create(
-            user=_user3,
-            candidate=cls._candidate1,
-            vote_cipher=json.dumps(dict())
-        )
+        Vote.objects.create(user=_user3, candidate=cls._candidate1)
 
     def setUp(self):
         self.client.login(username='pasta', password='sample')

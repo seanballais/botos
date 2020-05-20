@@ -78,16 +78,10 @@ class VoteProcessingView(TestCase):
         cls._admin.set_password('root')
         cls._admin.save()
 
-        # The keys should only be generated once.
-        client = Client()
-        client.login(username='admin', password='root')
-        client.post(reverse('admin-election-keys'), follow=True)
-
         # Time to add a vote for the _voted_user..
         Vote.objects.create(
             user=cls._voted_user,
-            candidate=cls._candidate,
-            vote_cipher=dict()
+            candidate=cls._candidate
         )
 
     def test_anonymous_get_requests_redirected_to_index(self):
@@ -203,22 +197,6 @@ class VoteProcessingView(TestCase):
 
         self.assertRedirects(response, reverse('index'))
 
-    def test_casting_votes_with_no_public_key_generated_yet(self):
-        Setting.objects.get(key='public_election_key').delete()
-        self.client.login(username='juan', password='pepito')
-
-        response = self.client.post(
-            reverse('vote-processing'),
-            { 'candidates_voted': str([]) },
-            follow=True
-        )
-        messages = list(response.context['messages'])
-        self.assertEqual(len(messages), 1)
-        self.assertEqual(
-            str(messages[0]),
-            'Election keys have not been generated yet.'
-        )
-
     def test_casting_no_votes(self):
         self.client.login(username='juan', password='pepito')
 
@@ -228,16 +206,67 @@ class VoteProcessingView(TestCase):
             follow=True
         )
 
-        # Let's make sure a vote got casted.
+        # Let's make sure no vote got casted.
         try:
-            # This vote should have a vote count of zero, i.e. the user did
-            # not vote for the candidate.
-            Vote.objects.get(
-                user=self._non_voted_user,
-                candidate=self._candidate
-            )
+            Vote.objects.get(user=self._non_voted_user)
+            self.fail('Vote was casted.')
         except Vote.DoesNotExist:
-            self.fail('Vote for test candidate was not casted successfully.')
+            pass
 
         self.assertRedirects(response, reverse('index'))
-        
+
+    def test_casting_with_duplicate_votes(self):
+        self.client.login(username='juan', password='pepito')
+
+        response = self.client.post(
+            reverse('vote-processing'),
+            # No candidate with id of 1000.
+            { 
+                'candidates_voted': str([
+                    self._candidate.id, self._candidate.id
+                ])
+            },
+            follow=True
+        )
+
+        response_messages = list(response.context['messages'])
+        self.assertEquals(
+            response_messages[0].message,
+            'The votes you sent were invalid. Please try voting '
+            'again, and/or contact the system administrator.'
+        )
+
+        # Let's make sure no vote got casted.
+        try:
+            Vote.objects.get(user=self._non_voted_user)
+            self.fail('Vote was casted.')
+        except Vote.DoesNotExist:
+            pass
+
+        self.assertRedirects(response, reverse('index'))
+
+    def test_casting_votes_for_non_existent_candidates(self):
+        self.client.login(username='juan', password='pepito')
+
+        response = self.client.post(
+            reverse('vote-processing'),
+            # No candidate with id of 1000.
+            { 'candidates_voted': str([ 1000 ])},
+            follow=True
+        )
+
+        response_messages = list(response.context['messages'])
+        self.assertEquals(
+            response_messages[0].message,
+            'The votes you sent were invalid. Please try voting '
+            'again, and/or contact the system administrator.'
+        )
+
+        # Let's make sure no vote got casted.
+        try:
+            Vote.objects.get(user=self._non_voted_user)
+            self.fail('Vote was casted.')
+        except Vote.DoesNotExist:
+            pass
+
+        self.assertRedirects(response, reverse('index'))

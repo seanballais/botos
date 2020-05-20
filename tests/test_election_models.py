@@ -84,12 +84,10 @@ class VoteTest(TestCase):
         )
         cls._vote = Vote.objects.create(
             user=cls._user,
-            candidate=cls._candidate,
-            vote_cipher=json.dumps(dict())
+            candidate=cls._candidate
         )
         cls._vote_user_field = cls._vote._meta.get_field('user')
         cls._vote_candidate_field = cls._vote._meta.get_field('candidate')
-        cls._vote_cipher_field = cls._vote._meta.get_field('vote_cipher')
 
     # Test user foreign key.
     def test_user_fk_is_fk(self):
@@ -162,24 +160,6 @@ class VoteTest(TestCase):
             'related_name'
         )
         self.assertEquals(related_name, 'votes')
-
-    # Test vote_cipher field.
-    def test_cipher_is_json_field(self):
-        self.assertTrue(
-            isinstance(self._vote_cipher_field, postgres_fields.JSONField)
-        )
-
-    def test_cipher_null(self):
-        self.assertFalse(self._vote_cipher_field.null)
-
-    def test_cipher_blank(self):
-        self.assertFalse(self._vote_cipher_field.blank)
-
-    def test_cipher_default(self):
-        self.assertIsNone(self._vote_cipher_field.default)
-
-    def test_cipher_unique(self):
-        self.assertTrue(self._vote_cipher_field.unique)
 
     # Test the meta class.
     def test_meta_indexes(self):

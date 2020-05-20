@@ -12,11 +12,9 @@ from django.views import View
 from django.views.decorators.csrf import csrf_protect
 
 from core.decorators import login_required
-from core.exceptions import MissingSecurityKeyException
 from core.models import (
     User, Candidate, Vote
 )
-from core.utils import AppSettings
 
 
 @method_decorator(csrf_protect, name='dispatch')
@@ -84,18 +82,15 @@ class VoteProcessingView(View):
                 )
             else:
                 if type(candidates_voted) is list:
-                    # No need for the private election key since we only need
-                    # to encrypt the votes. We only need the private key if we
-                    # need to decrypt votes.
                     try:
-                        public_key = self._get_public_election_key()
-                    except MissingSecurityKeyException:
+                        self._cast_votes(user, candidates_voted)
+                    except ValueError:
                         messages.error(
                             request,
-                            'Election keys have not been generated yet.'
+                            'The votes you sent were invalid. Please try '
+                            'voting again, and/or contact the system '
+                            'administrator.'
                         )
-                    else:
-                        self._cast_votes(user, candidates_voted, public_key)
                 else:
                     messages.error(
                         request,
@@ -105,51 +100,25 @@ class VoteProcessingView(View):
 
         return redirect(reverse('index'))
 
-    def _get_public_election_key(self):
-        public_election_key_str = AppSettings().get('public_election_key')
-        if public_election_key_str is None:
-            raise MissingSecurityKeyException(
-                'Election keys have not been generated yet.')
-        else:
-            public_key_json = json.loads(public_election_key_str)
+    def _cast_votes(self, user, candidates_voted):
+        # Ensure that there are no duplicate candidates.
+        encountered_candidate_ids = set()
+        voted_candidates = list()
+        for candidate_id in candidates_voted:
+            # Check that there are no duplicate votes and that the candidate
+            # IDs passed exist.
+            if candidate_id not in encountered_candidate_ids:
+                encountered_candidate_ids.add(candidate_id)
 
-            return paillier.PaillierPublicKey(n=public_key_json['n'])
+                try:
+                    candidate = Candidate.objects.get(id=candidate_id)
+                except Candidate.DoesNotExist:
+                    raise ValueError('Voted candidate does not exist.')
+                else:
+                    voted_candidates.append(candidate)
+            else:
+                raise ValueError('Duplicate candidates IDs submitted.')
 
-    def _cast_votes(self, user, candidates_voted, public_key):
-        try:
-            candidates_voted = Candidate.objects.filter(
-                reduce(
-                    lambda x, y: x | y,
-                    [ Q(id=candidate_id) for candidate_id in candidates_voted ]
-                )
-            )
-        except TypeError:
-            # No candidates were voted. Thus, candidates_voted is empty and
-            # reduce throws a TypeError.
-            candidates_voted = []
-
-        candidates = Candidate.objects.all()
-
-        for candidate in candidates:
-            vote_count = 0
-            # We need to have a benchmark to confirm if calling to the database
-            # to check if a candidate is part of the candidates voted takes
-            # more time to perform than iterating through an evaluated list of
-            # candidates voted. Right now, we're just going to do the latter
-            # since there seems to be additional overhead when performing a
-            # database call, and the evaluated list already acts as a cache of
-            # the candidates voted.
-            #
-            # Note: QuerySets are lazily evaluated.
-            if candidate in candidates_voted:
-                vote_count = 1
-
-            encrypted_vote = public_key.encrypt(vote_count)
-            Vote.objects.create(
-                user=user,
-                candidate=candidate,
-                vote_cipher=({
-                    'ciphertext': encrypted_vote.ciphertext(),
-                    'exponent': encrypted_vote.exponent
-                })
-            )
+        # Alright, things have gone well.
+        for candidate in voted_candidates:
+            Vote.objects.create(user=user, candidate=candidate)

@@ -68,31 +68,9 @@ class ResultsView(TemplateView):
         )
 
         results = OrderedDict()
-
-        public_key = self._get_public_election_key()
-        if public_key is None:
-            # The results can only be shown if the keys have been generated
-            # already. Thus, since they're not generated yet, we should just
-            # give back empty results, and an error message.
-            return {}
-
-        private_key = self._get_private_election_key()
-        if private_key is None:
-            # The results can only be shown if the keys have been generated
-            # already. Thus, since they're not generated yet, we should just
-            # give back empty results, and an error message.
-            return {}
-
         candidates = Candidate.objects.all()
         for candidate in candidates:
-            votes = Vote.objects.filter(candidate=candidate)
-            total_encrypted_votes = public_key.encrypt(0)
-            for vote in votes:
-                total_encrypted_votes += self._create_encrypted_vote_object(
-                    public_key,
-                    vote
-                )
-            total_votes = private_key.decrypt(total_encrypted_votes)
+            total_num_votes = Vote.objects.filter(candidate=candidate).count()
 
             position = str(candidate.position.position_name)
             if election_state == 'open':
@@ -120,7 +98,7 @@ class ResultsView(TemplateView):
                     candidate_name,
                     party_name,
                     avatar_url,
-                    total_votes
+                    total_num_votes
                 )
             )
 
@@ -130,48 +108,6 @@ class ResultsView(TemplateView):
                 random.shuffle(results[position])
 
         return results
-
-    def _create_encrypted_vote_object(self, public_key, vote):
-        vote_cipher_data = vote.vote_cipher
-        vote_cipher = vote_cipher_data['ciphertext']
-        vote_cipher_exponent = vote_cipher_data['exponent']
-
-        encrypted_vote = paillier.EncryptedNumber(
-            public_key,
-            ciphertext=vote_cipher,
-            exponent=vote_cipher_exponent
-        )
-
-        return encrypted_vote
-
-    def _get_private_election_key(self):
-        private_election_key_str = AppSettings().get('private_election_key')
-        if private_election_key_str is None:
-            messages.error(
-                self.request,
-                'Private election key has not been generated yet.'
-            )
-        else:
-            private_key_json = json.loads(private_election_key_str)
-            public_key = self._get_public_election_key()
-
-            return paillier.PaillierPrivateKey(
-                public_key,
-                p=private_key_json['p'],
-                q=private_key_json['q']
-            )
-
-    def _get_public_election_key(self):
-        public_election_key_str = AppSettings().get('public_election_key')
-        if public_election_key_str is None:
-            messages.error(
-                self.request,
-                'Election keys have not been generated yet.'
-            )
-        else:
-            public_key_json = json.loads(public_election_key_str)
-
-            return paillier.PaillierPublicKey(n=public_key_json['n'])
 
     def _get_random_candidate_name(self):
         random_names = [

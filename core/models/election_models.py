@@ -105,7 +105,10 @@ class Candidate(Base):
 
 
 class Vote(Base):
-    """ Model for the votes. """
+    """
+    Model for the votes. The existent of a vote record for a user-candidate
+    pair means that the user voted for the candidate.
+    """
     user = models.ForeignKey(
         User,
         on_delete=models.PROTECT,
@@ -122,16 +125,6 @@ class Vote(Base):
         default=None,
         unique=False,
         related_name='votes'
-    )
-    vote_cipher = postgres_fields.JSONField(
-        null=False,
-        blank=False,
-        default=None,
-        unique=True  # For privacy reasons; having the same resulting cipher
-                     # will weaken privacy since, once you are able to
-                     # figure out the original value of a cipher, you will
-                     # obviously automatically know the value of duplicate
-                     # ciphers.
     )
 
     class Meta:
