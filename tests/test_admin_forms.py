@@ -17,7 +17,8 @@ from core.forms.admin import (
     ElectionSettingsCurrentTemplateForm, ElectionSettingsElectionStateForm
 )
 from core.models import (
-    User, Batch, Section, Candidate, CandidateParty, CandidatePosition, Vote
+    User, Batch, Section, Candidate, CandidateParty, CandidatePosition, Vote,
+    UserType
 )
 from core.utils import AppSettings
 
@@ -28,19 +29,13 @@ class BaseAdminFormTest(ABC):
     """
     @classmethod
     def setUpTestData(cls):
-        cls._batch = Batch.objects.create(year=2019)
-        cls._section = Section.objects.create(section_name='Section')
-        cls._admin_batch = Batch.objects.create(year=0)
-        cls._admin_section = Section.objects.create(section_name='Superusers')
-
-        User.objects.create_user(
+        user = User(
             username='admin',
             email='admin@admin.com',
-            password='root',
-            batch=cls._admin_batch,
-            section=cls._admin_section,
-            is_superuser=True
+            type=UserType.ADMIN
         )
+        user.set_password('root')
+        user.save()
 
 
 class ElectionSettingsCurrentTemplateFormTest(BaseAdminFormTest, TestCase):

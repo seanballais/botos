@@ -6,7 +6,7 @@ from django.test import TestCase
 
 from core.models import (
     Vote, Candidate, CandidateParty, CandidatePosition,
-    User, Batch, Section
+    User, Batch, Section, UserType
 )
 
 
@@ -39,20 +39,6 @@ class VoteTest(TestCase):
         - unique = False
         - related_name = 'votes'
 
-    The vote_cipher field must be a JSON field and have the following settings:
-        - null = False
-        - blank = False
-        - default = None
-        - unique = True (for privacy reasons; having the same resulting cipher
-                         will weaken privacy since, once you are able to
-                         figure out the original value of a cipher, you will
-                         obviously automatically know the value of duplicate
-                         ciphers.)
-
-    The vote_cipher field will contain the encrypted vote of a user for a
-    candidate. The Paillier homeomorphic cryptosystem is used to
-    encrypt/decrypt votes.
-
     The model must have the following meta settings:
         - Index must be set to the user field and the candidate field.
         - The ordering must be based on the candidate position level first,
@@ -65,13 +51,7 @@ class VoteTest(TestCase):
     """
     @classmethod
     def setUpTestData(cls):
-        cls._batch = Batch.objects.create(year=2019)
-        cls._section = Section.objects.create(section_name='Emerald')
-        cls._user = User.objects.create(
-            username='juan',
-            batch=cls._batch,
-            section=cls._section
-        )
+        cls._user = User.objects.create(username='juan', type=UserType.VOTER)
         cls._party = CandidateParty.objects.create(party_name='Awesome Party')
         cls._position = CandidatePosition.objects.create(
             position_name='Amazing Position',
@@ -249,14 +229,11 @@ class CandidateTest(TestCase):
     """
     @classmethod
     def setUpTestData(cls):
-        cls._batch = Batch.objects.create(year=2019)
-        cls._section = Section.objects.create(section_name='Emerald')
         cls._user = User.objects.create(
             username='juan',
             first_name='Juan',
             last_name='Pedro',
-            batch=cls._batch,
-            section=cls._section
+            type=UserType.VOTER
         )
         cls._party = CandidateParty.objects.create(party_name='Awesome Party')
         cls._position = CandidatePosition.objects.create(

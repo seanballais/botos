@@ -5,7 +5,7 @@ from django.urls import reverse
 
 from core.models import (
     User, Batch, Section, Candidate, CandidateParty, CandidatePosition, Vote,
-    Setting
+    Setting, UserType
 )
 from core.utils import AppSettings
 
@@ -39,42 +39,27 @@ class ResultsViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         # Set up the test users, candidate, and vote.
-        _batch = Batch.objects.create(year=2020)
-        _section = Section.objects.create(section_name='Emerald')
-
         cls._user1 = User.objects.create(
             username='juan',
             first_name='Juan',
             last_name='Pepito',
-            batch=_batch,
-            section=_section
+            type=UserType.VOTER
         )
         cls._user1.set_password('pepito')
         cls._user1.save()
 
-        cls._user2 = User.objects.create(
-            username='pedro',
-            batch=_batch,
-            section=_section
-        )
+        cls._user2 = User.objects.create(username='pedro', type=UserType.VOTER)
         cls._user2.set_password('pendoko')
         cls._user2.save()
 
         cls._user3 = User.objects.create(
             username='emmanuel',
-            batch=_batch,
-            section=_section
+            type=UserType.VOTER
         )
         cls._user3.set_password('pedro')
         cls._user3.save()
 
-        cls._admin = User.objects.create(
-            username='admin',
-            batch=_batch,
-            section=_section,
-            is_staff=True,
-            is_superuser=True
-        )
+        cls._admin = User.objects.create(username='admin', type=UserType.ADMIN)
         cls._admin.set_password('root')
         cls._admin.save()
 

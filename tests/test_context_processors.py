@@ -15,6 +15,7 @@ class TemplateContextProcessorTest(TestCase):
         )
 
     def test_getting_set_theme(self):
+        # WTF, 2019 Sean? HAHAHAHAHA -2020 Sean
         AppSettings().set('template', 'ye-ye-bonel')
 
         self.assertEquals(

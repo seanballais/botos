@@ -15,7 +15,9 @@ from core.decorators import (
 from core.forms.admin import (
     ElectionSettingsCurrentTemplateForm, ElectionSettingsElectionStateForm
 )
-from core.models import Vote
+from core.models import (
+    Vote, UserType
+)
 from core.utils import AppSettings
 
 
@@ -28,7 +30,7 @@ from core.utils import AppSettings
 )
 @method_decorator(
     user_passes_test(
-        lambda u: u.is_superuser,
+        lambda u: u.type == UserType.ADMIN,
         login_url='/admin/login',
         next='/admin/election'
     ),
@@ -74,7 +76,7 @@ class ElectionSettingsIndexView(TemplateView):
 )
 @method_decorator(
     user_passes_test(
-        lambda u: u.is_superuser,
+        lambda u: u.type == UserType.ADMIN,
         login_url='/admin/login',
         next='/admin/election'
     ),
@@ -119,7 +121,7 @@ class CurrentTemplateView(View):
 )
 @method_decorator(
     user_passes_test(
-        lambda u: u.is_superuser,
+        lambda u: u.type == UserType.ADMIN,
         login_url='/admin/login',
         next='/admin/election'
     ),

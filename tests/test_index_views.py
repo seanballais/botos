@@ -6,7 +6,8 @@ from django.test import TestCase
 from django.urls import reverse
 
 from core.models import (
-    User, Batch, Section, Candidate, CandidateParty, CandidatePosition, Vote
+    User, Batch, Section, Candidate, CandidateParty, CandidatePosition, Vote,
+    UserType
 )
 from core.utils import AppSettings
 
@@ -18,30 +19,18 @@ class IndexViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         # Set up the users.
-        _batch = Batch.objects.create(year=2020)
-        _section = Section.objects.create(section_name='Emerald')
-        
-        _user1 = User.objects.create(
-            username='juan',
-            batch=_batch,
-            section=_section
-        )
+        _user1 = User.objects.create(username='juan', type=UserType.VOTER)
         _user1.set_password('sample')
         _user1.save()
 
-        _user2 = User.objects.create(
-            username='pedro',
-            batch=_batch,
-            section=_section
-        )
+        _user2 = User.objects.create(username='pedro', type=UserType.VOTER)
         _user2.set_password('sample')
         _user2.save()
 
         cls._user3 = User.objects.create(
             username='pasta',
             password='sample',
-            batch=_batch,
-            section=_section
+            type=UserType.VOTER
         )
         cls._user3.set_password('sample')
         cls._user3.save()
@@ -144,30 +133,18 @@ class VotingSubviewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         # Set up the users.
-        _batch = Batch.objects.create(year=2020)
-        _section = Section.objects.create(section_name='Emerald')
-        
-        _user1 = User.objects.create(
-            username='juan',
-            batch=_batch,
-            section=_section
-        )
+        _user1 = User.objects.create(username='juan', type=UserType.VOTER)
         _user1.set_password('sample')
         _user1.save()
 
-        _user2 = User.objects.create(
-            username='pedro',
-            batch=_batch,
-            section=_section
-        )
+        _user2 = User.objects.create(username='pedro', type=UserType.VOTER)
         _user2.set_password('sample')
         _user2.save()
 
         _user3 = User.objects.create(
             username='pasta',
             password='sample',
-            batch=_batch,
-            section=_section
+            type=UserType.VOTER
         )
         _user3.set_password('sample')
         _user3.save()
@@ -236,30 +213,15 @@ class VotedSubviewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         # Set up the users.
-        _batch = Batch.objects.create(year=2020)
-        _section = Section.objects.create(section_name='Emerald')
-
-        _user1 = User.objects.create(
-            username='juan',
-            batch=_batch,
-            section=_section
-        )
+        _user1 = User.objects.create(username='juan', type=UserType.VOTER)
         _user1.set_password('sample')
         _user1.save()
 
-        _user2 = User.objects.create(
-            username='pedro',
-            batch=_batch,
-            section=_section
-        )
+        _user2 = User.objects.create(username='pedro', type=UserType.VOTER)
         _user2.set_password('sample')
         _user2.save()
 
-        _user3 = User.objects.create(
-            username='pasta',
-            batch=_batch,
-            section=_section
-        )
+        _user3 = User.objects.create(username='pasta', type=UserType.VOTER)
         _user3.set_password('sample')
         _user3.save()
 

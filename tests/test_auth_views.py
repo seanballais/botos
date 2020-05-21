@@ -6,7 +6,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from core.models import (
-    User, Batch, Section
+    User, Batch, Section, UserType
 )
 
 
@@ -28,8 +28,7 @@ class LoginViewTest(TestCase):
 
         _user = User.objects.create(
             username='juan',
-            batch=_batch,
-            section=_section
+            type=UserType.VOTER
         )
         _user.set_password('pepito')
         _user.save()
@@ -133,8 +132,7 @@ class LogoutViewTest(TestCase):
         _section = Section.objects.create(section_name='Emerald')
         _user = User.objects.create(
             username='juan',
-            batch=_batch,
-            section=_section
+            type=UserType.VOTER
         )
         _user.set_password('pepito')
         _user.save()

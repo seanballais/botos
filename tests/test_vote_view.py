@@ -7,7 +7,7 @@ from django.urls import reverse
 
 from core.models import (
     User, Batch, Section, Candidate, CandidateParty,
-    CandidatePosition, Vote, Setting
+    CandidatePosition, Vote, Setting, UserType
 )
 from core.utils import AppSettings
 
@@ -39,20 +39,16 @@ class VoteProcessingView(TestCase):
     @classmethod
     def setUpTestData(cls):
         # Set up the test users, candidate, and vote.
-        _batch = Batch.objects.create(year=2020)
-        _section = Section.objects.create(section_name='Emerald')
         cls._non_voted_user = User.objects.create(
             username='juan',
-            batch=_batch,
-            section=_section
+            type=UserType.VOTER
         )
         cls._non_voted_user.set_password('pepito')
         cls._non_voted_user.save()
 
         cls._voted_user = User.objects.create(
             username='pedro',
-            batch=_batch,
-            section=_section
+            type=UserType.VOTER
         )
         cls._voted_user.set_password('pendoko')
         cls._voted_user.save()
@@ -70,10 +66,7 @@ class VoteProcessingView(TestCase):
 
         cls._admin = User.objects.create(
             username='admin',
-            batch=_batch,
-            section=_section,
-            is_staff=True,
-            is_superuser=True
+            type=UserType.ADMIN
         )
         cls._admin.set_password('root')
         cls._admin.save()

@@ -112,10 +112,15 @@ STATIC_ROOT = get_env_var('BOTOS_STATIC_ROOT', debug=DEBUG, debug_value=None)
 MEDIA_ROOT = get_env_var('BOTOS_MEDIA_ROOT', debug=DEBUG, debug_value=None)
 
 # Allowed hosts setup
-ALLOWED_HOSTS = get_env_var(
-    'BOTOS_ALLOWED_HOSTS', debug=DEBUG,
-    debug_value=''
-).split(',')
+ALLOWED_HOSTS = list(
+    map(
+        lambda s: s.strip(),
+        get_env_var(
+            'BOTOS_ALLOWED_HOSTS', debug=DEBUG,
+            debug_value='127.0.0.1, localhost'
+        ).split(',')
+    )
+)
 
 # Application definitions
 INSTALLED_APPS = [

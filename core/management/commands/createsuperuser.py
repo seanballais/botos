@@ -23,10 +23,6 @@ from django.db import (
 )
 from django.utils.text import capfirst
 
-from core.models import (
-    Batch, Section
-)
-
 
 class NotRunningInTTYException(Exception):
     pass
@@ -43,7 +39,9 @@ class Command(BaseCommand):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.UserModel = get_user_model()
-        self.username_field = self.UserModel._meta.get_field(self.UserModel.USERNAME_FIELD)
+        self.username_field = self.UserModel._meta.get_field(
+            self.UserModel.USERNAME_FIELD
+        )
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -87,23 +85,6 @@ class Command(BaseCommand):
         return super().execute(*args, **options)
 
     def handle(self, *args, **options):
-        # Create the necessary batches and sections.
-        try:
-            with transaction.atomic():
-                # We gotta wrap this in an atomic transaction so that
-                # tests will succeed.
-                batch = Batch.objects.create(year=0)
-        except IntegrityError:
-            batch = Batch.objects.get(year=0)
-
-        try:
-            with transaction.atomic():
-                # We gotta wrap this in an atomic transaction so that
-                # tests will succeed.
-                section = Section.objects.create(section_name='Superusers')
-        except IntegrityError:
-            section = Section.objects.get(section_name='Superusers')
-
         # Create the user.
         username = options[self.UserModel.USERNAME_FIELD]
         database = options['database']
@@ -223,14 +204,14 @@ class Command(BaseCommand):
                     env_var = 'DJANGO_SUPERUSER_' + field_name.upper()
                     value = options[field_name] or os.environ.get(env_var)
                     if not value:
-                        raise CommandError('You must use --%s with --noinput.' % field_name)
+                        raise CommandError(
+                            'You must use --%s with --noinput.' % field_name
+                        )
                     field = self.UserModel._meta.get_field(field_name)
                     user_data[field_name] = field.clean(value, None)
 
-            user_data['batch'] = batch
-            user_data['section'] = section
-
-            self.UserModel._default_manager.db_manager(database).create_superuser(**user_data)
+            db_manager = self.UserModel._default_manager.db_manager(database)
+            db_manager.create_superuser(**user_data)
             if options['verbosity'] >= 1:
                 self.stdout.write("Superuser created successfully.")
         except KeyboardInterrupt:
@@ -274,7 +255,9 @@ class Command(BaseCommand):
         """Validate username. If invalid, return a string error message."""
         if self.username_field.unique:
             try:
-                self.UserModel._default_manager.db_manager(database).get_by_natural_key(username)
+                default_manager = self.UserModel._default_manager
+                db_manager = default_manager.db_manager(database)
+                db_manager.get_by_natural_key(username)
             except self.UserModel.DoesNotExist:
                 pass
             else:

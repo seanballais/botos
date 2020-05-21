@@ -36,12 +36,6 @@ class TestUserManager(BaseUserManager):
         """
         Create and save a user with the given username, and email.
         """
-        # Remove section and batch fields since we don't use them in the test
-        # user. They're only used by the actual User model, and so we should
-        # just silently ignore the aforementioned fields.
-        del extra_fields['section']
-        del extra_fields['batch']
-
         if not username:
             raise ValueError('The given username must be set.')
         email = self.normalize_email(email)
@@ -71,12 +65,6 @@ class AnotherTestUserManager(TestUserManager):
         """
         Create and save a user with the given username, and email.
         """
-        # Remove section and batch fields since we don't use them in the test
-        # user. They're only used by the actual User model, and so we should
-        # just silently ignore the aforementioned fields.
-        del extra_fields['section']
-        del extra_fields['batch']
-
         try:
             extra_fields['some_small_int'] = TestConnectedModel.objects.get(
                 some_small_int=extra_fields['some_small_int']

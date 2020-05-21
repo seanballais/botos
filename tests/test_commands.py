@@ -11,7 +11,7 @@ from unittest import mock
 
 from core.management.commands import createsuperuser
 from core.models import (
-    User, Batch, Section
+    User, UserType
 )
 from tests.models import (
     AnotherTestUser, TestUser, TestConnectedModel
@@ -50,53 +50,7 @@ class CreateSuperUserTest(TestCase):
         else:
             self.assertTrue(user.check_password('root'))
 
-    def test_batch_0_exists(self):
-        call_command(
-            'createsuperuser',
-            username='admin',
-            password='root',
-            email='admin@admin.com',
-            stdout=StringIO()
-        )
-
-        try:
-            Batch.objects.get(year=0)
-        except Batch.DoesNotExist:
-            self.fail('Batch for superusers, 0, does not exist.')
-
-    def test_section_superusers_exists(self):
-        call_command(
-            'createsuperuser',
-            username='admin',
-            password='root',
-            email='admin@admin.com',
-            stdout=StringIO()
-        )
-
-        try:
-            Section.objects.get(section_name='Superusers')
-        except Section.DoesNotExist:
-            self.fail(
-                'Section for superusers, \'Superusers\', does not exist.'
-            )
-
-    def test_superuser_has_batch_0(self):
-        call_command(
-            'createsuperuser',
-            username='admin',
-            password='root',
-            email='admin@admin.com',
-            stdout=StringIO()
-        )
-
-        try:
-            user = User.objects.get(username='admin')
-        except User.DoesNotExist:
-            self.fail('Superuser \'admin\' got the wrong batch.')
-        else:
-            self.assertEquals(user.batch.year, 0)
-
-    def test_superuser_has_section_superuser(self):
+    def test_superuser_is_superuser(self):
         call_command(
             'createsuperuser',
             username='admin',
@@ -110,7 +64,7 @@ class CreateSuperUserTest(TestCase):
         except User.DoesNotExist:
             self.fail('Superuser \'admin\' got the wrong section.')
         else:
-            self.assertEquals(user.section.section_name, 'Superusers')
+            self.assertEqual(user.type, UserType.ADMIN)
 
     @override_settings(AUTH_USER_MODEL='tests.TestUser')
     def test_user_model_no_password_field(self):
@@ -162,23 +116,6 @@ class CreateSuperUserTest(TestCase):
         args = [
             '--username=admin',
             '--password=',
-            '--email=admin@botos.system',
-            '--no-input'
-        ]
-        call_command('createsuperuser', *args, stdout=StringIO())
-
-        try:
-            User.objects.get(username='admin')
-        except User.DoesNotExist:
-            self.fail('Admin was not created successfully.')
-
-    def test_non_interactive_call_existing_batch_section_all_args_valid(self):
-        Batch.objects.create(year=0)
-        Section.objects.create(section_name='Superusers')
-
-        args = [
-            '--username=admin',
-            '--password=!(root)@',
             '--email=admin@botos.system',
             '--no-input'
         ]
@@ -241,13 +178,8 @@ class CreateSuperUserTest(TestCase):
         )
 
     def test_non_interactive_call_specified_invalid_taken_username(self):
-        batch = Batch.objects.create(year=0)
-        section = Section.objects.create(section_name='Superusers')
-
         User.objects.create(
-            username='some_taken_username',
-            batch=batch,
-            section=section
+            username='some_taken_username'
         )
 
         try:
@@ -494,14 +426,7 @@ class CreateSuperUserTest(TestCase):
                           lambda: call_command('createsuperuser', *args))
 
     def test_interactive_call_specified_invalid_taken_username(self):
-        batch = Batch.objects.create(year=0)
-        section = Section.objects.create(section_name='Superusers')
-
-        User.objects.create(
-            username='some_taken_username',
-            batch=batch,
-            section=section
-        )
+        User.objects.create(username='some_taken_username')
 
         try:
             User.objects.get(username='some_taken_username')

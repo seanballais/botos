@@ -11,7 +11,8 @@ from django.test import TestCase
 from django.urls import reverse
 
 from core.models import (
-    User, Batch, Section, Candidate, CandidateParty, CandidatePosition, Vote
+    User, Batch, Section, Candidate, CandidateParty, CandidatePosition, Vote,
+    UserType
 )
 from core.utils import AppSettings
 
@@ -25,17 +26,14 @@ class BaseElectionSettingsViewTest(ABC):
     def setUpTestData(cls):
         cls._batch = Batch.objects.create(year=2019)
         cls._section = Section.objects.create(section_name='Section')
-        cls._admin_batch = Batch.objects.create(year=0)
-        cls._admin_section = Section.objects.create(section_name='Superusers')
 
-        User.objects.create_user(
+        user = User(
             username='admin',
             email='admin@admin.com',
-            password='root',
-            batch=cls._admin_batch,
-            section=cls._admin_section,
-            is_superuser=True
+            type=UserType.ADMIN
         )
+        user.set_password('root')
+        user.save()
 
         cls._view_url = ''
 
@@ -53,13 +51,13 @@ class BaseElectionSettingsViewTest(ABC):
         )
 
     def test_view_denies_non_superusers(self):
-        User.objects.create_user(
+        user = User(
             username='juan',
             email='juan@juan.com',
-            password='123',
-            batch=self._batch,
-            section=self._section
+            type=UserType.VOTER
         )
+        user.set_password('123')
+        user.save()
 
         self.client.login(username='juan', password='123')
 
@@ -196,6 +194,7 @@ class ElectionSettingsCurrentTemplateViewTest(
         self.client.login(username='admin', password='root')
         response = self.client.post(
             self._view_url,
+            # 2019 Sean, seriously? My Little Pony? -2020 Sean
             { 'template_name': 'my-little-pony' },
             follow=True
         )
