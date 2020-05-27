@@ -3,7 +3,7 @@ from django.db import models
 from django.test import TestCase
 
 from core.models import (
-    User, Batch, Section, UserType, VoterProfile
+    User, Batch, Section, UserType, VoterProfile, Election
 )
 
 
@@ -215,13 +215,22 @@ class VoterProfileModelTest(TestCase):
     
     This model holds the profile for voters.
 
+    The user field must be a one-to-one field and have the
+    following settings:
+        - on_delete = CASCADE
+        - null = False
+        - blank = False
+        - default = None
+        - unique = True
+        - related_name = 'voter_profile'
+
     The batch and section foreign keys must have the following settings:
         - on_delete = models.PROTECT
         - null = False
         - blank = False
         - default = None
         - unique = False
-        - related_name = 'users'
+        - related_name = 'voter_profiles'
 
     The model must have the following meta settings:
         - Index must be set to the user field.
@@ -257,10 +266,7 @@ class VoterProfileModelTest(TestCase):
 
     def test_user_fk_on_delete(self):
         on_delete_policy = getattr(self._user_field.remote_field, 'on_delete')
-        self.assertEquals(on_delete_policy, models.PROTECT)
-
-    def test_user_fk_unique(self):
-        self.assertTrue(self._user_field.unique)
+        self.assertEquals(on_delete_policy, models.CASCADE)
 
     def test_user_fk_null(self):
         self.assertFalse(self._user_field.null)
@@ -270,6 +276,9 @@ class VoterProfileModelTest(TestCase):
 
     def test_user_fk_default(self):
         self.assertIsNone(self._user_field.default)
+
+    def test_user_fk_unique(self):
+        self.assertTrue(self._user_field.unique)
 
     def test_user_fk_related_name(self):
         related_name = getattr(self._user_field.remote_field, 'related_name')
@@ -379,12 +388,24 @@ class BatchModelTest(TestCase):
         - default = None
         - unique = True
 
+    The election field must be a foreign key and have the following settings:
+        - to = 'Election'
+        - on_delete = models.CASCADE
+        - null = False
+        - blank = False
+        - default = None
+        - unique = False
+        - related_name = 'voter_profiles'
+
     The __str___() method should return "<Batch '{year}'>".
     """
     @classmethod
     def setUpTestData(cls):
         cls._batch = Batch.objects.create(year=2019)
         cls._batch_year_field = cls._batch._meta.get_field('year')
+        cls._batch_election_field = cls._voter_profile._meta.get_field(
+            'election'
+        )
 
     # Test year field.
     def test_year_is_small_int_field(self):
@@ -406,6 +427,48 @@ class BatchModelTest(TestCase):
 
     def test_year_verbose_name(self):
         self.assertEquals(self._batch_year_field.verbose_name, 'year')
+
+    # Test election foreign key.
+    def test_election_fk_is_fk(self):
+        self.assertTrue(
+            isinstance(self._batch_election_field, models.ForeignKey)
+        )
+
+    def test_election_fk_connected_model(self):
+        connected_model = getattr(
+            self._batch_election_field.remote_field,
+            'model'
+        )
+        self.assertEquals(connected_model, Election)
+
+    def test_election_fk_on_delete(self):
+        on_delete_policy = getattr(
+            self._batch_election_field.remote_field,
+            'on_delete'
+        )
+        self.assertEquals(on_delete_policy, models.CASCADE)
+
+    def test_election_fk_null(self):
+        # The election field shouldn't be null since, based on current use
+        # cases, voters already have an election they will be participating
+        # in.
+        self.assertFalse(self._batch_election_field.null)
+
+    def test_election_fk_blank(self):
+        self.assertFalse(self._batch_election_field.blank)
+
+    def test_election_fk_default(self):
+        self.assertIsNone(self._batch_election_field.default)
+
+    def test_election_fk_unique(self):
+        self.assertFalse(self._batch_election_field.unique)
+
+    def test_election_fk_related_name(self):
+        related_name = getattr(
+            self._batch_election_field.remote_field,
+            'related_name'
+        )
+        self.assertEquals(related_name, 'voter_profiles')
 
     # Test the meta class.
     def test_meta_indexes(self):

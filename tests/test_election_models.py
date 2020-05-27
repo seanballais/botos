@@ -5,7 +5,7 @@ from django.db import models
 from django.test import TestCase
 
 from core.models import (
-    Vote, Candidate, CandidateParty, CandidatePosition,
+    Vote, Candidate, CandidateParty, CandidatePosition, Election,
     User, Batch, Section, UserType
 )
 
@@ -29,10 +29,20 @@ class VoteTest(TestCase):
         - blank = False
         - default = None
         - related_name = 'votes'
+        - unique = True
 
     The candidate field must be a foreign key and have the following settings:
         - to = 'Candidate'
         - on_delete = models.PROTECT
+        - null = False
+        - blank = False
+        - default = None
+        - unique = False
+        - related_name = 'votes'
+
+    The election field must be a foreign key and have the following settings:
+        - to = 'Election'
+        - on_delete = 'CASCADE'
         - null = False
         - blank = False
         - default = None
@@ -68,11 +78,12 @@ class VoteTest(TestCase):
         )
         cls._vote_user_field = cls._vote._meta.get_field('user')
         cls._vote_candidate_field = cls._vote._meta.get_field('candidate')
+        cls._vote_election_field = cls._vote._meta.get_field('election')
 
     # Test user foreign key.
     def test_user_fk_is_fk(self):
         self.assertTrue(
-            isinstance(self._vote_user_field, models.ForeignKey)
+            isinstance(self._vote_user_field, models.OneToOneField)
         )
 
     def test_user_fk_connected_model(self):
@@ -97,6 +108,9 @@ class VoteTest(TestCase):
 
     def test_user_fk_default(self):
         self.assertIsNone(self._vote_user_field.default)
+
+    def test_user_fk_unique(self):
+        self.assertTrue(self._vote_user_field.unique)
 
     def test_user_fk_related_name(self):
         related_name = getattr(
@@ -137,6 +151,42 @@ class VoteTest(TestCase):
     def test_candidate_fk_related_name(self):
         related_name = getattr(
             self._vote_candidate_field.remote_field,
+            'related_name'
+        )
+        self.assertEquals(related_name, 'votes')
+
+    # Test election foreign key.
+    def test_election_fk_is_fk(self):
+        self.assertTrue(
+            isinstance(self._vote_election_field, models.ForeignKey)
+        )
+
+    def test_election_fk_connected_model(self):
+        connected_model = getattr(
+            self._vote_election_field.remote_field,
+            'model'
+        )
+        self.assertEquals(connected_model, Election)
+
+    def test_election_fk_on_delete(self):
+        on_delete_policy = getattr(
+            self._vote_election_field.remote_field,
+            'on_delete'
+        )
+        self.assertEquals(on_delete_policy, models.CASCADE)
+
+    def test_election_fk_null(self):
+        self.assertFalse(self._vote_election_field.null)
+
+    def test_election_fk_blank(self):
+        self.assertFalse(self._vote_election_field.blank)
+
+    def test_election_fk_default(self):
+        self.assertIsNone(self._vote_election_field.default)
+
+    def test_election_fk_related_name(self):
+        related_name = getattr(
+            self._vote_election_field.remote_field,
             'related_name'
         )
         self.assertEquals(related_name, 'votes')
@@ -189,6 +239,7 @@ class CandidateTest(TestCase):
         - null = False
         - blank = False
         - default = None
+        - unique = True
         - related_name = '+' (it doesn't make sense to have a reverse
                               relationship in an is-a relationship)
 
@@ -211,6 +262,15 @@ class CandidateTest(TestCase):
     The position must be a foreign key and have the following settings:
         - to = 'CandidatePosition'
         - on_delete = models.PROTECT
+        - null = False
+        - blank = False
+        - default = None
+        - unique = False
+        - related_name = 'candidates'
+
+    The election field must be a foreign key and have the following settings:
+        - to = 'Election'
+        - on_delete = models.CASCADE
         - null = False
         - blank = False
         - default = None
@@ -251,11 +311,14 @@ class CandidateTest(TestCase):
         cls._candidate_position_field = cls._candidate._meta.get_field(
             'position'
         )
+        cls._candidate_election_field = cls._candidate._meta.get_field(
+            'election'
+        )
 
     # Test user foreign key.
     def test_user_fk_is_fk(self):
         self.assertTrue(
-            isinstance(self._candidate_user_field, models.ForeignKey)
+            isinstance(self._candidate_user_field, models.OneToOneField)
         )
 
     def test_user_fk_connected_model(self):
@@ -280,6 +343,9 @@ class CandidateTest(TestCase):
 
     def test_user_fk_default(self):
         self.assertIsNone(self._candidate_user_field.default)
+
+    def test_user_fk_unique(self):
+        self.assertTrue(self._candidate_user_field.unique)
 
     def test_user_fk_related_name(self):
         related_name = getattr(
@@ -399,6 +465,45 @@ class CandidateTest(TestCase):
         )
         self.assertEquals(related_name, 'candidates')
 
+    # Test election foreign key.
+    def test_election_fk_is_fk(self):
+        self.assertTrue(
+            isinstance(self._candidate_election_field, models.ForeignKey)
+        )
+
+    def test_election_fk_connected_model(self):
+        connected_model = getattr(
+            self._candidate_election_field.remote_field,
+            'model'
+        )
+        self.assertEquals(connected_model, Election)
+
+    def test_election_fk_on_delete(self):
+        on_delete_policy = getattr(
+            self._candidate_election_field.remote_field,
+            'on_delete'
+        )
+        self.assertEquals(on_delete_policy, models.CASCADE)
+
+    def test_election_fk_null(self):
+        self.assertFalse(self._candidate_election_field.null)
+
+    def test_election_fk_blank(self):
+        self.assertFalse(self._candidate_election_field.blank)
+
+    def test_election_fk_default(self):
+        self.assertIsNone(self._candidate_election_field.default)
+
+    def test_election_fk_unique(self):
+        self.assertFalse(self._candidate_election_field.unique)
+
+    def test_election_fk_related_name(self):
+        related_name = getattr(
+            self._candidate_election_field.remote_field,
+            'related_name'
+        )
+        self.assertEquals(related_name, 'candidates')
+
     # Test the meta class.
     def test_meta_indexes(self):
         indexes = self._candidate._meta.indexes
@@ -446,12 +551,23 @@ class CandidatePartyTest(TestCase):
         - null = False
         - blank = False
         - default = None
-        - unique = True
+        - unique = False
+
+    The election field must be a foreign key and have the following settings:
+        - to = 'Election'
+        - on_delete = models.CASCADE
+        - null = False
+        - blank = False
+        - default = None
+        - unique = False
+        - related_name = 'candidate_parties'
 
     The model must have the following meta settings:
         - Index must be set to the party_name field.
         - The ordering must be alphabetical and be based on the party_name
           field.
+        - Election and party_name must be a unique pair. This is
+          so that there can only be one party with the name in an election.
         - The singular verbose name will be "party", with the plural being
           "parties".
 
@@ -461,6 +577,7 @@ class CandidatePartyTest(TestCase):
     def setUpTestData(cls):
         cls._party = CandidateParty.objects.create(party_name='Awesome Party')
         cls._party_name_field = cls._party._meta.get_field('party_name')
+        cls._party_election_field = cls._party._meta.get_field('election')
 
     # Test party_name field.
     def test_party_name_is_varchar_field(self):
@@ -481,7 +598,46 @@ class CandidatePartyTest(TestCase):
         self.assertIsNone(self._party_name_field.default)
 
     def test_party_name_unique(self):
-        self.assertTrue(self._party_name_field.unique)
+        self.assertFalse(self._party_name_field.unique)
+
+    # Test election foreign key.
+    def test_election_fk_is_fk(self):
+        self.assertTrue(
+            isinstance(self._party_election_field, models.ForeignKey)
+        )
+
+    def test_election_fk_connected_model(self):
+        connected_model = getattr(
+            self._party_election_field.remote_field,
+            'model'
+        )
+        self.assertEquals(connected_model, Election)
+
+    def test_election_fk_on_delete(self):
+        on_delete_policy = getattr(
+            self._party_election_field.remote_field,
+            'on_delete'
+        )
+        self.assertEquals(on_delete_policy, models.CASCADE)
+
+    def test_election_fk_null(self):
+        self.assertFalse(self._party_election_field.null)
+
+    def test_election_fk_blank(self):
+        self.assertFalse(self._party_election_field.blank)
+
+    def test_election_fk_default(self):
+        self.assertIsNone(self._party_election_field.default)
+
+    def test_election_fk_unique(self):
+        self.assertFalse(self._party_election_field.unique)
+
+    def test_election_fk_related_name(self):
+        related_name = getattr(
+            self._party_election_field.remote_field,
+            'related_name'
+        )
+        self.assertEquals(related_name, 'candidate_parties')
 
     # Test the meta class.
     def test_meta_indexes(self):
@@ -491,6 +647,12 @@ class CandidatePartyTest(TestCase):
 
     def test_meta_ordering(self):
         self.assertEquals(self._party._meta.ordering, [ 'party_name' ])
+
+    def test_meta_unique_together(self):
+        self.assertEquals(
+            self._party._meta.unique_together,
+            ( 'party_name', 'election', )
+        )
 
     def test_meta_verbose_name(self):
         self.assertEquals(self._party._meta.verbose_name, 'party')
@@ -522,7 +684,7 @@ class CandidatePositionTest(TestCase):
         - null = False
         - blank = False
         - default = None
-        - unique = True
+        - unique = False
 
     The position_level field must be a positive small integer field and
     have the following settings:
@@ -531,10 +693,21 @@ class CandidatePositionTest(TestCase):
         - default = 32767 (the largest number this field type supports)
         - unique = False
 
+    The election field must be a foreign key and have the following settings:
+        - to = 'Election'
+        - on_delete = models.CASCADE
+        - null = False
+        - blank = False
+        - default = None
+        - unique = False
+        - related_name = 'candidate_positions'
+
     The model must have the following meta settings:
         - Index must be set to the position_name field.
         - The ordering must be alphabetical and be based on the position_level
           field, then the position_name.
+        - Election and position_name must be a unique pair. This is so that
+          there is only one position with such name in an election.
         - The singular verbose name will be "candidate position", with the
           plural for being "candidate positions".
 
@@ -552,6 +725,9 @@ class CandidatePositionTest(TestCase):
         )
         cls._position_level_field = cls._position._meta.get_field(
             'position_level'
+        )
+        cls._position_election_field = cls._position._meta.get_field(
+            'election'
         )
 
     # Test position_name field.
@@ -573,7 +749,7 @@ class CandidatePositionTest(TestCase):
         self.assertIsNone(self._position_name_field.default)
 
     def test_position_name_unique(self):
-        self.assertTrue(self._position_name_field.unique)
+        self.assertFalse(self._position_name_field.unique)
 
     # Test position level field.
     def test_position_level_is_positive_smallint_field(self):
@@ -596,6 +772,45 @@ class CandidatePositionTest(TestCase):
     def test_position_level_unique(self):
         self.assertFalse(self._position_level_field.unique)
 
+    # Test election foreign key.
+    def test_position_election_fk_is_fk(self):
+        self.assertTrue(
+            isinstance(self._position_election_field, models.ForeignKey)
+        )
+
+    def test_position_election_fk_connected_model(self):
+        connected_model = getattr(
+            self._position_election_field.remote_field,
+            'model'
+        )
+        self.assertEquals(connected_model, Election)
+
+    def test_position_election_fk_on_delete(self):
+        on_delete_policy = getattr(
+            self._position_election_field.remote_field,
+            'on_delete'
+        )
+        self.assertEquals(on_delete_policy, models.CASCADE)
+
+    def test_position_election_fk_null(self):
+        self.assertFalse(self._position_election_field.null)
+
+    def test_position_election_fk_blank(self):
+        self.assertFalse(self._position_election_field.blank)
+
+    def test_position_election_fk_default(self):
+        self.assertIsNone(self._position_election_field.default)
+
+    def test_position_election_fk_unique(self):
+        self.assertFalse(self._position_election_field.unique)
+
+    def test_position_election_fk_related_name(self):
+        related_name = getattr(
+            self._position_election_field.remote_field,
+            'related_name'
+        )
+        self.assertEquals(related_name, 'candidate_positions')
+
     # Test the meta class.
     def test_meta_indexes(self):
         indexes = self._position._meta.indexes
@@ -606,6 +821,12 @@ class CandidatePositionTest(TestCase):
         self.assertEquals(
             self._position._meta.ordering,
             [ 'position_level', 'position_name' ]
+        )
+
+    def test_meta_unique_together(self):
+        self.assertEquals(
+            self._position._meta.unique_together,
+            ( 'position_name', 'election', )
         )
 
     def test_meta_verbose_name(self):
