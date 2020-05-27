@@ -846,3 +846,71 @@ class CandidatePositionTest(TestCase):
             str(self._position),
             'Amazing Position'
         )
+
+
+class ElectionTest(TestCase):
+    """
+    Tests the Election model.
+
+    The election name field must be a character field and the following
+    settings:
+        - max_length = 32
+        - null = False
+        - blank = False
+        - default = None
+        - unique = True
+
+    The __str___() method should return "{election name}".
+    """
+    @classmethod
+    def setUpTestData(cls):
+        cls._election = Election.objects.create(name='Election')
+        cls._election_name_field = cls._section._meta.get_field('name')
+
+    # Test section_name field.
+    def test_election_name_field_is_char_field(self):
+        self.assertTrue(
+            isinstance(self._election_name_field, models.CharField)
+        )
+
+    def test_election_name_field_max_length(self):
+        self.assertEquals(self._election_name_field.max_length, 32)
+
+    def test_election_name_field_null(self):
+        self.assertFalse(self._election_name_field.null)
+
+    def test_election_name_field_blank(self):
+        self.assertFalse(self._election_name_field.blank)
+
+    def test_election_name_field_default(self):
+        self.assertIsNone(self._election_name_field.default)
+
+    def test_election_name_field_unique(self):
+        self.assertTrue(self._election_name_field.unique)
+
+    def test_election_name_field_verbose_name(self):
+        self.assertEquals(
+            self._election_name_field.verbose_name,
+            'name'
+        )
+
+    # Test the meta class.
+    def test_meta_indexes(self):
+        indexes = self._section._meta.indexes
+        self.assertEquals(len(indexes), 1)
+        self.assertEquals(indexes[0].fields, [ 'name' ])
+
+    def test_meta_ordering(self):
+        ordering = self._section._meta.ordering
+        self.assertEquals(ordering, [ 'name' ])
+
+    def test_meta_verbose_name(self):
+        verbose_name = self._section._meta.verbose_name
+        self.assertEquals(verbose_name, 'election')
+
+    def test_meta_verbose_name_plural(self):
+        verbose_name_plural = self._section._meta.verbose_name_plural
+        self.assertEquals(verbose_name_plural, 'elections')
+
+    def test_str(self):
+        self.assertEquals(str(self._election), 'Election')
