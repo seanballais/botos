@@ -61,6 +61,7 @@ class VoteTest(TestCase):
     """
     @classmethod
     def setUpTestData(cls):
+        cls._election = Election.objects.create(name='Election')
         cls._user = User.objects.create(username='juan', type=UserType.VOTER)
         cls._party = CandidateParty.objects.create(party_name='Awesome Party')
         cls._position = CandidatePosition.objects.create(
@@ -70,11 +71,13 @@ class VoteTest(TestCase):
         cls._candidate = Candidate.objects.create(
             user=cls._user,
             party=cls._party,
-            position=cls._position
+            position=cls._position,
+            election=cls._election
         )
         cls._vote = Vote.objects.create(
             user=cls._user,
-            candidate=cls._candidate
+            candidate=cls._candidate,
+            election=cls._election
         )
         cls._vote_user_field = cls._vote._meta.get_field('user')
         cls._vote_candidate_field = cls._vote._meta.get_field('candidate')
@@ -300,10 +303,12 @@ class CandidateTest(TestCase):
             position_name='Amazing Position',
             position_level=0
         )
+        cls._election = Election.objects.create(name='Election')
         cls._candidate = Candidate.objects.create(
             user=cls._user,
             party=cls._party,
-            position=cls._position
+            position=cls._position,
+            election=cls._election
         )
         cls._candidate_user_field = cls._candidate._meta.get_field('user')
         cls._candidate_avatar_field = cls._candidate._meta.get_field('avatar')
@@ -575,7 +580,11 @@ class CandidatePartyTest(TestCase):
     """
     @classmethod
     def setUpTestData(cls):
-        cls._party = CandidateParty.objects.create(party_name='Awesome Party')
+        cls._election = Election.objects.create(name='Election')
+        cls._party = CandidateParty.objects.create(
+            party_name='Awesome Party',
+            election=cls._election
+        )
         cls._party_name_field = cls._party._meta.get_field('party_name')
         cls._party_election_field = cls._party._meta.get_field('election')
 
@@ -716,9 +725,11 @@ class CandidatePositionTest(TestCase):
     """
     @classmethod
     def setUpTestData(cls):
+        cls._election = Election.objects.create(name='Election')
         cls._position = CandidatePosition.objects.create(
             position_name='Amazing Position',
-            position_level=0
+            position_level=0,
+            election=cls._election
         )
         cls._position_name_field = cls._position._meta.get_field(
             'position_name'

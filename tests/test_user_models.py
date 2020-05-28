@@ -401,7 +401,8 @@ class BatchModelTest(TestCase):
     """
     @classmethod
     def setUpTestData(cls):
-        cls._batch = Batch.objects.create(year=2019)
+        cls._election = Election.objects.create(name='Election')
+        cls._batch = Batch.objects.create(year=2019, election=cls._election)
         cls._batch_year_field = cls._batch._meta.get_field('year')
         cls._batch_election_field = cls._voter_profile._meta.get_field(
             'election'

@@ -35,6 +35,11 @@ class VoteProcessingView(TestCase):
     the user has voted already.
 
     View URL: `/vote`
+
+    TODO: Add tests here to test support for multiple elections.
+          - Must make sure that the candidates that a voter will be casting
+            votes for is the same as belong to the same election as the voter's.
+
     """
     @classmethod
     def setUpTestData(cls):

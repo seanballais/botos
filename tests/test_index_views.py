@@ -7,7 +7,7 @@ from django.urls import reverse
 
 from core.models import (
     User, Batch, Section, Candidate, CandidateParty, CandidatePosition, Vote,
-    UserType
+    UserType, Election
 )
 from core.utils import AppSettings
 
@@ -35,20 +35,22 @@ class IndexViewTest(TestCase):
         cls._user3.set_password('sample')
         cls._user3.save()
 
-        _party = CandidateParty.objects.create(party_name='Awesome Party')
+        cls._election = Election.objects.create(name='Election')
+
+        _party = CandidateParty.objects.create(
+            party_name='Awesome Party',
+            election=cls._election
+        )
         _position = CandidatePosition.objects.create(
             position_name='Amazing Position',
-            position_level=0
+            position_level=0,
+            election=cls._election
         )
         cls._candidate1 = Candidate.objects.create(
             user=_user1,
             party=_party,
-            position=_position
-        )
-        _candidate2 = Candidate.objects.create(
-            user=_user2,
-            party=_party,
-            position=_position
+            position=_position,
+            election=cls._election
         )
 
     def test_anonymous_users_post_index(self):
@@ -62,7 +64,11 @@ class IndexViewTest(TestCase):
         self.assertRedirects(response, reverse('index'))
 
     def test_logged_in_voted_users_post_index(self):
-        Vote.objects.create(user=self._user3, candidate=self._candidate1)
+        Vote.objects.create(
+            user=self._user3,
+            candidate=self._candidate1,
+            election=self,_election
+        )
 
         self.client.login(username='pasta', password='sample')
 
@@ -132,7 +138,15 @@ class VotingSubviewTest(TestCase):
     """
     @classmethod
     def setUpTestData(cls):
+        _election0 = Election.objects.create(name='Election 0')
+        _election1 = Election.objects.create(name='Election 1')
+
         # Set up the users.
+        _batch0 = Batch.objects.create(year=0, election=_election0)
+        _batch1 = Batch.objects.create(year=1, election=_election1)
+        _section0 = Section.objects.create(section_name='Section 0')
+        _section1 = Section.objects.create(section_name='Section 1')
+
         _user1 = User.objects.create(username='juan', type=UserType.VOTER)
         _user1.set_password('sample')
         _user1.save()
@@ -143,26 +157,59 @@ class VotingSubviewTest(TestCase):
 
         _user3 = User.objects.create(
             username='pasta',
-            password='sample',
             type=UserType.VOTER
         )
         _user3.set_password('sample')
         _user3.save()
 
-        _party = CandidateParty.objects.create(party_name='Awesome Party')
-        _position = CandidatePosition.objects.create(
-            position_name='Amazing Position',
-            position_level=0
+        _user4 = User.objects.create(
+            username='hollow',
+            type=UserType.VOTER
+        )
+        _user4.set_password('knight')
+        _user4.save()
+
+        VoterProfile.objects.create(
+            user=_user3,
+            batch=_batch0,
+            section=_section0
+        )
+
+        VoterProfile.objects.create(
+            user=_user4,
+            batch=_batch1,
+            section=_section1
+        )
+
+        _party0 = CandidateParty.objects.create(
+            party_name='Awesome Party 0',
+            election=_election0
+        )
+        _party1 = CandidateParty.objects.create(
+            party_name='Awesome Party 1',
+            election=_election1
+        )
+        _position0 = CandidatePosition.objects.create(
+            position_name='Amazing Position 0',
+            position_level=0,
+            election=_election0
+        )
+        _position1 = CandidatePosition.objects.create(
+            position_name='Amazing Position 1',
+            position_level=0,
+            election=_election1
         )
         cls._candidate1 = Candidate.objects.create(
             user=_user1,
-            party=_party,
-            position=_position
+            party=_party0,
+            position=_position0,
+            election=_election0
         )
         cls._candidate2 = Candidate.objects.create(
             user=_user2,
-            party=_party,
-            position=_position
+            party=_party1,
+            position=_position1,
+            election=_election1
         )
 
     def setUp(self):
@@ -195,6 +242,37 @@ class VotingSubviewTest(TestCase):
         )
         self.assertEquals(len(candidate_divs), 2)
 
+    def test_candidate_in_election_0_correct(self):
+        response = self.client.get('/', follow=True)
+        candidates = response.context['candidates']
+
+        # There should only be one candidate in the election the current user
+        # is participating in.
+        self.assertEqual(len(candidates), 1)
+        self.assertEqual(
+            candidates,
+            {
+                'Amazing Position 0': [ self._candidate1 ]
+            }
+        )
+
+    def test_candidate_in_election_1_correct(self):
+        # We still need to login to the 'hollow' account, since, by default,
+        # we log in to the 'pasta' account.
+        self.client.login(username='hollow', password='knight')
+        response = self.client.get('/', follow=True)
+        candidates = response.context['candidates']
+
+        # There should only be one candidate in the election the current user
+        # is participating in.
+        self.assertEqual(len(candidates), 1)
+        self.assertEqual(
+            candidates,
+            {
+                'Amazing Position 1': [ self._candidate2 ]
+            }
+        )
+
     def _get_voting_form(self, view_html):
         view_html_soup = BeautifulSoup(view_html, 'html.parser')
         form = view_html_soup.find('form', id='voting')
@@ -212,18 +290,25 @@ class VotedSubviewTest(TestCase):
     """
     @classmethod
     def setUpTestData(cls):
+        _election = Election.objects.create(name='Election')
+
         # Set up the users.
+        _batch = Batch.objects.create(year=0, election=_election)
+        _section = Section.objects.create(section_name='Section')
+
         _user1 = User.objects.create(username='juan', type=UserType.VOTER)
         _user1.set_password('sample')
         _user1.save()
 
-        _user2 = User.objects.create(username='pedro', type=UserType.VOTER)
-        _user2.set_password('sample')
-        _user2.save()
-
         _user3 = User.objects.create(username='pasta', type=UserType.VOTER)
         _user3.set_password('sample')
         _user3.save()
+
+        VoterProfile.objects.create(
+            user=_user3,
+            batch=_batch,
+            section=_section
+        )
 
         _party = CandidateParty.objects.create(party_name='Awesome Party')
         _position = CandidatePosition.objects.create(
@@ -235,13 +320,12 @@ class VotedSubviewTest(TestCase):
             party=_party,
             position=_position
         )
-        cls._candidate2 = Candidate.objects.create(
-            user=_user2,
-            party=_party,
-            position=_position
-        )
 
-        Vote.objects.create(user=_user3, candidate=cls._candidate1)
+        Vote.objects.create(
+            user=_user3,
+            candidate=cls._candidate1,
+            election=_election
+        )
 
     def setUp(self):
         self.client.login(username='pasta', password='sample')

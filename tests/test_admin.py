@@ -1,5 +1,7 @@
 # This test is partly based from:
 #     https://www.argpar.se/posts/programming/testing-django-admin/
+from abc import ABC
+
 from django import forms
 from django.contrib.admin.sites import AdminSite
 from django.test import (
@@ -7,11 +9,13 @@ from django.test import (
 )
 
 from core.admin import (
-    AdminCreationForm, VoterCreationForm, AdminUserAdmin, VoterAdmin,
-    VoterProfileInline, AdminUser, Voter
+    AdminUserAdmin, VoterAdmin, VoterProfileInline, AdminUser, Voter,
+    AdminCreationForm, VoterCreationForm, CandidateCreationForm,
+    CandidateChangeForm
 )
 from core.models import (
-    User, Batch, Section, VoterProfile, UserType
+    User, Batch, Section, VoterProfile, UserType, Candidate, CandidateParty,
+    CandidatePosition, Election
 )
 
 
@@ -184,6 +188,152 @@ class UserCreationFormTest(TestCase):
     def test_voter_admin_has_voter_profile_inline(self):
         admin = VoterAdmin(Voter, AdminSite())
         self.assertTrue(lambda: VoterProfileInline in admin.inlines)
+
+
+class BaseCandidateFormTest(ABC):
+    @classmethod
+    def setUpTestData(cls):
+        cls._election0 = Election.objects.create(name='Election 0')
+        cls._election1 = Election.objects.create(name='Election 1')
+        cls._user0 = User.objects.create(username='user0')
+        cls._user1 = User.objects.create(username='user1')
+        cls._candidate_party0 = CandidateParty.objects.create(
+            party_name='Awesome Party 0',
+            election=cls._election0
+        )
+        cls._candidate_party1 = CandidateParty.objects.create(
+            party_name='Another Party 0',
+            election=cls._election0
+        )
+        cls._candidate_party2 = CandidateParty.objects.create(
+            party_name='Another Party 1',
+            election=cls._election1
+        )
+        cls._candidate_position0 = CandidatePosition.objects.create(
+            position_name='Awesome Position 0',
+            position_level=0,
+            election=cls._election0
+        )
+        cls._candidate_position1 = CandidatePosition.objects.create(
+            position_name='Awesome Position 1',
+            position_level=1,
+            election=cls._election0
+        )
+        cls._candidate_position2 = CandidatePosition.objects.create(
+            position_name='Awesome Position 2',
+            position_level=0,
+            election=cls._election1
+        )
+
+    def test_form_gives_correct_possible_candidate_parties(self):
+        data = {
+            'user': self._user0.pk,
+            'election': self._election0.pk
+        }
+        form = self._form(data)
+
+        form.is_valid()  # This calls clean_username() down the line.
+
+        # is_valid() handles exceptions raised by clean_username(), creates an
+        # HTML snippet displaying the error, and stores it in a dict. As such,
+        # we cannot catch the exception raised by clean_username().
+        # Fortunately, we can use .has_error() to check if any exceptions has
+        # been raised by any of the clean methods in the form object, including
+        # any exceptions raised by clean_username().
+        self.assertFalse(form.has_error('user'))
+
+        self.assertEqual(
+            list(form.party.choices),
+            [
+                (self._candidate_party0.pk, 'Awesome Party 0',),
+                (self._candidate_party1.pk, 'Another Party 0',)
+            ]
+        )
+
+    def test_form_gives_correct_possible_candidate_positions(self):
+        data = {
+            'user': self._user0.pk,
+            'election': self._election0.pk
+        }
+        form = self._form(data)
+
+        form.is_valid()  # This calls clean_username() down the line.
+
+        # is_valid() handles exceptions raised by clean_username(), creates an
+        # HTML snippet displaying the error, and stores it in a dict. As such,
+        # we cannot catch the exception raised by clean_username().
+        # Fortunately, we can use .has_error() to check if any exceptions has
+        # been raised by any of the clean methods in the form object, including
+        # any exceptions raised by clean_username().
+        self.assertFalse(form.has_error('user'))
+
+        self.assertEqual(
+            list(form.position.choices),
+            [
+                (self._candidate_position0.pk, 'Awesome Position 0',),
+                (self._candidate_position1.pk, 'Awesome Position 1',)
+            ]
+        )
+
+
+class CandidateCreationFormTest(BaseCandidateFormTest, TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        self._form = CandidateCreationForm
+
+    def test_adding_new_candidate_from_form(self):
+        data = {
+            'user': self._user0.pk,
+            'election': self._election0.pk
+        }
+        form = CandidateCreationForm(data)
+
+        form.is_valid()  # This calls clean_username() down the line.
+
+        # is_valid() handles exceptions raised by clean_username(), creates an
+        # HTML snippet displaying the error, and stores it in a dict. As such,
+        # we cannot catch the exception raised by clean_username().
+        # Fortunately, we can use .has_error() to check if any exceptions has
+        # been raised by any of the clean methods in the form object, including
+        # any exceptions raised by clean_username().
+        self.assertFalse(form.has_error('user'))
+
+    def test_adding_preexisting_from_form(self):
+        Candidate.objects.create(
+            user=self._user0,
+            party=self._candidate_party0,
+            position=self._candidate_position0,
+            election=self._election0
+        )
+
+        try:
+            Candidate.objects.create(user=self._user0)
+        except Candidate.DoesNotExist:
+            self.fail('Candidate was not created.')
+
+        data = {
+            'user': self._user0.pk,
+            'election': self._election0.pk
+        }
+        form = CandidateCreationForm(data)
+
+        form.is_valid()  # This calls clean_username() down the line.
+
+        # is_valid() handles exceptions raised by clean_username(), creates an
+        # HTML snippet displaying the error, and stores it in a dict. As such,
+        # we cannot catch the exception raised by clean_username().
+        # Fortunately, we can use .has_error() to check if any exceptions has
+        # been raised by any of the clean methods in the form object, including
+        # any exceptions raised by clean_username().
+        self.assertTrue(form.has_error('user'))
+
+
+class CandidateChangeFormTest(TestCase):
+    @classmethod
+    def setUpTestData(self):
+        super().setUpTestData()
+        self._form = CandidateChangeForm
 
 
 class AdminUserProxyUserTest(TestCase):
