@@ -11,8 +11,8 @@ from django.test import TestCase
 from django.urls import reverse
 
 from core.models import (
-    User, Batch, Section, Candidate, CandidateParty, CandidatePosition, Vote,
-    UserType
+    User, Batch, Section, Election, Candidate, CandidateParty,
+    CandidatePosition, Vote, UserType
 )
 from core.utils import AppSettings
 
@@ -24,7 +24,8 @@ class BaseElectionSettingsViewTest(ABC):
     """
     @classmethod
     def setUpTestData(cls):
-        cls._batch = Batch.objects.create(year=2019)
+        _election = Election.objects.create(name='Election')
+        cls._batch = Batch.objects.create(year=2019, election=_election)
         cls._section = Section.objects.create(section_name='Section')
 
         user = User(

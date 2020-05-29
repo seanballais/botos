@@ -67,7 +67,7 @@ class IndexViewTest(TestCase):
         Vote.objects.create(
             user=self._user3,
             candidate=self._candidate1,
-            election=self,_election
+            election=self._election
         )
 
         self.client.login(username='pasta', password='sample')

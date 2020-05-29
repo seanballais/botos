@@ -6,8 +6,8 @@ from django.test import (
 from django.urls import reverse
 
 from core.models import (
-    User, Batch, Section, Candidate, CandidateParty,
-    CandidatePosition, Vote, Setting, UserType
+    User, Batch, Section, Election, Candidate, CandidateParty,
+    CandidatePosition, Vote, VoterProfile, Setting, UserType
 )
 from core.utils import AppSettings
 

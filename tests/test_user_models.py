@@ -241,7 +241,8 @@ class VoterProfileModelTest(TestCase):
     """
     @classmethod
     def setUpTestData(cls):
-        cls._batch = Batch.objects.create(year=2019)
+        _election = Election.objects.create(name='Election')
+        cls._batch = Batch.objects.create(year=2019, election=_election)
         cls._section = Section.objects.create(section_name='Emerald')
         cls._user = User.objects.create(username='juan', type=UserType.VOTER)
         cls._voter_profile = VoterProfile.objects.create(
@@ -395,7 +396,7 @@ class BatchModelTest(TestCase):
         - blank = False
         - default = None
         - unique = False
-        - related_name = 'voter_profiles'
+        - related_name = 'batches'
 
     The __str___() method should return "<Batch '{year}'>".
     """
@@ -404,7 +405,7 @@ class BatchModelTest(TestCase):
         cls._election = Election.objects.create(name='Election')
         cls._batch = Batch.objects.create(year=2019, election=cls._election)
         cls._batch_year_field = cls._batch._meta.get_field('year')
-        cls._batch_election_field = cls._voter_profile._meta.get_field(
+        cls._batch_election_field = cls._batch._meta.get_field(
             'election'
         )
 
@@ -469,7 +470,7 @@ class BatchModelTest(TestCase):
             self._batch_election_field.remote_field,
             'related_name'
         )
-        self.assertEquals(related_name, 'voter_profiles')
+        self.assertEquals(related_name, 'batches')
 
     # Test the meta class.
     def test_meta_indexes(self):

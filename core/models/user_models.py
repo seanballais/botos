@@ -152,7 +152,7 @@ class VoterProfile(Base):
     """ Custom model for users. """
     user = models.OneToOneField(
         User,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         unique=True,
         null=False,
         blank=False,
@@ -196,6 +196,18 @@ class Batch(Base):
         blank=False,
         default=None,
         unique=True
+    )
+    election = models.ForeignKey(
+        'Election',  # Using a string for the model name, since using the model
+                     # itself would mean importing the model from
+                     # election_models, which will cause a circular dependency
+                     # since election_models also imports from this module.
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+        default=None,
+        unique=False,
+        related_name='batches'
     )
 
     class Meta:

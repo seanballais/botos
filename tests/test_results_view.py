@@ -4,8 +4,8 @@ from django.test import (
 from django.urls import reverse
 
 from core.models import (
-    User, Batch, Section, Candidate, CandidateParty, CandidatePosition, Vote,
-    Setting, UserType, VoterProfile
+    User, Batch, Section, Election, Candidate, CandidateParty,
+    CandidatePosition, Vote, Setting, UserType, VoterProfile
 )
 from core.utils import AppSettings
 
@@ -97,17 +97,20 @@ class ResultsViewTest(TestCase):
         cls._candidate1 = Candidate.objects.create(
             user=cls._user1,
             party=_party0,
-            position=_position0
+            position=_position0,
+            election=_election0
         )
         cls._candidate2 = Candidate.objects.create(
             user=cls._user2,
             party=_party0,
-            position=_position0
+            position=_position0,
+            election=_election0
         )
         cls._candidate3 = Candidate.objects.create(
             user=cls._user3,
             party=_party0,
-            position=_position0
+            position=_position0,
+            election=_election0
         )
 
         # Election 1 Entities.
@@ -159,17 +162,20 @@ class ResultsViewTest(TestCase):
         cls._candidate4 = Candidate.objects.create(
             user=cls._user4,
             party=_party1,
-            position=_position1
+            position=_position1,
+            election=_election1
         )
         cls._candidate5 = Candidate.objects.create(
             user=cls._user5,
             party=_party1,
-            position=_position1
+            position=_position1,
+            election=_election1
         )
         cls._candidate6 = Candidate.objects.create(
             user=cls._user6,
             party=_party1,
-            position=_position1
+            position=_position1,
+            election=_election1
         )
 
     def setUp(self):

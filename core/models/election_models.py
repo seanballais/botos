@@ -1,8 +1,28 @@
-from django.contrib.postgres import fields as postgres_fields
 from django.db import models
 
 from .base_model import Base
 from .user_models import User
+
+
+class Election(Base):
+    """ Model for the elections. """
+    name = models.CharField(
+        'name',
+        max_length=32,
+        null=False,
+        blank=False,
+        default=None,
+        unique=True
+    )
+
+    class Meta:
+        indexes = [ models.Index(fields=[ 'name' ]) ]
+        ordering = [ 'name' ]
+        verbose_name = 'election'
+        verbose_name_plural = 'elections'
+
+    def __str__(self):
+        return self.name
 
 
 class CandidateParty(Base):
@@ -13,12 +33,23 @@ class CandidateParty(Base):
         null=False,
         blank=False,
         default=None,
-        unique=True
+        unique=False
+    )
+
+    election = models.ForeignKey(
+        Election,
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+        default=None,
+        unique=False,
+        related_name='candidate_parties'
     )
 
     class Meta:
         indexes = [ models.Index(fields=[ 'party_name' ]) ]
         ordering = [ 'party_name' ]
+        unique_together = ( ( 'party_name', 'election', ), )
         verbose_name = 'party'
         verbose_name_plural = 'parties'
 
@@ -34,7 +65,7 @@ class CandidatePosition(Base):
         null=False,
         blank=False,
         default=None,
-        unique=True
+        unique=False
     )
     position_level = models.PositiveSmallIntegerField(
         'position level',
@@ -43,10 +74,20 @@ class CandidatePosition(Base):
         default=32767,  # This is the largest number this field type supports.
         unique=False
     )
+    election = models.ForeignKey(
+        Election,
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+        default=None,
+        unique=False,
+        related_name='candidate_positions'
+    )
 
     class Meta:
         indexes = [ models.Index(fields=[ 'position_name' ]) ]
         ordering = [ 'position_level', 'position_name' ]
+        unique_together = ( ( 'position_name', 'election', ), )
         verbose_name = 'candidate position'
         verbose_name_plural = 'candidate positions'
 
@@ -90,6 +131,15 @@ class Candidate(Base):
         unique=False,
         related_name='candidates'
     )
+    election = models.ForeignKey(
+        Election,
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+        default=None,
+        unique=False,
+        related_name='candidates'
+    )
 
     class Meta:
         indexes = [ models.Index(fields=[ 'user' ]) ]
@@ -115,11 +165,21 @@ class Vote(Base):
         null=False,
         blank=False,
         default=None,
+        unique=False,
         related_name='votes'
     )
     candidate = models.ForeignKey(
         Candidate,
         on_delete=models.PROTECT,
+        null=False,
+        blank=False,
+        default=None,
+        unique=False,
+        related_name='votes'
+    )
+    election = models.ForeignKey(
+        Election,
+        on_delete=models.CASCADE,
         null=False,
         blank=False,
         default=None,
@@ -133,6 +193,7 @@ class Vote(Base):
             'candidate__position__position_level',
             'candidate__party__party_name'
         ]
+        unique_together = [ 'user', 'candidate' ]
         verbose_name = 'vote'
         verbose_name_plural = 'votes'
 

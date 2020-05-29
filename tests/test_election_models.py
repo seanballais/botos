@@ -29,7 +29,7 @@ class VoteTest(TestCase):
         - blank = False
         - default = None
         - related_name = 'votes'
-        - unique = True
+        - unique = False
 
     The candidate field must be a foreign key and have the following settings:
         - to = 'Candidate'
@@ -53,6 +53,8 @@ class VoteTest(TestCase):
         - Index must be set to the user field and the candidate field.
         - The ordering must be based on the candidate position level first,
           then the candidate last name, and lastly, the candidate first name.
+        - Candidate and user must be unique together. This is so that the user
+          cannot have duplicate votes for the same candidate.
         - The singular verbose name will be "vote", with the plural being
           "votes".
 
@@ -63,10 +65,14 @@ class VoteTest(TestCase):
     def setUpTestData(cls):
         cls._election = Election.objects.create(name='Election')
         cls._user = User.objects.create(username='juan', type=UserType.VOTER)
-        cls._party = CandidateParty.objects.create(party_name='Awesome Party')
+        cls._party = CandidateParty.objects.create(
+            party_name='Awesome Party',
+            election=cls._election
+        )
         cls._position = CandidatePosition.objects.create(
             position_name='Amazing Position',
-            position_level=0
+            position_level=0,
+            election=cls._election
         )
         cls._candidate = Candidate.objects.create(
             user=cls._user,
@@ -210,6 +216,12 @@ class VoteTest(TestCase):
             ]
         )
 
+    def test_meta_unique_together(self):
+        self.assertEquals(
+            self._party._meta.unique_together,
+            ( 'user', 'candidate', )
+        )
+
     def test_meta_verbose_name(self):
         verbose_name = self._vote._meta.verbose_name
         self.assertEquals(verbose_name, 'vote')
@@ -298,12 +310,16 @@ class CandidateTest(TestCase):
             last_name='Pedro',
             type=UserType.VOTER
         )
-        cls._party = CandidateParty.objects.create(party_name='Awesome Party')
+        cls._election = Election.objects.create(name='Election')
+        cls._party = CandidateParty.objects.create(
+            party_name='Awesome Party',
+            election=cls._election
+        )
         cls._position = CandidatePosition.objects.create(
             position_name='Amazing Position',
-            position_level=0
+            position_level=0,
+            election=cls._election
         )
-        cls._election = Election.objects.create(name='Election')
         cls._candidate = Candidate.objects.create(
             user=cls._user,
             party=cls._party,
@@ -660,7 +676,7 @@ class CandidatePartyTest(TestCase):
     def test_meta_unique_together(self):
         self.assertEquals(
             self._party._meta.unique_together,
-            ( 'party_name', 'election', )
+            ( ('party_name', 'election'), )
         )
 
     def test_meta_verbose_name(self):
@@ -837,7 +853,7 @@ class CandidatePositionTest(TestCase):
     def test_meta_unique_together(self):
         self.assertEquals(
             self._position._meta.unique_together,
-            ( 'position_name', 'election', )
+            ( ( 'position_name', 'election', ), )
         )
 
     def test_meta_verbose_name(self):
@@ -876,7 +892,7 @@ class ElectionTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls._election = Election.objects.create(name='Election')
-        cls._election_name_field = cls._section._meta.get_field('name')
+        cls._election_name_field = cls._election._meta.get_field('name')
 
     # Test section_name field.
     def test_election_name_field_is_char_field(self):
@@ -907,20 +923,20 @@ class ElectionTest(TestCase):
 
     # Test the meta class.
     def test_meta_indexes(self):
-        indexes = self._section._meta.indexes
+        indexes = self._election._meta.indexes
         self.assertEquals(len(indexes), 1)
         self.assertEquals(indexes[0].fields, [ 'name' ])
 
     def test_meta_ordering(self):
-        ordering = self._section._meta.ordering
+        ordering = self._election._meta.ordering
         self.assertEquals(ordering, [ 'name' ])
 
     def test_meta_verbose_name(self):
-        verbose_name = self._section._meta.verbose_name
+        verbose_name = self._election._meta.verbose_name
         self.assertEquals(verbose_name, 'election')
 
     def test_meta_verbose_name_plural(self):
-        verbose_name_plural = self._section._meta.verbose_name_plural
+        verbose_name_plural = self._election._meta.verbose_name_plural
         self.assertEquals(verbose_name_plural, 'elections')
 
     def test_str(self):
