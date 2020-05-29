@@ -43,31 +43,13 @@ class VoteProcessingView(TestCase):
     """
     @classmethod
     def setUpTestData(cls):
-        # Set up the test users, candidate, and vote.
-        cls._non_voted_user = User.objects.create(
-            username='juan',
-            type=UserType.VOTER
-        )
-        cls._non_voted_user.set_password('pepito')
-        cls._non_voted_user.save()
+        _election0 = Election.objects.create(name='Election 0')
+        _election1 = Election.objects.create(name='Election 1')
 
-        cls._voted_user = User.objects.create(
-            username='pedro',
-            type=UserType.VOTER
-        )
-        cls._voted_user.set_password('pendoko')
-        cls._voted_user.save()
-
-        _party = CandidateParty.objects.create(party_name='Awesome Party')
-        _position = CandidatePosition.objects.create(
-            position_name='Amazing Position',
-            position_level=0
-        )
-        cls._candidate = Candidate.objects.create(
-            user=cls._non_voted_user,
-            party=_party,
-            position=_position
-        )
+        _batch0 = Batch.objects.create(year=0, election=_election0)
+        _batch1 = Batch.objects.create(year=1, election=_election1)
+        _section0 = Section.objects.create(section_name='Section 0')
+        _section1 = Section.objects.create(section_name='Section 1')
 
         cls._admin = User.objects.create(
             username='admin',
@@ -76,10 +58,90 @@ class VoteProcessingView(TestCase):
         cls._admin.set_password('root')
         cls._admin.save()
 
-        # Time to add a vote for the _voted_user..
+        # Set up the test users, candidate, and vote for the first election.
+        cls._non_voted_user0 = User.objects.create(
+            username='juan',
+            type=UserType.VOTER
+        )
+        cls._non_voted_user0.set_password('pepito')
+        cls._non_voted_user0.save()
+
+        cls._voted_user0 = User.objects.create(
+            username='pedro',
+            type=UserType.VOTER
+        )
+        cls._voted_user0.set_password('pendoko')
+        cls._voted_user0.save()
+
+        VoterProfile.objects.create(
+            user=_voted_user0,
+            batch=_batch0,
+            section=_section0
+        )
+
+        _party0 = CandidateParty.objects.create(
+            party_name='Awesome Party 0',
+            election=_election0
+        )
+        _position0 = CandidatePosition.objects.create(
+            position_name='Amazing Position 0',
+            position_level=0,
+            election=_election0
+        )
+        cls._candidate0 = Candidate.objects.create(
+            user=cls._non_voted_user0,
+            party=_party0,
+            position=_position0,
+            election=_election0
+        )
+
         Vote.objects.create(
-            user=cls._voted_user,
-            candidate=cls._candidate
+            user=cls._voted_user0,
+            candidate=cls._candidate0,
+            election=_election0
+        )
+
+        # Set up the test users, candidate, and vote for the second election.
+        cls._non_voted_user1 = User.objects.create(
+            username='juan1',
+            type=UserType.VOTER
+        )
+        cls._non_voted_user1.set_password('pepito')
+        cls._non_voted_user1.save()
+
+        cls._voted_user1 = User.objects.create(
+            username='pedro1',
+            type=UserType.VOTER
+        )
+        cls._voted_user1.set_password('pendoko')
+        cls._voted_user1.save()
+
+        VoterProfile.objects.create(
+            user=_voted_user1,
+            batch=_batch1,
+            section=_section1
+        )
+
+        _party1 = CandidateParty.objects.create(
+            party_name='Awesome Party 1',
+            election=_election1
+        )
+        _position1 = CandidatePosition.objects.create(
+            position_name='Amazing Position 1',
+            position_level=0,
+            election=_election1
+        )
+        cls._candidate1 = Candidate.objects.create(
+            user=cls._non_voted_user1,
+            party=_party1,
+            position=_position1,
+            election=_election1
+        )
+
+        Vote.objects.create(
+            user=cls._voted_user1,
+            candidate=cls._candidate1,
+            election=_election1
         )
 
     def test_anonymous_get_requests_redirected_to_index(self):
@@ -105,7 +167,7 @@ class VoteProcessingView(TestCase):
         response = self.client.post(
             reverse('vote-processing'),
             {
-                'candidates_voted': str([ self._candidate.id ])
+                'candidates_voted': str([ self._candidate0.id ])
             },
             follow=True
         )
@@ -113,8 +175,8 @@ class VoteProcessingView(TestCase):
         # Let's make sure the right vote got casted.
         try:
             Vote.objects.get(
-                user=self._non_voted_user,
-                candidate=self._candidate
+                user=self._non_voted_user0,
+                candidate=self._candidate0
             )
         except Vote.DoesNotExist:
             self.fail('Vote for test candidate was not casted successfully.')
@@ -148,7 +210,7 @@ class VoteProcessingView(TestCase):
         response = self.client.post(
             reverse('vote-processing'),
             {
-                'candidates_voted': str([ self._candidate.id ])
+                'candidates_voted': str([ self._candidate0.id ])
             },
             follow=True
         )
@@ -206,7 +268,7 @@ class VoteProcessingView(TestCase):
 
         # Let's make sure no vote got casted.
         try:
-            Vote.objects.get(user=self._non_voted_user)
+            Vote.objects.get(user=self._non_voted_user0)
             self.fail('Vote was casted.')
         except Vote.DoesNotExist:
             pass
@@ -221,7 +283,7 @@ class VoteProcessingView(TestCase):
             # No candidate with id of 1000.
             { 
                 'candidates_voted': str([
-                    self._candidate.id, self._candidate.id
+                    self._candidate0.id, self._candidate0.id
                 ])
             },
             follow=True
@@ -236,7 +298,7 @@ class VoteProcessingView(TestCase):
 
         # Let's make sure no vote got casted.
         try:
-            Vote.objects.get(user=self._non_voted_user)
+            Vote.objects.get(user=self._non_voted_user0)
             self.fail('Vote was casted.')
         except Vote.DoesNotExist:
             pass
@@ -262,7 +324,33 @@ class VoteProcessingView(TestCase):
 
         # Let's make sure no vote got casted.
         try:
-            Vote.objects.get(user=self._non_voted_user)
+            Vote.objects.get(user=self._non_voted_user0)
+            self.fail('Vote was casted.')
+        except Vote.DoesNotExist:
+            pass
+
+        self.assertRedirects(response, reverse('index'))
+
+    def test_casting_votes_for_a_candidate_in_a_different_election(self):
+        self.client.login(username='juan', password='pepito')
+
+        response = self.client.post(
+            reverse('vote-processing'),
+            # Candidate is from a different election.
+            { 'candidates_voted': str([ self._candidate1.id ]) },
+            follow=True
+        )
+
+        response_messages = list(response.context['messages'])
+        self.assertEqual(
+            response_messages[0].message,
+            'The votes you sent were invalid. Please try voting '
+            'again, and/or contact the system administrator.'
+        )
+
+        # Let's make sure no vote got casted.
+        try:
+            Vote.objects.get(user=self._non_voted_user0)
             self.fail('Vote was casted.')
         except Vote.DoesNotExist:
             pass
