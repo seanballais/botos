@@ -92,7 +92,7 @@ class VoteTest(TestCase):
     # Test user foreign key.
     def test_user_fk_is_fk(self):
         self.assertTrue(
-            isinstance(self._vote_user_field, models.OneToOneField)
+            isinstance(self._vote_user_field, models.ForeignKey)
         )
 
     def test_user_fk_connected_model(self):
@@ -119,7 +119,7 @@ class VoteTest(TestCase):
         self.assertIsNone(self._vote_user_field.default)
 
     def test_user_fk_unique(self):
-        self.assertTrue(self._vote_user_field.unique)
+        self.assertFalse(self._vote_user_field.unique)
 
     def test_user_fk_related_name(self):
         related_name = getattr(
@@ -218,8 +218,8 @@ class VoteTest(TestCase):
 
     def test_meta_unique_together(self):
         self.assertEquals(
-            self._party._meta.unique_together,
-            ( 'user', 'candidate', )
+            self._vote._meta.unique_together,
+            ( ('user', 'candidate'), )
         )
 
     def test_meta_verbose_name(self):

@@ -102,6 +102,7 @@ class VoteProcessingView(View):
 
     def _cast_votes(self, user, candidates_voted):
         # Ensure that there are no duplicate candidates.
+        election = user.voter_profile.batch.election
         encountered_candidate_ids = set()
         voted_candidates = list()
         for candidate_id in candidates_voted:
@@ -115,10 +116,20 @@ class VoteProcessingView(View):
                 except Candidate.DoesNotExist:
                     raise ValueError('Voted candidate does not exist.')
                 else:
-                    voted_candidates.append(candidate)
+                    candidate_election = candidate.election
+                    if election == candidate_election:
+                        voted_candidates.append(candidate)
+                    else:
+                        raise ValueError(
+                            'Voted for candidate in another election.'
+                        )
             else:
                 raise ValueError('Duplicate candidates IDs submitted.')
 
         # Alright, things have gone well.
         for candidate in voted_candidates:
-            Vote.objects.create(user=user, candidate=candidate)
+            Vote.objects.create(
+                user=user,
+                candidate=candidate,
+                election=election
+            )

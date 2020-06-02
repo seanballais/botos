@@ -74,7 +74,13 @@ class VoteProcessingView(TestCase):
         cls._voted_user0.save()
 
         VoterProfile.objects.create(
-            user=_voted_user0,
+            user=cls._non_voted_user0,
+            batch=_batch0,
+            section=_section0
+        )
+
+        VoterProfile.objects.create(
+            user=cls._voted_user0,
             batch=_batch0,
             section=_section0
         )
@@ -117,7 +123,13 @@ class VoteProcessingView(TestCase):
         cls._voted_user1.save()
 
         VoterProfile.objects.create(
-            user=_voted_user1,
+            user=cls._non_voted_user1,
+            batch=_batch1,
+            section=_section1
+        )
+
+        VoterProfile.objects.create(
+            user=cls._voted_user1,
             batch=_batch1,
             section=_section1
         )

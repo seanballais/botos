@@ -6,7 +6,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from core.models import (
-    User, Batch, Section, Election, UserType
+    User, Batch, Section, Election, UserType, VoterProfile
 )
 
 
@@ -33,6 +33,12 @@ class LoginViewTest(TestCase):
         )
         _user.set_password('pepito')
         _user.save()
+
+        VoterProfile.objects.create(
+            user=_user,
+            batch=_batch,
+            section=_section
+        )
 
     def test_get_requests_redirected_to_index(self):
         response = self.client.get(reverse('auth-login'), follow=True)
@@ -132,12 +138,19 @@ class LogoutViewTest(TestCase):
         _election = Election.objects.create(name='Election')
         _batch = Batch.objects.create(year=2020, election=_election)
         _section = Section.objects.create(section_name='Emerald')
+
         _user = User.objects.create(
             username='juan',
             type=UserType.VOTER
         )
         _user.set_password('pepito')
         _user.save()
+
+        VoterProfile.objects.create(
+            user=_user,
+            batch=_batch,
+            section=_section
+        )
 
     def test_anonymous_users_get_request_redirected_to_index(self):
         response = self.client.get(reverse('auth-logout'), follow=True)

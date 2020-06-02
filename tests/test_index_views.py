@@ -7,7 +7,7 @@ from django.urls import reverse
 
 from core.models import (
     User, Batch, Section, Candidate, CandidateParty, CandidatePosition, Vote,
-    UserType, Election
+    UserType, Election, VoterProfile
 )
 from core.utils import AppSettings
 
@@ -18,6 +18,10 @@ class IndexViewTest(TestCase):
     """
     @classmethod
     def setUpTestData(cls):
+        cls._election = Election.objects.create(name='Election')
+        cls._batch = Batch.objects.create(year=0, election=cls._election)
+        cls._section = Section.objects.create(section_name='Section')
+
         # Set up the users.
         _user1 = User.objects.create(username='juan', type=UserType.VOTER)
         _user1.set_password('sample')
@@ -35,7 +39,11 @@ class IndexViewTest(TestCase):
         cls._user3.set_password('sample')
         cls._user3.save()
 
-        cls._election = Election.objects.create(name='Election')
+        VoterProfile.objects.create(
+            user=cls._user3,
+            batch=cls._batch,
+            section=cls._section
+        )
 
         _party = CandidateParty.objects.create(
             party_name='Awesome Party',
@@ -240,7 +248,7 @@ class VotingSubviewTest(TestCase):
             'div',
             { 'class': 'candidate' }
         )
-        self.assertEquals(len(candidate_divs), 2)
+        self.assertEquals(len(candidate_divs), 1)
 
     def test_candidate_in_election_0_correct(self):
         response = self.client.get('/', follow=True)
@@ -310,15 +318,20 @@ class VotedSubviewTest(TestCase):
             section=_section
         )
 
-        _party = CandidateParty.objects.create(party_name='Awesome Party')
+        _party = CandidateParty.objects.create(
+            party_name='Awesome Party',
+            election=_election
+        )
         _position = CandidatePosition.objects.create(
             position_name='Amazing Position',
-            position_level=0
+            position_level=0,
+            election=_election
         )
         cls._candidate1 = Candidate.objects.create(
             user=_user1,
             party=_party,
-            position=_position
+            position=_position,
+            election=_election
         )
 
         Vote.objects.create(

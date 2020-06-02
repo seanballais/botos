@@ -73,6 +73,12 @@ class ResultsViewTest(TestCase):
         cls._user3.save()
 
         VoterProfile.objects.create(
+            user=cls._user1,
+            batch=_batch0,
+            section=_section0
+        )
+
+        VoterProfile.objects.create(
             user=cls._user2,
             batch=_batch0,
             section=_section0
@@ -136,6 +142,12 @@ class ResultsViewTest(TestCase):
         )
         cls._user6.set_password('pedro')
         cls._user6.save()
+
+        VoterProfile.objects.create(
+            user=cls._user4,
+            batch=_batch1,
+            section=_section1
+        )
 
         VoterProfile.objects.create(
             user=cls._user5,
@@ -225,9 +237,9 @@ class ResultsViewTest(TestCase):
             reverse('vote-processing'),
             {
                 'candidates_voted': str([
-                    self._candidate1.id,
-                    self._candidate2.id,
-                    self._candidate3.id
+                    self._candidate4.id,
+                    self._candidate5.id,
+                    self._candidate6.id
                 ])
             },
         )

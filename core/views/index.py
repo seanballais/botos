@@ -53,10 +53,14 @@ class IndexView(TemplateView):
             else:
                 context['subview'] = 'voting'
 
+                election = user.voter_profile.batch.election
+
                 # Note: The desired ordering of candidates has already been
                 #       defined in the ordering option Candidate's Meta class.
                 #       So, no need to specify the ordering here.
-                candidates = Candidate.objects.all()
+                candidates = Candidate.objects.filter(
+                    election__id=election.id
+                )
                 # TODO: Refactor this to use queries instead of looping through
                 #       the candidate list.
                 candidates_by_position = OrderedDict()
