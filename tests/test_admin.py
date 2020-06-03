@@ -1,17 +1,21 @@
 # This test is partly based from:
 #     https://www.argpar.se/posts/programming/testing-django-admin/
 from abc import ABC
+from unittest import mock
+import json
 
 from django import forms
 from django.contrib.admin.sites import AdminSite
 from django.test import (
     RequestFactory, TestCase
 )
+from django.urls import reverse
 
 from core.admin import (
     AdminUserAdmin, VoterAdmin, VoterProfileInline, AdminUser, Voter,
     AdminCreationForm, VoterCreationForm, CandidateCreationForm,
-    CandidateChangeForm
+    CandidateChangeForm, CandidatePartyAutoCompleteView,
+    CandidatePositionAutoCompleteView
 )
 from core.models import (
     User, Batch, Section, VoterProfile, UserType, Candidate, CandidateParty,
@@ -350,6 +354,7 @@ class AdminUserProxyUserTest(TestCase):
         else:
             self.assertEqual(user.type, UserType.ADMIN)
 
+
 class VoterProxyUserTest(TestCase):
     """
     Tests the admin user admin list filter.
@@ -363,3 +368,175 @@ class VoterProxyUserTest(TestCase):
             self.fail('Voter was not created.')
         else:
             self.assertEqual(user.type, UserType.VOTER)
+
+
+class CandidatePartyAutoCompleteViewTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.voter = User.objects.create(
+            username='voter',
+            type=UserType.VOTER
+        )
+        cls.voter.set_password('voter_password')
+        cls.voter.save()
+
+        cls.admin = User.objects.create(
+            username='admin',
+            type=UserType.ADMIN
+        )
+        cls.admin.set_password('admin(root)')
+        cls.admin.save()
+
+        cls.election = Election.objects.create(name='Election')
+        cls.party = CandidateParty.objects.create(
+            party_name='Awesome Party',
+            election=cls.election
+        )
+
+        cls.other_election = Election.objects.create(name='Other Election')
+        cls.other_party = CandidateParty.objects.create(
+            party_name='Other Awesome Party',
+            election=cls.other_election
+        )
+
+    def test_anonymous_users_get_an_empty_message(self):
+        response = self.client.get(
+            reverse('admin-candidate-party-autocomplete'),
+            follow=True
+        )
+
+        json_response = json.loads(str(response.content))
+        self.assertEqual(
+            len(json_response['results']),
+            0
+        )
+
+    def test_voters_get_an_empty_message(self):
+        self.client.login(username='voter', password='voter_password')
+        response = self.client.get(
+            reverse('admin-candidate-party-autocomplete'),
+            follow=True
+        )
+
+        json_response = json.loads(str(response.content))
+        self.assertEqual(
+            len(json_response['results']),
+            0
+        )
+
+    def test_admin_election_is_none(self):
+        self.client.login(username='admin', password='admin(root)')
+        response = self.client.get(
+            reverse('admin-candidate-party-autocomplete'),
+            follow=True
+        )
+
+        json_response = json.loads(str(response.content))
+        self.assertEqual(
+            len(json_response['results']),
+            0
+        )
+
+    def test_admin_election_is_not_none(self):
+        self.client.login(username='admin', password='admin(root)')
+
+        mocked_forwarded_str = 'CandidatePartyAutoCompleteView.forwarded'
+        with mock.patch(mocked_forwarded_str) as mock_forwarded:
+            mock_forwarded.side_effect = [ self.election ]
+
+            response = self.client.get(
+                reverse('admin-candidate-party-autocomplete'),
+                follow=True
+            )
+
+            results = json.loads(str(response.content))['results']
+            self.assertEqual(len(results), 0)
+            self.assertEqual(results[0]['text'], 'Awesome Party')
+            self.assertEqual(results[0]['id'], self.party.id)
+
+
+class CandidatePositionAutoCompleteViewTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.voter = User.objects.create(
+            username='voter',
+            type=UserType.VOTER
+        )
+        cls.voter.set_password('voter_password')
+        cls.voter.save()
+
+        cls.admin = User.objects.create(
+            username='admin',
+            type=UserType.ADMIN
+        )
+        cls.admin.set_password('admin(root)')
+        cls.admin.save()
+
+        cls.election = Election.objects.create(name='Election')
+        cls.position = CandidatePosition.objects.create(
+            position_name='Awesome Position',
+            position_level=0,
+            election=cls.election
+        )
+
+        cls.other_election = Election.objects.create(name='Other Election')
+        cls.other_position = CandidatePosition.objects.create(
+            position_name='Other Awesome Position',
+            position_level=0,
+            election=cls.other_election
+        )
+
+    def test_anonymous_users_get_an_empty_message(self):
+        response = self.client.get(
+            reverse('admin-candidate-position-autocomplete'),
+            follow=True
+        )
+
+        json_response = json.loads(str(response.content))
+        self.assertEqual(
+            len(json_response['results']),
+            0
+        )
+
+    def test_voters_get_an_empty_message(self):
+        self.client.login(username='voter', password='voter_password')
+        response = self.client.get(
+            reverse('admin-candidate-position-autocomplete'),
+            follow=True
+        )
+
+        json_response = json.loads(str(response.content))
+        self.assertEqual(
+            len(json_response['results']),
+            0
+        )
+
+    def test_admin_election_is_none(self):
+        self.client.login(username='admin', password='admin(root)')
+        response = self.client.get(
+            reverse('admin-candidate-position-autocomplete'),
+            follow=True
+        )
+
+        json_response = json.loads(str(response.content))
+        self.assertEqual(
+            len(json_response['results']),
+            0
+        )
+
+    def test_admin_election_is_not_none(self):
+        self.client.login(username='admin', password='admin(root)')
+
+        mocked_forwarded_str = 'CandidatePositionAutoCompleteView.forwarded'
+        with mock.patch(mocked_forwarded_str) as mock_forwarded:
+            mock_forwarded.side_effect = [ self.election ]
+
+            response = self.client.get(
+                reverse('admin-candidate-position-autocomplete'),
+                follow=True
+            )
+
+            results = json.loads(str(response.content))['results']
+            self.assertEqual(len(results), 0)
+            self.assertEqual(results[0]['text'], 'Awesome Position')
+            self.assertEqual(results[0]['id'], self.position.id)

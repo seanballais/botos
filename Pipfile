@@ -13,6 +13,7 @@ django = "~=2.2.10"
 phe = "*"
 pillow = "~=6.2.2"
 psycopg2 = "*"
+django-autocomplete-light = "*"
 
 [requires]
 python_version = "3.5"

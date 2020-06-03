@@ -144,6 +144,17 @@ class Voter(User):
         super().save(*args, **kwargs)
 
 
+"""class CandidateCreationForm(forms.ModelForm):
+    class Meta:
+        model = Candidate
+        widgets = {
+            'party': forms.ModelChoiceField(
+                queryset=Candidate.objects.all(),
+                required=True
+            )
+        }"""
+
+
 admin.site.register(AdminUser, AdminUserAdmin)
 admin.site.register(Voter, VoterAdmin)
 admin.site.register(Batch)
