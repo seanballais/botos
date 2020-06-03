@@ -6,6 +6,8 @@ from django.contrib.auth.forms import (
 )
 from django.contrib.auth.models import Group
 
+from dal import autocomplete
+
 from core.models import (
     User, Batch, Section, VoterProfile, Candidate, CandidateParty,
     CandidatePosition, UserType
@@ -144,22 +146,31 @@ class Voter(User):
         super().save(*args, **kwargs)
 
 
-"""class CandidateCreationForm(forms.ModelForm):
+class CandidateForm(forms.ModelForm):
     class Meta:
         model = Candidate
+        fields = ( '__all__' )
         widgets = {
-            'party': forms.ModelChoiceField(
-                queryset=Candidate.objects.all(),
-                required=True
+            'party': autocomplete.ModelSelect2(
+                url='admin-candidate-party-autocomplete',
+                forward=['election']
+            ),
+            'position': autocomplete.ModelSelect2(
+                url='admin-candidate-position-autocomplete',
+                forward=['election']
             )
-        }"""
+        }
+
+
+class CandidateAdmin(admin.ModelAdmin):
+    form = CandidateForm
 
 
 admin.site.register(AdminUser, AdminUserAdmin)
 admin.site.register(Voter, VoterAdmin)
 admin.site.register(Batch)
 admin.site.register(Section)
-admin.site.register(Candidate)
+admin.site.register(Candidate, CandidateAdmin)
 admin.site.register(CandidateParty)
 admin.site.register(CandidatePosition)
 admin.site.unregister(Group)  # We don't need this at the moment.

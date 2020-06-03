@@ -130,6 +130,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.staticfiles',
     'django.contrib.messages',
+    'dal',
+    'dal_select2',
     'django.contrib.admin'
 ]
 
