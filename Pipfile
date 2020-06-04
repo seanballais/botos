@@ -13,7 +13,11 @@ django = "~=2.2.10"
 phe = "*"
 pillow = "~=6.2.2"
 psycopg2 = "*"
-django-autocomplete-light = "*"
+# Pinning django-autocomplete-light to 3.5.0 since there is a regression in
+# 3.5.1, which causes the JS files used by the library to fail to load. Pinning
+# the version was suggested from this GitHub Issue page for the library:
+#   https://github.com/yourlabs/django-autocomplete-light/issues/1137
+django-autocomplete-light = "==3.5.0"
 
 [requires]
 python_version = "3.5"

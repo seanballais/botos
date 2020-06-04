@@ -351,13 +351,13 @@ class CandidatePartyAutoCompleteViewTest(TestCase):
 
         response = self.client.get(
             reverse('admin-candidate-party-autocomplete'),
+            { 'forward': '{{ "election": "{}" }}'.format(self.election.id) },
             follow=True
         )
-
-        results = json.loads(str(response.content))['results']
-        self.assertEqual(len(results), 0)
+        results = json.loads(response.content.decode('utf-8'))['results']
+        self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['text'], 'Awesome Party')
-        self.assertEqual(results[0]['id'], self.party.id)
+        self.assertEqual(int(results[0]['id']), self.party.id)
 
 
 class CandidatePositionAutoCompleteViewTest(TestCase):
@@ -432,19 +432,13 @@ class CandidatePositionAutoCompleteViewTest(TestCase):
     def test_admin_election_is_not_none(self):
         self.client.login(username='admin', password='admin(root)')
 
-        mocked_forwarded_str = (
-            'core.views.admin.admin'
-            '.CandidatePositionAutoCompleteView.forwarded'
+        response = self.client.get(
+            reverse('admin-candidate-position-autocomplete'),
+            { 'forward': '{{ "election": "{}" }}'.format(self.election.id) },
+            follow=True
         )
-        with mock.patch(mocked_forwarded_str) as mock_forwarded:
-            mock_forwarded.side_effect = [ self.election ]
 
-            response = self.client.get(
-                reverse('admin-candidate-position-autocomplete'),
-                follow=True
-            )
-
-            results = json.loads(str(response.content))['results']
-            self.assertEqual(len(results), 0)
-            self.assertEqual(results[0]['text'], 'Awesome Position')
-            self.assertEqual(results[0]['id'], self.position.id)
+        results = json.loads(response.content.decode('utf-8'))['results']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['text'], 'Awesome Position')
+        self.assertEqual(int(results[0]['id']), self.position.id)

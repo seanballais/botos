@@ -10,7 +10,7 @@ from dal import autocomplete
 
 from core.models import (
     User, Batch, Section, VoterProfile, Candidate, CandidateParty,
-    CandidatePosition, UserType
+    CandidatePosition, UserType, Election
 )
 
 
@@ -147,19 +147,27 @@ class Voter(User):
 
 
 class CandidateForm(forms.ModelForm):
+    election = forms.ModelChoiceField(
+        queryset=Election.objects.all()
+    )
+    party = forms.ModelChoiceField(
+        queryset=CandidateParty.objects.all(),
+        widget=autocomplete.ModelSelect2(
+            url='admin-candidate-party-autocomplete',
+            forward=['election']
+        )
+    )
+    position = forms.ModelChoiceField(
+        queryset=CandidatePosition.objects.all(),
+        widget=autocomplete.ModelSelect2(
+            url='admin-candidate-position-autocomplete',
+            forward=['election']
+        )
+    )
+
     class Meta:
         model = Candidate
         fields = ( '__all__' )
-        widgets = {
-            'party': autocomplete.ModelSelect2(
-                url='admin-candidate-party-autocomplete',
-                forward=['election']
-            ),
-            'position': autocomplete.ModelSelect2(
-                url='admin-candidate-position-autocomplete',
-                forward=['election']
-            )
-        }
 
 
 class CandidateAdmin(admin.ModelAdmin):
@@ -173,4 +181,5 @@ admin.site.register(Section)
 admin.site.register(Candidate, CandidateAdmin)
 admin.site.register(CandidateParty)
 admin.site.register(CandidatePosition)
+admin.site.register(Election)
 admin.site.unregister(Group)  # We don't need this at the moment.

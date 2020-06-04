@@ -1,5 +1,9 @@
 from dal import autocomplete
 
+from core.decorators import (
+    login_required, user_passes_test
+)
+
 from core.models import (
     CandidateParty, CandidatePosition, UserType
 )
