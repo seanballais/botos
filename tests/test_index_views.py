@@ -1,3 +1,4 @@
+from collections import OrderedDict
 import json
 
 from bs4 import BeautifulSoup
@@ -155,16 +156,28 @@ class VotingSubviewTest(TestCase):
         _section0 = Section.objects.create(section_name='Section 0')
         _section1 = Section.objects.create(section_name='Section 1')
 
-        _user1 = User.objects.create(username='juan', type=UserType.VOTER)
+        _user1 = User.objects.create(
+            username='juan',
+            first_name='Juan',
+            last_name='Sample',
+            type=UserType.VOTER
+        )
         _user1.set_password('sample')
         _user1.save()
 
-        _user2 = User.objects.create(username='pedro', type=UserType.VOTER)
+        _user2 = User.objects.create(
+            username='pedro',
+            first_name='Pedro',
+            last_name='Sample',
+            type=UserType.VOTER
+        )
         _user2.set_password('sample')
         _user2.save()
 
         _user3 = User.objects.create(
             username='pasta',
+            first_name='Pasta',
+            last_name='Sample',
             type=UserType.VOTER
         )
         _user3.set_password('sample')
@@ -172,10 +185,30 @@ class VotingSubviewTest(TestCase):
 
         _user4 = User.objects.create(
             username='hollow',
+            first_name='Hollow',
+            last_name='Knight',
             type=UserType.VOTER
         )
         _user4.set_password('knight')
         _user4.save()
+
+        _user5 = User.objects.create(
+            username='hollow1',
+            first_name='Hollow 1',
+            last_name='Knight',
+            type=UserType.VOTER
+        )
+        _user5.set_password('knight')
+        _user5.save()
+
+        _user6 = User.objects.create(
+            username='blabla',
+            first_name='Blabla',
+            last_name='Haha',
+            type=UserType.VOTER
+        )
+        _user6.set_password('haha')
+        _user6.save()
 
         VoterProfile.objects.create(
             user=_user3,
@@ -207,6 +240,16 @@ class VotingSubviewTest(TestCase):
             position_level=0,
             election=_election1
         )
+        _position2 = CandidatePosition.objects.create(
+            position_name='Amazing Position 2',
+            position_level=1,
+            election=_election0
+        )
+        _position3 = CandidatePosition.objects.create(
+            position_name='Amazing Position 3',
+            position_level=1,
+            election=_election1
+        )
         cls._candidate1 = Candidate.objects.create(
             user=_user1,
             party=_party0,
@@ -217,6 +260,30 @@ class VotingSubviewTest(TestCase):
             user=_user2,
             party=_party1,
             position=_position1,
+            election=_election1
+        )
+        cls._candidate3 = Candidate.objects.create(
+            user=_user3,
+            party=_party0,
+            position=_position0,
+            election=_election0
+        )
+        cls._candidate4 = Candidate.objects.create(
+            user=_user4,
+            party=_party1,
+            position=_position1,
+            election=_election1
+        )
+        cls._candidate5 = Candidate.objects.create(
+            user=_user5,
+            party=_party0,
+            position=_position2,
+            election=_election0
+        )
+        cls._candidate6 = Candidate.objects.create(
+            user=_user6,
+            party=_party1,
+            position=_position3,
             election=_election1
         )
 
@@ -248,7 +315,7 @@ class VotingSubviewTest(TestCase):
             'div',
             { 'class': 'candidate' }
         )
-        self.assertEquals(len(candidate_divs), 1)
+        self.assertEquals(len(candidate_divs), 3)
 
     def test_candidate_in_election_0_correct(self):
         response = self.client.get('/', follow=True)
@@ -256,12 +323,14 @@ class VotingSubviewTest(TestCase):
 
         # There should only be one candidate in the election the current user
         # is participating in.
-        self.assertEqual(len(candidates), 1)
+        candidates_list = [ c for i in list(candidates.values()) for c in i ]
+        self.assertEqual(len(candidates_list), 3)
         self.assertEqual(
             candidates,
-            {
-                'Amazing Position 0': [ self._candidate1 ]
-            }
+            OrderedDict([
+                ('Amazing Position 0', [ self._candidate1, self._candidate3 ]),
+                ('Amazing Position 2', [ self._candidate5 ])
+            ])
         )
 
     def test_candidate_in_election_1_correct(self):
@@ -273,12 +342,14 @@ class VotingSubviewTest(TestCase):
 
         # There should only be one candidate in the election the current user
         # is participating in.
-        self.assertEqual(len(candidates), 1)
+        candidates_list = [ c for i in list(candidates.values()) for c in i ]
+        self.assertEqual(len(candidates_list), 3)
         self.assertEqual(
             candidates,
-            {
-                'Amazing Position 1': [ self._candidate2 ]
-            }
+            OrderedDict([
+                ('Amazing Position 1', [ self._candidate4, self._candidate2 ]),
+                ('Amazing Position 3', [ self._candidate6 ])
+            ])
         )
 
     def _get_voting_form(self, view_html):

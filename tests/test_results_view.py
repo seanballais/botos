@@ -61,12 +61,18 @@ class ResultsViewTest(TestCase):
         cls._user1.set_password('pepito')
         cls._user1.save()
 
-        cls._user2 = User.objects.create(username='pedro', type=UserType.VOTER)
+        cls._user2 = User.objects.create(
+            username='pedro',
+            first_name='Pedro',
+            last_name='Pendoko',
+            type=UserType.VOTER)
         cls._user2.set_password('pendoko')
         cls._user2.save()
 
         cls._user3 = User.objects.create(
             username='emmanuel',
+            first_name='Emmanuel',
+            last_name='Pedro',
             type=UserType.VOTER
         )
         cls._user3.set_password('pedro')
@@ -122,7 +128,7 @@ class ResultsViewTest(TestCase):
         # Election 1 Entities.
         cls._user4 = User.objects.create(
             username='juan1',
-            first_name='Juan',
+            first_name='Juan 1',
             last_name='Pepito',
             type=UserType.VOTER
         )
@@ -131,6 +137,8 @@ class ResultsViewTest(TestCase):
 
         cls._user5 = User.objects.create(
             username='pedro1',
+            first_name='Pedro 1',
+            last_name='Pendoko',
             type=UserType.VOTER
         )
         cls._user5.set_password('pendoko')
@@ -138,6 +146,8 @@ class ResultsViewTest(TestCase):
 
         cls._user6 = User.objects.create(
             username='emmanuel1',
+            first_name='Emmanuel 1',
+            last_name='Pedro',
             type=UserType.VOTER
         )
         cls._user6.set_password('pedro')
@@ -275,13 +285,29 @@ class ResultsViewTest(TestCase):
 
         self.assertNotEquals(
             results['Amazing Position 0'][0].name,
+            'Pedro, Emmanuel'
+        )
+        self.assertNotEquals(
+            results['Amazing Position 0'][1].name,
+            'Pendoko, Pedro'
+        )
+        self.assertNotEquals(
+            results['Amazing Position 0'][2].name,
             'Pepito, Juan'
         )
 
         # Just making sure that the other election's candidates appear too.
         self.assertNotEquals(
             results['Amazing Position 1'][0].name,
-            'Pepito, Juan'
+            'Pedro, Emmanuel 1'
+        )
+        self.assertNotEquals(
+            results['Amazing Position 1'][1].name,
+            'Pendoko, Pedro 1'
+        )
+        self.assertNotEquals(
+            results['Amazing Position 1'][2].name,
+            'Pepito, Juan 1'
         )
 
     def test_results_candidate_party_name_elections_open(self):
@@ -307,13 +333,29 @@ class ResultsViewTest(TestCase):
 
         self.assertEquals(
             results['Amazing Position 0'][0].name,
+            'Pedro, Emmanuel'
+        )
+        self.assertEquals(
+            results['Amazing Position 0'][1].name,
+            'Pendoko, Pedro'
+        )
+        self.assertEquals(
+            results['Amazing Position 0'][2].name,
             'Pepito, Juan'
         )
 
         # Just making sure that the other election's candidates appear too.
         self.assertEquals(
             results['Amazing Position 1'][0].name,
-            'Pepito, Juan'
+            'Pedro, Emmanuel 1'
+        )
+        self.assertEquals(
+            results['Amazing Position 1'][1].name,
+            'Pendoko, Pedro 1'
+        )
+        self.assertEquals(
+            results['Amazing Position 1'][2].name,
+            'Pepito, Juan 1'
         )
 
     def test_results_candidate_party_name_elections_closed(self):

@@ -359,6 +359,22 @@ class CandidatePartyAutoCompleteViewTest(TestCase):
         self.assertEqual(results[0]['text'], 'Awesome Party')
         self.assertEqual(int(results[0]['id']), self.party.id)
 
+    def test_admin_election_with_query_substring(self):
+        self.client.login(username='admin', password='admin(root)')
+
+        response = self.client.get(
+            reverse('admin-candidate-party-autocomplete'),
+            {
+                'forward': '{{ "election": "{}" }}'.format(self.election.id),
+                'q': 'A'
+            },
+            follow=True
+        )
+        results = json.loads(response.content.decode('utf-8'))['results']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['text'], 'Awesome Party')
+        self.assertEqual(int(results[0]['id']), self.party.id)
+
 
 class CandidatePositionAutoCompleteViewTest(TestCase):
     @classmethod
@@ -438,6 +454,22 @@ class CandidatePositionAutoCompleteViewTest(TestCase):
             follow=True
         )
 
+        results = json.loads(response.content.decode('utf-8'))['results']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['text'], 'Awesome Position')
+        self.assertEqual(int(results[0]['id']), self.position.id)
+
+    def test_admin_election_with_query_substring(self):
+        self.client.login(username='admin', password='admin(root)')
+
+        response = self.client.get(
+            reverse('admin-candidate-position-autocomplete'),
+            {
+                'forward': '{{ "election": "{}" }}'.format(self.election.id),
+                'q': 'A'
+            },
+            follow=True
+        )
         results = json.loads(response.content.decode('utf-8'))['results']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['text'], 'Awesome Position')

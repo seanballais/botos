@@ -537,7 +537,9 @@ class CandidateTest(TestCase):
             ordering,
             [
                 'position__position_level',
-                'party__party_name'
+                'party__party_name',
+                'user__last_name',
+                'user__first_name'
             ]
         )
 

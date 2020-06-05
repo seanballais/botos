@@ -145,7 +145,9 @@ class Candidate(Base):
         indexes = [ models.Index(fields=[ 'user' ]) ]
         ordering = [
             'position__position_level',
-            'party__party_name'
+            'party__party_name',
+            'user__last_name',
+            'user__first_name'
         ]
         verbose_name = 'candidate'
         verbose_name_plural = 'candidates'
