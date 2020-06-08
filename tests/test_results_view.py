@@ -221,23 +221,23 @@ class ResultsViewTest(TestCase):
         self.client.post(
             reverse('vote-processing'),
             {
-                'candidates_voted': str([
-                    self._candidate1.id,
-                    self._candidate2.id,
-                    self._candidate3.id
-                ])
-            },
+                'candidates_voted': str([ self._candidate1.id ])
+            }
         )
 
         self.client.login(username='pedro', password='pendoko')
         self.client.post(
             reverse('vote-processing'),
             {
-                'candidates_voted': str([
-                    self._candidate1.id,
-                    self._candidate2.id,
-                    self._candidate3.id
-                ])
+                'candidates_voted': str([ self._candidate1.id ])
+            }
+        )
+
+        self.client.login(username='emmanuel', password='pedro')
+        self.client.post(
+            reverse('vote-processing'),
+            {
+                'candidates_voted': str([ self._candidate2.id ])
             }
         )
 
@@ -246,11 +246,7 @@ class ResultsViewTest(TestCase):
         self.client.post(
             reverse('vote-processing'),
             {
-                'candidates_voted': str([
-                    self._candidate4.id,
-                    self._candidate5.id,
-                    self._candidate6.id
-                ])
+                'candidates_voted': str([ self._candidate4.id ])
             },
         )
 
@@ -258,11 +254,15 @@ class ResultsViewTest(TestCase):
         self.client.post(
             reverse('vote-processing'),
             {
-                'candidates_voted': str([
-                    self._candidate4.id,
-                    self._candidate5.id,
-                    self._candidate6.id
-                ])
+                'candidates_voted': str([ self._candidate4.id ])
+            }
+        )
+
+        self.client.login(username='emmanuel1', password='pedro')
+        self.client.post(
+            reverse('vote-processing'),
+            {
+                'candidates_voted': str([ self._candidate6.id ])
             }
         )
 
@@ -270,12 +270,12 @@ class ResultsViewTest(TestCase):
         response = self.client.get(reverse('results'))
         results = response.context['results']
 
-        self.assertEquals(results['Amazing Position 0'][0].total_votes, 2)
-        self.assertEquals(results['Amazing Position 0'][1].total_votes, 2)
+        self.assertEquals(results['Amazing Position 0'][0].total_votes, 0)
+        self.assertEquals(results['Amazing Position 0'][1].total_votes, 1)
         self.assertEquals(results['Amazing Position 0'][2].total_votes, 2)
 
-        self.assertEquals(results['Amazing Position 1'][0].total_votes, 2)
-        self.assertEquals(results['Amazing Position 1'][1].total_votes, 2)
+        self.assertEquals(results['Amazing Position 1'][0].total_votes, 1)
+        self.assertEquals(results['Amazing Position 1'][1].total_votes, 0)
         self.assertEquals(results['Amazing Position 1'][2].total_votes, 2)
 
     def test_results_candidate_name_elections_open(self):

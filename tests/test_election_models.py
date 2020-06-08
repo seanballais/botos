@@ -1,6 +1,7 @@
 import json
 
 from django.contrib.postgres import fields as postgres_fields
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.test import TestCase
 
@@ -720,6 +721,14 @@ class CandidatePositionTest(TestCase):
         - default = 32767 (the largest number this field type supports)
         - unique = False
 
+    The max_num_selected_candidates field must be a positive small integer
+    field and have the following settings:
+        - null = False
+        - blank = False
+        - default = 1
+        - unique = False
+        - validator = [ MinValueValidator(1) ]
+
     The election field must be a foreign key and have the following settings:
         - to = 'Election'
         - on_delete = models.CASCADE
@@ -754,6 +763,9 @@ class CandidatePositionTest(TestCase):
         )
         cls._position_level_field = cls._position._meta.get_field(
             'position_level'
+        )
+        cls._max_num_selected_candidates = cls._position._meta.get_field(
+            'max_num_selected_candidates'
         )
         cls._position_election_field = cls._position._meta.get_field(
             'election'
@@ -800,6 +812,35 @@ class CandidatePositionTest(TestCase):
 
     def test_position_level_unique(self):
         self.assertFalse(self._position_level_field.unique)
+
+    # Test position max_num_selected_candidates field.
+    def test_max_num_selected_candidates_is_positive_smallint_field(self):
+        self.assertTrue(
+            isinstance(
+                self._max_num_selected_candidates,
+                models.PositiveSmallIntegerField
+            )
+        )
+
+    def test_max_num_selected_candidates_null(self):
+        self.assertFalse(self._max_num_selected_candidates.null)
+
+    def test_max_num_selected_candidates_blank(self):
+        self.assertFalse(self._max_num_selected_candidates.blank)
+
+    def test_max_num_selected_candidates_default(self):
+        self.assertEquals(self._max_num_selected_candidates.default, 1)
+
+    def test_max_num_selected_candidates_unique(self):
+        self.assertFalse(self._max_num_selected_candidates.unique)
+
+    def test_max_num_selected_candidates_validators(self):
+        self.assertTrue(
+            isinstance(
+                self._max_num_selected_candidates.validators[0],
+                MinValueValidator
+            )
+        )
 
     # Test election foreign key.
     def test_position_election_fk_is_fk(self):

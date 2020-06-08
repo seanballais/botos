@@ -65,11 +65,18 @@ class IndexView(TemplateView):
                 #       the candidate list.
                 candidates_by_position = OrderedDict()
                 for candidate in candidates:
-                    position = str(candidate.position.position_name)
-                    if position in candidates_by_position:
-                        candidates_by_position[position] += [ candidate ]
+                    position = candidate.position
+                    position_name = candidate.position.position_name
+                    if position_name in candidates_by_position:
+                        item = candidates_by_position[position_name]
+                        item["candidates"].append(candidate)
                     else:
-                        candidates_by_position[position] = [ candidate ]
+                        candidates_by_position[position_name] = {
+                            "candidates": [ candidate ],
+                            "max_num_selected_candidates": (
+                                position.max_num_selected_candidates
+                            )
+                        }
 
                 context['candidates'] = candidates_by_position
         else:

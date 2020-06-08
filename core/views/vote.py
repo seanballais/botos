@@ -105,6 +105,7 @@ class VoteProcessingView(View):
         election = user.voter_profile.batch.election
         encountered_candidate_ids = set()
         voted_candidates = list()
+        num_selected_candidates_per_position = dict()
         for candidate_id in candidates_voted:
             # Check that there are no duplicate votes and that the candidate
             # IDs passed exist.
@@ -115,14 +116,35 @@ class VoteProcessingView(View):
                     candidate = Candidate.objects.get(id=candidate_id)
                 except Candidate.DoesNotExist:
                     raise ValueError('Voted candidate does not exist.')
-                else:
-                    candidate_election = candidate.election
-                    if election == candidate_election:
-                        voted_candidates.append(candidate)
-                    else:
-                        raise ValueError(
-                            'Voted for candidate in another election.'
+                
+                candidate_election = candidate.election
+                if election == candidate_election:
+                    position = candidate.position
+                    pos_name = position.position_name
+                    if pos_name in num_selected_candidates_per_position:
+                        num_selected_candidates_per_position[pos_name] += 1
+
+                        pos_max_selected = position.max_num_selected_candidates
+                        pos_num_selected = (
+                            num_selected_candidates_per_position[pos_name]
                         )
+                        if pos_num_selected > pos_max_selected: 
+                            raise ValueError(
+                                'Selected more candidates in the same '
+                                'position than allowed.'
+                            )
+                        else:
+                            voted_candidates.append(candidate)
+                    else:
+                        # No need to check if the number of selected candidates
+                        # in a position has already exceeded the set maximum
+                        # number, since the maximum number cannot be 0.
+                        num_selected_candidates_per_position[pos_name] = 1
+                        voted_candidates.append(candidate)                        
+                else:
+                    raise ValueError(
+                        'Voted for candidate in another election.'
+                    )
             else:
                 raise ValueError('Duplicate candidates IDs submitted.')
 

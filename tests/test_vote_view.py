@@ -43,6 +43,10 @@ class VoteProcessingView(TestCase):
     """
     @classmethod
     def setUpTestData(cls):
+        # Election 0 has a candidate position that allows for voting two
+        # candidates running for the position. Election 1, on the other hand,
+        # has a candidate position that allows for voting only one candidate
+        # running for the position.
         _election0 = Election.objects.create(name='Election 0')
         _election1 = Election.objects.create(name='Election 1')
 
@@ -92,10 +96,17 @@ class VoteProcessingView(TestCase):
         _position0 = CandidatePosition.objects.create(
             position_name='Amazing Position 0',
             position_level=0,
+            max_num_selected_candidates=2,
             election=_election0
         )
         cls._candidate0 = Candidate.objects.create(
             user=cls._non_voted_user0,
+            party=_party0,
+            position=_position0,
+            election=_election0
+        )
+        cls._candidate2 = Candidate.objects.create(
+            user=cls._voted_user0,
             party=_party0,
             position=_position0,
             election=_election0
@@ -145,6 +156,12 @@ class VoteProcessingView(TestCase):
         )
         cls._candidate1 = Candidate.objects.create(
             user=cls._non_voted_user1,
+            party=_party1,
+            position=_position1,
+            election=_election1
+        )
+        cls._candidate3 = Candidate.objects.create(
+            user=cls._voted_user1,
             party=_party1,
             position=_position1,
             election=_election1
@@ -363,6 +380,67 @@ class VoteProcessingView(TestCase):
         # Let's make sure no vote got casted.
         try:
             Vote.objects.get(user=self._non_voted_user0)
+            self.fail('Vote was casted.')
+        except Vote.DoesNotExist:
+            pass
+
+        self.assertRedirects(response, reverse('index'))
+
+    def test_casting_votes_two_candidates_same_position_max_2_cands(self):
+        self.client.login(username='juan', password='pepito')
+
+        response = self.client.post(
+            reverse('vote-processing'),
+            # Candidate is from a different election.
+            {
+                'candidates_voted': str([
+                    self._candidate0.id, self._candidate2.id
+                ])
+            },
+            follow=True
+        )
+
+        try:
+            Vote.objects.get(
+                user=self._non_voted_user0,
+                candidate=self._candidate0
+            )
+            Vote.objects.get(
+                user=self._non_voted_user0,
+                candidate=self._candidate2
+            )
+        except Vote.DoesNotExist:
+            self.fail(
+                'Vote for all election 0 candidates were not '
+                'casted successfully.'
+            )
+
+        self.assertRedirects(response, reverse('index'))
+
+    def test_casting_votes_two_candidates_same_position_max_1_cand(self):
+        self.client.login(username='juan1', password='pepito')
+
+        response = self.client.post(
+            reverse('vote-processing'),
+            # Candidate is from a different election.
+            {
+                'candidates_voted': str([
+                    self._candidate1.id, self._candidate3.id
+                ])
+            },
+            follow=True
+        )
+
+        response_messages = list(response.context['messages'])
+        self.assertEqual(
+            response_messages[0].message,
+            'The votes you sent were invalid. Please try voting '
+            'again, and/or contact the system administrator.'
+        )
+
+        # Let's make sure no vote got casted.
+        try:
+            Vote.objects.get(user=self._non_voted_user1)
             self.fail('Vote was casted.')
         except Vote.DoesNotExist:
             pass

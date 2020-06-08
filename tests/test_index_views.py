@@ -233,6 +233,7 @@ class VotingSubviewTest(TestCase):
         _position0 = CandidatePosition.objects.create(
             position_name='Amazing Position 0',
             position_level=0,
+            max_num_selected_candidates=2,
             election=_election0
         )
         _position1 = CandidatePosition.objects.create(
@@ -323,13 +324,27 @@ class VotingSubviewTest(TestCase):
 
         # There should only be one candidate in the election the current user
         # is participating in.
-        candidates_list = [ c for i in list(candidates.values()) for c in i ]
+        candidates_list = [
+            c for i in list(candidates.values()) for c in i["candidates"]
+        ]
         self.assertEqual(len(candidates_list), 3)
         self.assertEqual(
             candidates,
             OrderedDict([
-                ('Amazing Position 0', [ self._candidate1, self._candidate3 ]),
-                ('Amazing Position 2', [ self._candidate5 ])
+                (
+                    'Amazing Position 0',
+                    {
+                        "candidates": [ self._candidate1, self._candidate3 ],
+                        "max_num_selected_candidates": 2
+                    }
+                ),
+                (
+                    'Amazing Position 2',
+                    {
+                        "candidates": [ self._candidate5 ],
+                        "max_num_selected_candidates": 1
+                    }
+                )
             ])
         )
 
@@ -342,13 +357,27 @@ class VotingSubviewTest(TestCase):
 
         # There should only be one candidate in the election the current user
         # is participating in.
-        candidates_list = [ c for i in list(candidates.values()) for c in i ]
+        candidates_list = [
+            c for i in list(candidates.values()) for c in i["candidates"]
+        ]
         self.assertEqual(len(candidates_list), 3)
         self.assertEqual(
             candidates,
             OrderedDict([
-                ('Amazing Position 1', [ self._candidate4, self._candidate2 ]),
-                ('Amazing Position 3', [ self._candidate6 ])
+                (
+                    'Amazing Position 1',
+                    {
+                        "candidates": [ self._candidate4, self._candidate2 ],
+                        "max_num_selected_candidates": 1
+                    }
+                ),
+                (
+                    'Amazing Position 3',
+                    {
+                        "candidates": [ self._candidate6 ],
+                        "max_num_selected_candidates": 1
+                    }
+                )
             ])
         )
 

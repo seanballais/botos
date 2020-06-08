@@ -13,11 +13,11 @@
     {% endif %}
 </header>
 <article id="voting">
-    {% for position, candidates in candidates.items %}
+    {% for position, position_data in candidates.items %}
     <section>
         <h2>{{ position }}</h2>
         <div class="candidates">
-            {% for candidate in candidates %}
+            {% for candidate in position_data.candidates %}
             <div class="candidate">
                 <img src="{{ MEDIA_PREFIX }}{{ candidate.avatar }}" alt="Candidate: {{ candidate.user.first_name }} {{ candidate.user.last_name }}" />
                 <h3>{{ candidate.user.last_name }}, {{ candidate.user.first_name }}</h3>

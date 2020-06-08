@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator
 from django.db import models
 
 from .base_model import Base
@@ -73,6 +74,14 @@ class CandidatePosition(Base):
         blank=False,
         default=32767,  # This is the largest number this field type supports.
         unique=False
+    )
+    max_num_selected_candidates = models.PositiveSmallIntegerField(
+        'max_num_selected_candidates',
+        null=False,
+        blank=False,
+        default=1,
+        unique=False,
+        validators=[ MinValueValidator(1) ]
     )
     election = models.ForeignKey(
         Election,
