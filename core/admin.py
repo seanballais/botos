@@ -1,13 +1,12 @@
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth.forms import (
-    UserChangeForm, UserCreationForm
-)
 from django.contrib.auth.models import Group
 
-from dal import autocomplete
-
+from core.forms.admin import (
+    AdminChangeForm, AdminCreationForm, VoterChangeForm,
+    VoterCreationForm, CandidateForm
+)
 from core.models import (
     User, Batch, Section, VoterProfile, Candidate, CandidateParty,
     CandidatePosition, UserType, Election
@@ -53,36 +52,6 @@ class BaseUserAdmin(UserAdmin):
     filter_horizontal = ()
 
 
-# The following classes are based on the code by @kdh454 from:
-#    https://stackoverflow.com/a/17496836/1116098
-# and on the code by @adrianoviedo from:
-#    https://stackoverflow.com/a/48405520/1116098
-class BaseForm(forms.ModelForm):
-    class Meta:
-        exclude = ('is_staff', 'is_superuser', 'is_active', 'type',)
-
-
-class BaseCreateForm(BaseForm):
-    def clean_username(self):
-        username = self.cleaned_data['username']
-        try:
-            u = User.objects.get(username=username)
-        except User.DoesNotExist:
-            return username
-
-        raise forms.ValidationError('Username already used.')
-
-
-class AdminChangeForm(BaseForm, UserChangeForm):
-    class Meta(BaseForm.Meta):
-        model = User
-
-
-class AdminCreationForm(BaseCreateForm, UserCreationForm):
-    class Meta(BaseForm.Meta):
-        model = User
-
-
 class AdminUserAdmin(BaseUserAdmin):
     form = AdminChangeForm
     add_form = AdminCreationForm
@@ -95,16 +64,6 @@ class AdminUserAdmin(BaseUserAdmin):
         obj.type = UserType.ADMIN
 
         super().save_model(request, obj, form, change)
-
-
-class VoterChangeForm(BaseForm, UserChangeForm):
-    class Meta(BaseForm.Meta):
-        model = User
-
-
-class VoterCreationForm(BaseCreateForm, UserCreationForm):
-    class Meta(BaseForm.Meta):
-        model = User
 
 
 class VoterProfileInline(admin.StackedInline):
@@ -144,30 +103,6 @@ class Voter(User):
     def save(self, *args, **kwargs):
         self.type = UserType.VOTER
         super().save(*args, **kwargs)
-
-
-class CandidateForm(forms.ModelForm):
-    election = forms.ModelChoiceField(
-        queryset=Election.objects.all()
-    )
-    party = forms.ModelChoiceField(
-        queryset=CandidateParty.objects.all(),
-        widget=autocomplete.ModelSelect2(
-            url='admin-candidate-party-autocomplete',
-            forward=['election']
-        )
-    )
-    position = forms.ModelChoiceField(
-        queryset=CandidatePosition.objects.all(),
-        widget=autocomplete.ModelSelect2(
-            url='admin-candidate-position-autocomplete',
-            forward=['election']
-        )
-    )
-
-    class Meta:
-        model = Candidate
-        fields = ( '__all__' )
 
 
 class CandidateAdmin(admin.ModelAdmin):

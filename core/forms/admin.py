@@ -2,7 +2,16 @@ import os
 
 from django import forms
 from django.conf import settings
+from django.contrib.auth.forms import (
+    UserChangeForm, UserCreationForm
+)
 
+from dal import autocomplete
+
+from core.models import (
+    User, Batch, Section, VoterProfile, Candidate, CandidateParty,
+    CandidatePosition, UserType, Election
+)
 from core.utils import AppSettings
 
 
@@ -49,3 +58,67 @@ class ElectionSettingsElectionStateForm(forms.Form):
             widget=forms.RadioSelect,
             initial=AppSettings().get('election_state', 'closed')
         )
+
+
+# The following classes are based on the code by @kdh454 from:
+#    https://stackoverflow.com/a/17496836/1116098
+# and on the code by @adrianoviedo from:
+#    https://stackoverflow.com/a/48405520/1116098
+class BaseForm(forms.ModelForm):
+    class Meta:
+        exclude = ('is_staff', 'is_superuser', 'is_active', 'type',)
+
+
+class BaseCreateForm(BaseForm):
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        try:
+            u = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return username
+
+        raise forms.ValidationError('Username already used.')
+
+
+class AdminChangeForm(BaseForm, UserChangeForm):
+    class Meta(BaseForm.Meta):
+        model = User
+
+
+class AdminCreationForm(BaseCreateForm, UserCreationForm):
+    class Meta(BaseForm.Meta):
+        model = User
+
+
+class VoterChangeForm(BaseForm, UserChangeForm):
+    class Meta(BaseForm.Meta):
+        model = User
+
+
+class VoterCreationForm(BaseCreateForm, UserCreationForm):
+    class Meta(BaseForm.Meta):
+        model = User
+
+
+class CandidateForm(forms.ModelForm):
+    election = forms.ModelChoiceField(
+        queryset=Election.objects.all()
+    )
+    party = forms.ModelChoiceField(
+        queryset=CandidateParty.objects.all(),
+        widget=autocomplete.ModelSelect2(
+            url='admin-candidate-party-autocomplete',
+            forward=['election']
+        )
+    )
+    position = forms.ModelChoiceField(
+        queryset=CandidatePosition.objects.all(),
+        widget=autocomplete.ModelSelect2(
+            url='admin-candidate-position-autocomplete',
+            forward=['election']
+        )
+    )
+
+    class Meta:
+        model = Candidate
+        fields = ( '__all__' )
