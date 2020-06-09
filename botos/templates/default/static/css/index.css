@@ -281,6 +281,14 @@ article#voting section div.candidates div.candidate button.depressed-vote-btn {
     box-shadow: none;
 }
 
+article#voting section div.candidates div.candidate button.disabled-vote-btn {
+    background: rgb(137,222,172);
+    background: linear-gradient(235deg, rgba(137,222,172,1) 0%, rgba(131,204,217,1) 54%, rgba(141,158,187,1) 100%);
+
+    cursor: default;
+    box-shadow: none;
+}
+
 article#voting div#voting-actions {
     display: flex;
     flex-direction: column;

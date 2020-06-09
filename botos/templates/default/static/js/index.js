@@ -16,6 +16,38 @@ function resetAllVotingButtonsInSameCandidatePosition(btn) {
     }
 }
 
+function toggleUnselectedVoteButtonsInSameCandidatePosition(candidatesDiv) {
+    var numCandidateButtons = candidatesDiv.getElementsByTagName('button');
+    for (var i = 0; i < numCandidateButtons.length; i++) {
+        if (numCandidateButtons[i].classList.contains('vote-btn')) {
+            numCandidateButtons[i].disabled = true;
+            numCandidateButtons[i].classList.add('disabled-vote-btn');
+            numCandidateButtons[i].classList.remove('vote-btn');
+        } else if (numCandidateButtons[i].classList.contains('disabled-vote-btn')) {
+            numCandidateButtons[i].disabled = false;
+            numCandidateButtons[i].classList.add('vote-btn');
+            numCandidateButtons[i].classList.remove('disabled-vote-btn');
+        }
+    }
+}
+
+function getNumSelectedCandidatesInSamePosition(candidatesDiv) {
+    var numSelectedButtons = candidatesDiv.getElementsByTagName('button');
+    var numSelected = 0;
+    for (var i = 0; i < numSelectedButtons.length; i++) {
+        if (numSelectedButtons[i].classList.contains('depressed-vote-btn')) {
+            numSelected++;
+        }
+    }
+
+    return numSelected;
+}
+
+function getMaxNumSelectedCandidatesInSamePosition(candidatesDiv) {
+    var maxNumSelected = candidatesDiv.getAttribute('data-max-num-selected');
+    return maxNumSelected;
+}
+
 ready(function() {
     // Login sub-view.
     var loginForm = document.querySelector('form#login');
@@ -30,19 +62,61 @@ ready(function() {
     if (votingButtons != null) {
         votingButtons.forEach(btn => {
             btn.addEventListener('click', function() {
+                var candidatesDiv = this.parentNode.parentNode;
+                var numSelected = getNumSelectedCandidatesInSamePosition(candidatesDiv);
+                var maxNumSelected = getMaxNumSelectedCandidatesInSamePosition(candidatesDiv);
                 if (this.classList.contains('depressed-vote-btn')) {
                     // This button was clicked already.
+                    if (maxNumSelected > 1) {
+                        // This block should only be allowed for candidate positions that allow
+                        // for more than one candidate to be selected, to ensure auto-switching
+                        // candidates for a position when the voter can only select one.
+                        numSelected--;
+                        if ((numSelected + 1) == maxNumSelected) {
+                            // Previously, the currently unselected voting buttons were disabled. Enable them now
+                            // since we have an additional slot.
+                            toggleUnselectedVoteButtonsInSameCandidatePosition(candidatesDiv);
+                        }
+                    }
+
+                    // And now, revert this button to an unselected state. We have to this last. Otherwise
+                    // this button will be considered previously disabled.
                     resetVotingButton(this);
                 } else {
                     // This button was not clicked before.
-                    resetAllVotingButtonsInSameCandidatePosition(this);
+                    if (maxNumSelected == 1) {
+                        // Allow auto-switching candidates when you can only vote for one for a position.
+                        resetAllVotingButtonsInSameCandidatePosition(this);
 
-                    this.textContent = 'Unvote';
-                    this.classList.add('depressed-vote-btn');
-                    this.classList.remove('vote-btn')
+                        this.textContent = 'Unvote';
+                        this.classList.add('depressed-vote-btn');
+                        this.classList.remove('vote-btn')
 
-                    var candidateDiv = this.parentNode;
-                    candidateDiv.classList.add('opaque');
+                        var candidateDiv = this.parentNode;
+                        candidateDiv.classList.add('opaque');
+                    } else {
+                        // Note that when the position allows for choosing more than one candidate, Botos
+                        // will require voters to manually unvote candidates. This is so that they can make
+                        // sure that they do not accidentally and unintentionally unvote a candidate they
+                        // were actually voting for. If Botos auto-unvotes a candidate when a voter attempts
+                        // to vote for one more candidate, it would put an additional mental load on the
+                        // voter since they would have to track which candidate will be unvoted, depending on
+                        // the mechanism for auto-unvoting.
+                        if (numSelected < maxNumSelected) {
+                            this.textContent = 'Unvote';
+                            this.classList.add('depressed-vote-btn');
+                            this.classList.remove('vote-btn')
+
+                            var candidateDiv = this.parentNode;
+                            candidateDiv.classList.add('opaque');
+
+                            numSelected++; // Since we selected a new one.
+                            if (numSelected == maxNumSelected) {
+                                // Time to disable other buttons.
+                                toggleUnselectedVoteButtonsInSameCandidatePosition(candidatesDiv);
+                            }
+                        }
+                    }
                 }
             });
         });
