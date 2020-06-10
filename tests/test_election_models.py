@@ -905,14 +905,11 @@ class CandidatePositionTest(TestCase):
         )
         self.assertEquals(connected_model, Batch)
 
-    def test_target_batches_field_null(self):
-        self.assertTrue(self._target_batches_field.null)
-
     def test_target_batches_field_blank(self):
         self.assertTrue(self._target_batches_field.blank)
 
     def test_target_batches_field_default(self):
-        self.assertEquals(self._target_batches_field.default, None)
+        self.assertIsNone(self._target_batches_field.default)
 
     def test_target_batches_field_related_name(self):
         related_name = getattr(

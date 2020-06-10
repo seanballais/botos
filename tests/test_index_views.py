@@ -424,6 +424,13 @@ class VotingSubviewTargetBatchesTest(TestCase):
         _user2.set_password('sample')
         _user2.save()
 
+        _user3 = User.objects.create(
+            username='pendoko',
+            first_name='Pedro',
+            last_name='Sample',
+            type=UserType.VOTER
+        )
+
         VoterProfile.objects.create(
             user=_user1,
             batch=_batch0,
@@ -432,6 +439,12 @@ class VotingSubviewTargetBatchesTest(TestCase):
 
         VoterProfile.objects.create(
             user=_user2,
+            batch=_batch1,
+            section=_section1
+        )
+
+        VoterProfile.objects.create(
+            user=_user3,
             batch=_batch1,
             section=_section1
         )
@@ -459,6 +472,12 @@ class VotingSubviewTargetBatchesTest(TestCase):
         )
         _position0.target_batches.add(_batch1)
 
+        _position2 = CandidatePosition.objects.create(
+            position_name='Amazing Position 2',
+            position_level=0,
+            election=_election
+        )
+
         cls._candidate1 = Candidate.objects.create(
             user=_user1,
             party=_party0,
@@ -468,6 +487,13 @@ class VotingSubviewTargetBatchesTest(TestCase):
 
         cls._candidate2 = Candidate.objects.create(
             user=_user2,
+            party=_party1,
+            position=_position1,
+            election=_election
+        )
+
+        cls._candidate3 = Candidate.objects.create(
+            user=_user3,
             party=_party1,
             position=_position1,
             election=_election
@@ -483,7 +509,7 @@ class VotingSubviewTargetBatchesTest(TestCase):
         candidates_list = [
             c for i in list(candidates.values()) for c in i["candidates"]
         ]
-        self.assertEqual(len(candidates_list), 3)
+        self.assertEqual(len(candidates_list), 2)
         self.assertEqual(
             candidates,
             OrderedDict([
@@ -491,6 +517,13 @@ class VotingSubviewTargetBatchesTest(TestCase):
                     'Amazing Position 0',
                     {
                         "candidates": [ self._candidate1.id ],
+                        "max_num_selected_candidates": 1
+                    },
+                ),
+                (
+                    'Amazing Position 2',
+                    {
+                        "candidates": [ self._candidate3.id ],
                         "max_num_selected_candidates": 1
                     }
                 )
@@ -506,7 +539,7 @@ class VotingSubviewTargetBatchesTest(TestCase):
         candidates_list = [
             c for i in list(candidates.values()) for c in i["candidates"]
         ]
-        self.assertEqual(len(candidates_list), 3)
+        self.assertEqual(len(candidates_list), 1)
         self.assertEqual(
             candidates,
             OrderedDict([
@@ -514,6 +547,13 @@ class VotingSubviewTargetBatchesTest(TestCase):
                     'Amazing Position 1',
                     {
                         "candidates": [ self._candidate2.id ],
+                        "max_num_selected_candidates": 1
+                    },
+                ),
+                (
+                    'Amazing Position 2',
+                    {
+                        "candidates": [ self._candidate3.id ],
                         "max_num_selected_candidates": 1
                     }
                 )

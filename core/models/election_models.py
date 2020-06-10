@@ -2,7 +2,9 @@ from django.core.validators import MinValueValidator
 from django.db import models
 
 from .base_model import Base
-from .user_models import User
+from .user_models import (
+    User, Batch
+)
 
 
 class Election(Base):
@@ -90,6 +92,12 @@ class CandidatePosition(Base):
         blank=False,
         default=None,
         unique=False,
+        related_name='candidate_positions'
+    )
+    target_batches = models.ManyToManyField(
+        Batch,
+        blank=True,
+        default=None,
         related_name='candidate_positions'
     )
 

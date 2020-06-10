@@ -550,7 +550,7 @@ class VoteProcessingTargetBatchesTest(TestCase):
         # Let's make sure the right vote got casted.
         try:
             Vote.objects.get(
-                user=cls._user1,
+                user=self._user1,
                 candidate=self._candidate1
             )
         except Vote.DoesNotExist:
@@ -585,7 +585,7 @@ class VoteProcessingTargetBatchesTest(TestCase):
         # Let's make sure the right vote got casted.
         try:
             Vote.objects.get(
-                user=cls._user1,
+                user=self._user1,
                 candidate=self._candidate2
             )
             self.fail(

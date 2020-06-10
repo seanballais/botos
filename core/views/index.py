@@ -54,6 +54,7 @@ class IndexView(TemplateView):
                 context['subview'] = 'voting'
 
                 election = user.voter_profile.batch.election
+                batch = user.voter_profile.batch
 
                 # Note: The desired ordering of candidates has already been
                 #       defined in the ordering option Candidate's Meta class.
@@ -66,6 +67,12 @@ class IndexView(TemplateView):
                 candidates_by_position = OrderedDict()
                 for candidate in candidates:
                     position = candidate.position
+                    if (position.target_batches.exists()
+                            and batch in position.target_batches.all()):
+                        # The voter cannot vote for candidates running for this
+                        # position.
+                        continue
+
                     position_name = candidate.position.position_name
                     if position_name in candidates_by_position:
                         item = candidates_by_position[position_name]
