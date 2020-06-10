@@ -738,6 +738,14 @@ class CandidatePositionTest(TestCase):
         - unique = False
         - related_name = 'candidate_positions'
 
+    The target_batches field must be a many-to-many field and have the
+    following settings:
+        - to = 'Batch'
+        - null = True
+        - blank = True
+        - default = None
+        - related_name = 'candidate_positions'
+
     The model must have the following meta settings:
         - Index must be set to the position_name field.
         - The ordering must be alphabetical and be based on the position_level
@@ -769,6 +777,9 @@ class CandidatePositionTest(TestCase):
         )
         cls._position_election_field = cls._position._meta.get_field(
             'election'
+        )
+        cls._target_batches_field = cls._position._meta.get_field(
+            'target_batches'
         )
 
     # Test position_name field.
@@ -877,6 +888,35 @@ class CandidatePositionTest(TestCase):
     def test_position_election_fk_related_name(self):
         related_name = getattr(
             self._position_election_field.remote_field,
+            'related_name'
+        )
+        self.assertEquals(related_name, 'candidate_positions')
+
+    # Test batches many-to-many field.
+    def test_target_batches_field_m2m_is_m2m(self):
+        self.assertTrue(
+            isinstance(self._target_batches_field, models.ManyToManyField)
+        )
+
+    def test_target_batches_field_connected_model(self):
+        connected_model = getattr(
+            self._target_batches_field.remote_field,
+            'model'
+        )
+        self.assertEquals(connected_model, Batch)
+
+    def test_target_batches_field_null(self):
+        self.assertTrue(self._target_batches_field.null)
+
+    def test_target_batches_field_blank(self):
+        self.assertTrue(self._target_batches_field.blank)
+
+    def test_target_batches_field_default(self):
+        self.assertEquals(self._target_batches_field.default, None)
+
+    def test_target_batches_field_related_name(self):
+        related_name = getattr(
+            self._target_batches_field.remote_field,
             'related_name'
         )
         self.assertEquals(related_name, 'candidate_positions')

@@ -388,6 +388,139 @@ class VotingSubviewTest(TestCase):
         return form
 
 
+class VotingSubviewTargetBatchesTest(TestCase):
+    """
+    Tests the voting subview with candidates whose positions are only voteable
+    by select batches (e.g. representatives for certain batches).
+
+    Separating this test from the voting subview test allows for cleaner test
+    code.
+    """
+    @classmethod
+    def setUpTestData(cls):
+        _election = Election.objects.create(name='Election')
+
+        # Set up the users.
+        _batch0 = Batch.objects.create(year=0, election=_election)
+        _batch1 = Batch.objects.create(year=1, election=_election)
+        _section0 = Section.objects.create(section_name='Section 0')
+        _section1 = Section.objects.create(section_name='Section 1')
+
+        _user1 = User.objects.create(
+            username='juan',
+            first_name='Juan',
+            last_name='Sample',
+            type=UserType.VOTER
+        )
+        _user1.set_password('sample')
+        _user1.save()
+
+        _user2 = User.objects.create(
+            username='pedro',
+            first_name='Pedro',
+            last_name='Sample',
+            type=UserType.VOTER
+        )
+        _user2.set_password('sample')
+        _user2.save()
+
+        VoterProfile.objects.create(
+            user=_user1,
+            batch=_batch0,
+            section=_section0
+        )
+
+        VoterProfile.objects.create(
+            user=_user2,
+            batch=_batch1,
+            section=_section1
+        )
+
+        _party0 = CandidateParty.objects.create(
+            party_name='Awesome Party 0',
+            election=_election
+        )
+        _party1 = CandidateParty.objects.create(
+            party_name='Awesome Party 1',
+            election=_election
+        )
+
+        _position0 = CandidatePosition.objects.create(
+            position_name='Amazing Position 0',
+            position_level=0,
+            election=_election
+        )
+        _position0.target_batches.add(_batch0)
+
+        _position1 = CandidatePosition.objects.create(
+            position_name='Amazing Position 1',
+            position_level=0,
+            election=_election
+        )
+        _position0.target_batches.add(_batch1)
+
+        cls._candidate1 = Candidate.objects.create(
+            user=_user1,
+            party=_party0,
+            position=_position0,
+            election=_election
+        )
+
+        cls._candidate2 = Candidate.objects.create(
+            user=_user2,
+            party=_party1,
+            position=_position1,
+            election=_election
+        )
+
+    def test_correct_candidates_appear_for_voters(self):
+        self.client.login(username='juan', password='sample')
+        response = self.client.get('/', follow=True)
+        candidates = response.context['candidates']
+
+        # There should only be one candidate in the election the current user
+        # is participating in.
+        candidates_list = [
+            c for i in list(candidates.values()) for c in i["candidates"]
+        ]
+        self.assertEqual(len(candidates_list), 3)
+        self.assertEqual(
+            candidates,
+            OrderedDict([
+                (
+                    'Amazing Position 0',
+                    {
+                        "candidates": [ self._candidate1.id ],
+                        "max_num_selected_candidates": 1
+                    }
+                )
+            ])
+        )
+
+        self.client.login(username='pedro', password='sample')
+        response = self.client.get('/', follow=True)
+        candidates = response.context['candidates']
+
+        # There should only be one candidate in the election the current user
+        # is participating in.
+        candidates_list = [
+            c for i in list(candidates.values()) for c in i["candidates"]
+        ]
+        self.assertEqual(len(candidates_list), 3)
+        self.assertEqual(
+            candidates,
+            OrderedDict([
+                (
+                    'Amazing Position 1',
+                    {
+                        "candidates": [ self._candidate2.id ],
+                        "max_num_selected_candidates": 1
+                    }
+                )
+            ])
+        )
+
+
 class VotedSubviewTest(TestCase):
     """
     Tests the voted sub-view in the index view (accessed via `/`).
