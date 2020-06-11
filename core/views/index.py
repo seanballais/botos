@@ -68,7 +68,7 @@ class IndexView(TemplateView):
                 for candidate in candidates:
                     position = candidate.position
                     if (position.target_batches.exists()
-                            and batch in position.target_batches.all()):
+                            and batch not in position.target_batches.all()):
                         # The voter cannot vote for candidates running for this
                         # position.
                         continue

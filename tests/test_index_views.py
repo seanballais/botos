@@ -426,7 +426,7 @@ class VotingSubviewTargetBatchesTest(TestCase):
 
         _user3 = User.objects.create(
             username='pendoko',
-            first_name='Pedro',
+            first_name='Pendoko',
             last_name='Sample',
             type=UserType.VOTER
         )
@@ -470,7 +470,7 @@ class VotingSubviewTargetBatchesTest(TestCase):
             position_level=0,
             election=_election
         )
-        _position0.target_batches.add(_batch1)
+        _position1.target_batches.add(_batch1)
 
         _position2 = CandidatePosition.objects.create(
             position_name='Amazing Position 2',
@@ -495,7 +495,7 @@ class VotingSubviewTargetBatchesTest(TestCase):
         cls._candidate3 = Candidate.objects.create(
             user=_user3,
             party=_party1,
-            position=_position1,
+            position=_position2,
             election=_election
         )
 
@@ -516,14 +516,14 @@ class VotingSubviewTargetBatchesTest(TestCase):
                 (
                     'Amazing Position 0',
                     {
-                        "candidates": [ self._candidate1.id ],
+                        "candidates": [ self._candidate1 ],
                         "max_num_selected_candidates": 1
                     },
                 ),
                 (
                     'Amazing Position 2',
                     {
-                        "candidates": [ self._candidate3.id ],
+                        "candidates": [ self._candidate3 ],
                         "max_num_selected_candidates": 1
                     }
                 )
@@ -539,21 +539,21 @@ class VotingSubviewTargetBatchesTest(TestCase):
         candidates_list = [
             c for i in list(candidates.values()) for c in i["candidates"]
         ]
-        self.assertEqual(len(candidates_list), 1)
+        self.assertEqual(len(candidates_list), 2)
         self.assertEqual(
             candidates,
             OrderedDict([
                 (
                     'Amazing Position 1',
                     {
-                        "candidates": [ self._candidate2.id ],
+                        "candidates": [ self._candidate2 ],
                         "max_num_selected_candidates": 1
                     },
                 ),
                 (
                     'Amazing Position 2',
                     {
-                        "candidates": [ self._candidate3.id ],
+                        "candidates": [ self._candidate3 ],
                         "max_num_selected_candidates": 1
                     }
                 )
