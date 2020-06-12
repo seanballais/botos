@@ -517,7 +517,7 @@ class VoteProcessingTargetBatchesTest(TestCase):
             position_level=0,
             election=_election
         )
-        _position0.target_batches.add(_batch1)
+        _position1.target_batches.add(_batch1)
 
         cls._candidate1 = Candidate.objects.create(
             user=cls._user1,
