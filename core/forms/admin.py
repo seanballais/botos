@@ -122,3 +122,18 @@ class CandidateForm(forms.ModelForm):
     class Meta:
         model = Candidate
         fields = ( '__all__' )
+
+
+class CandidatePositionForm(forms.ModelForm):
+    election = forms.ModelChoiceField(queryset=Election.objects.all())
+    target_batches = forms.ModelMultipleChoiceField(
+        queryset=Batch.objects.all(),
+        widget=autocomplete.ModelSelect2Multiple(
+            url='admin-election-batches-autocomplete',
+            forward=['election']
+        )
+    )
+
+    class Meta:
+        model = CandidatePosition
+        fields = ( '__all__' )

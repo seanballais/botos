@@ -5,7 +5,7 @@ from django.contrib.auth.models import Group
 
 from core.forms.admin import (
     AdminChangeForm, AdminCreationForm, VoterChangeForm,
-    VoterCreationForm, CandidateForm
+    VoterCreationForm, CandidateForm, CandidatePositionForm
 )
 from core.models import (
     User, Batch, Section, VoterProfile, Candidate, CandidateParty,
@@ -109,12 +109,16 @@ class CandidateAdmin(admin.ModelAdmin):
     form = CandidateForm
 
 
+class CandidatePositionAdmin(admin.ModelAdmin):
+    form = CandidatePositionForm
+
+
 admin.site.register(AdminUser, AdminUserAdmin)
 admin.site.register(Voter, VoterAdmin)
 admin.site.register(Batch)
 admin.site.register(Section)
 admin.site.register(Candidate, CandidateAdmin)
 admin.site.register(CandidateParty)
-admin.site.register(CandidatePosition)
+admin.site.register(CandidatePosition, CandidatePositionAdmin)
 admin.site.register(Election)
 admin.site.unregister(Group)  # We don't need this at the moment.

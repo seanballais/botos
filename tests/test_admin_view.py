@@ -12,7 +12,7 @@ from django.urls import reverse
 
 from core.models import (
     User, Batch, Section, Election, Candidate, CandidateParty,
-    CandidatePosition, Vote, UserType
+    CandidatePosition, Vote, VoterProfile, UserType
 )
 from core.views.admin.admin import (
     CandidatePartyAutoCompleteView, CandidatePositionAutoCompleteView
@@ -366,6 +366,17 @@ class CandidatePartyAutoCompleteViewTest(TestCase):
             reverse('admin-candidate-party-autocomplete'),
             {
                 'forward': '{{ "election": "{}" }}'.format(self.election.id),
+                'q': 'B'
+            },
+            follow=True
+        )
+        results = json.loads(response.content.decode('utf-8'))['results']
+        self.assertEqual(len(results), 0)
+
+        response = self.client.get(
+            reverse('admin-candidate-party-autocomplete'),
+            {
+                'forward': '{{ "election": "{}" }}'.format(self.election.id),
                 'q': 'A'
             },
             follow=True
@@ -466,6 +477,17 @@ class CandidatePositionAutoCompleteViewTest(TestCase):
             reverse('admin-candidate-position-autocomplete'),
             {
                 'forward': '{{ "election": "{}" }}'.format(self.election.id),
+                'q': 'B'
+            },
+            follow=True
+        )
+        results = json.loads(response.content.decode('utf-8'))['results']
+        self.assertEqual(len(results), 0)
+
+        response = self.client.get(
+            reverse('admin-candidate-position-autocomplete'),
+            {
+                'forward': '{{ "election": "{}" }}'.format(self.election.id),
                 'q': 'A'
             },
             follow=True
@@ -474,3 +496,109 @@ class CandidatePositionAutoCompleteViewTest(TestCase):
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['text'], 'Awesome Position')
         self.assertEqual(int(results[0]['id']), self.position.id)
+
+
+class ElectionBatchesAutoCompleteViewTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.voter = User.objects.create(
+            username='voter',
+            type=UserType.VOTER
+        )
+        cls.voter.set_password('voter_password')
+        cls.voter.save()
+
+        cls.election = Election.objects.create(name='Election')
+        cls.other_election = Election.objects.create(name='Other Election')
+
+        cls._batch0 = Batch.objects.create(year=0, election=cls.election)
+        cls._batch1 = Batch.objects.create(year=1, election=cls.election)
+        cls._batch2 = Batch.objects.create(year=2, election=cls.other_election)
+
+        cls.admin = User.objects.create(
+            username='admin',
+            type=UserType.ADMIN
+        )
+        cls.admin.set_password('admin(root)')
+        cls.admin.save()
+
+    def test_anonymous_users_get_an_empty_message(self):
+        response = self.client.get(
+            reverse('admin-election-batches-autocomplete'),
+            follow=True
+        )
+
+        json_response = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(
+            len(json_response['results']),
+            0
+        )
+
+    def test_voters_get_an_empty_message(self):
+        self.client.login(username='voter', password='voter_password')
+        response = self.client.get(
+            reverse('admin-election-batches-autocomplete'),
+            follow=True
+        )
+
+        json_response = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(
+            len(json_response['results']),
+            0
+        )
+
+    def test_admin_election_is_none(self):
+        self.client.login(username='admin', password='admin(root)')
+        response = self.client.get(
+            reverse('admin-election-batches-autocomplete'),
+            follow=True
+        )
+
+        json_response = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(
+            len(json_response['results']),
+            0
+        )
+
+    def test_admin_election_is_not_none(self):
+        self.client.login(username='admin', password='admin(root)')
+
+        response = self.client.get(
+            reverse('admin-election-batches-autocomplete'),
+            { 'forward': '{{ "election": "{}" }}'.format(self.election.id) },
+            follow=True
+        )
+
+        results = json.loads(response.content.decode('utf-8'))['results']
+        self.assertEqual(len(results), 2)
+        self.assertEqual(results[0]['text'], '0')
+        self.assertEqual(int(results[0]['id']), self._batch0.id)
+        self.assertEqual(results[1]['text'], '1')
+        self.assertEqual(int(results[1]['id']), self._batch1.id)
+
+    def test_admin_election_with_query_substring(self):
+        self.client.login(username='admin', password='admin(root)')
+
+        response = self.client.get(
+            reverse('admin-election-batches-autocomplete'),
+            {
+                'forward': '{{ "election": "{}" }}'.format(self.election.id),
+                'q': '3'
+            },
+            follow=True
+        )
+        results = json.loads(response.content.decode('utf-8'))['results']
+        self.assertEqual(len(results), 0)
+
+        response = self.client.get(
+            reverse('admin-election-batches-autocomplete'),
+            {
+                'forward': '{{ "election": "{}" }}'.format(self.election.id),
+                'q': '1'
+            },
+            follow=True
+        )
+        results = json.loads(response.content.decode('utf-8'))['results']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['text'], '1')
+        self.assertEqual(int(results[0]['id']), self._batch1.id)
