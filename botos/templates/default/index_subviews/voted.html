@@ -19,7 +19,10 @@
     </div>
     {% endif %}
     <div id="view-actions">
-        <button class="logout-btn">Log out</button>
+        <form id="logout" action="/auth/logout" method="post">
+            {% csrf_token %}
+            <button class="logout-btn">Log out</button>
+        </form>
         <p><a id="meme-2">Edit election results.</a> (<-- Do not click this please. Debugging purposes only. Thanks.)</p>
     </div>
 </article>

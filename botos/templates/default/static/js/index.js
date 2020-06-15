@@ -160,34 +160,16 @@ ready(function() {
         });
     }
 
-    var logoutLink = document.getElementById('logout-link');
-    if (logoutLink != null) {
-        logoutLink.addEventListener('click', function() {
-            var request = new XMLHttpRequest();
-            request.onreadystatechange = function() {
-                document.location.reload(true);
-            };
-            request.open('POST', '/auth/logout', true);
-            request.setRequestHeader('X-CSRFToken', window.CSRF_TOKEN);
-            request.send({});
-        });
-    }
-
     // Voted sub-view.
     var logoutBtn = document.querySelector('button.logout-btn');
     if (logoutBtn != null) {
-        logoutBtn.addEventListener('click', function() {
-            logoutBtn.disabled = true;
-            
-            // Had to duplicate this from `logoutLink`. I tried put the snippet
-            // below in a function but it doesn't seem to work.
-            var request = new XMLHttpRequest();
-            request.onreadystatechange = function() {
-                document.location.reload(true);
-            };
-            request.open('POST', '/auth/logout', true);
-            request.setRequestHeader('X-CSRFToken', window.CSRF_TOKEN);
-            request.send({});
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            this.disabled = true;
+
+            var logoutForm = document.querySelector('form#logout');
+            logoutForm.submit();
         });
     }
 

@@ -100,7 +100,4 @@ class LogoutView(View):
 
         messages.success(request, 'Logged out successfully.')
 
-        # No redirecting to index view here. Doing so causes the index view to
-        # render the same subview during force refresh, which is done after
-        # this POST operation. We should fix this at a later time.
-        return HttpResponse(status=204)
+        return redirect(reverse('index'))

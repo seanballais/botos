@@ -9,6 +9,16 @@
     display: none !important;
 }
 
+/* General */
+form#logout {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    
+    display: inline;
+    text-align: center;
+}
+
 /* Login Sub-View CSS Definitions */
 header#login {
     display: flex;
@@ -372,6 +382,18 @@ article#voting div#voting-actions p a:hover {
 
 article#voting div#voting-actions p a:active {
     color: hsl(0, 0%, 80%);
+}
+
+article#voting div#voting-actions div#logout-action {
+    display: inline;
+    min-width: 350px;
+    text-align: center;
+
+    margin: 3%;
+}
+
+article#voting div#voting-actions div#logout-action p {
+    display: inline;
 }
 
 footer#voting p {
