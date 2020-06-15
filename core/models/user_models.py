@@ -159,6 +159,12 @@ class VoterProfile(Base):
         default=None,
         related_name='voter_profile'  # Note: Voter user *has a* voter profile.
     )
+    has_voted = models.BooleanField(
+        unique=False,
+        null=False,
+        blank=False,
+        default=False
+    )
     batch = models.ForeignKey(
         'Batch',
         on_delete=models.PROTECT,

@@ -13,7 +13,7 @@ from django.views.decorators.csrf import csrf_protect
 
 from core.decorators import login_required
 from core.models import (
-    User, Candidate, Vote
+    User, Candidate, Vote, VoterProfile
 )
 
 
@@ -164,3 +164,6 @@ class VoteProcessingView(View):
                 candidate=candidate,
                 election=election
             )
+
+        user.voter_profile.has_voted = True
+        user.voter_profile.save()

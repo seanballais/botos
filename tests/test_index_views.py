@@ -291,7 +291,7 @@ class VotingSubviewTest(TestCase):
     def setUp(self):
         self.client.login(username='pasta', password='sample')
 
-    def test_logged_in_users_voting_subview(self):
+    def test_nonvoted_logged_in_users_voting_subview(self):
         response = self.client.get('/')
         self.assertIsNotNone(self._get_voting_form(str(response.content)))
 
@@ -612,12 +612,14 @@ class VotedSubviewTest(TestCase):
             candidate=cls._candidate1,
             election=_election
         )
+        _user3.voter_profile.has_voted = True
+        _user3.voter_profile.save()
 
     def setUp(self):
         self.client.login(username='pasta', password='sample')
 
-    def test_logged_in_users_voted_subview(self):
-        response = self.client.get('/')
+    def test_voted_logged_in_users_voted_subview(self):
+        response = self.client.get('/', follow=True)
         self.assertIsNotNone(self._get_logout_button(str(response.content)))
 
     def test_index_uses_correct_template(self):

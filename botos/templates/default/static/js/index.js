@@ -124,17 +124,25 @@ ready(function() {
 
     var castVoteForm = document.querySelector('form#voting');
     if (castVoteForm != null) {
-        castVoteForm.addEventListener('submit', function() {
-            castVoteForm.querySelector('input[type=submit').disabled = true;
+        castVoteForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var castVote = confirm('Are you sure you want to cast your vote?');
 
-            var votedCandidates = [];
-            var votingButtons = document.querySelectorAll('button.depressed-vote-btn');
-            votingButtons.forEach(btn => {
-                votedCandidates.push(btn.value);
-            });
+            if (castVote) {
+                castVoteForm.querySelector('input[type=submit').disabled = true;
+
+                var votedCandidates = [];
+                var votingButtons = document.querySelectorAll('button.depressed-vote-btn');
+                votingButtons.forEach(btn => {
+                    votedCandidates.push(btn.value);
+                });
             
-            var candidatesVotedInput = castVoteForm.querySelector('input#candidates-voted');
-            candidatesVotedInput.value = JSON.stringify(votedCandidates);
+                var candidatesVotedInput = castVoteForm.querySelector('input#candidates-voted');
+                candidatesVotedInput.value = JSON.stringify(votedCandidates);
+                this.submit();
+            } else {
+                return false;
+            }
         });
     }
 

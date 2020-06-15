@@ -45,7 +45,7 @@ class IndexView(TemplateView):
 
         if user.is_authenticated:
             # Show either the Voting or Voted sub-view.
-            has_user_voted = Vote.objects.filter(user__id=user.id).exists()
+            has_user_voted = user.voter_profile.has_voted
             if has_user_voted:
                 context['subview'] = 'voted'
                 # Remember to show the voter's vote ID in later revisions. This

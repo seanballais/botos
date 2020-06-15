@@ -233,6 +233,59 @@ class VoteProcessingView(TestCase):
         #       (located in core/tests/index_views.py).
         self.assertRedirects(response, reverse('index'))
 
+    def test_non_voted_logged_in_post_request_valid_data_becomes_voted(self):
+        self.client.login(username='juan', password='pepito')
+
+        response = self.client.post(
+            reverse('vote-processing'),
+            {
+                'candidates_voted': str([ self._candidate0.id ])
+            },
+            follow=True
+        )
+
+        # Refresh user object to reflect changes done ti it.
+        self._non_voted_user0.refresh_from_db()
+
+        # Let's make sure the right vote got casted.
+        try:
+            Vote.objects.get(
+                user=self._non_voted_user0,
+                candidate=self._candidate0
+            )
+        except Vote.DoesNotExist:
+            self.fail('Vote for test candidate was not casted successfully.')
+
+        self.assertTrue(self._non_voted_user0.voter_profile.has_voted)
+        self.assertRedirects(response, reverse('index'))
+
+    def test_non_voted_logged_in_post_no_selected_data_becomes_voted(self):
+        self.client.login(username='juan', password='pepito')
+
+        response = self.client.post(
+            reverse('vote-processing'),
+            {
+                'candidates_voted': str([])
+            },
+            follow=True
+        )
+
+        # Refresh user object to reflect changes done ti it.
+        self._non_voted_user0.refresh_from_db()
+
+        # Let's make sure the no vote got casted.
+        try:
+            Vote.objects.get(
+                user=self._non_voted_user0,
+                candidate=self._candidate0
+            )
+            self.fail('Votes by user was casted successfully.')
+        except Vote.DoesNotExist:
+            pass
+
+        self.assertTrue(self._non_voted_user0.voter_profile.has_voted)
+        self.assertRedirects(response, reverse('index'))
+
     def test_voted_logged_in_post_requests_with_valid_data(self):
         self.client.login(username='pedro', password='pendoko')
 

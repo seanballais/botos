@@ -224,6 +224,12 @@ class VoterProfileModelTest(TestCase):
         - unique = True
         - related_name = 'voter_profile'
 
+    The has_voted field must be a boolean field and hve the following settings:
+        - null = False
+        - blank = False
+        - default = False
+        - unique = False
+
     The batch and section foreign keys must have the following settings:
         - on_delete = models.PROTECT
         - null = False
@@ -254,6 +260,7 @@ class VoterProfileModelTest(TestCase):
         cls._user_field = cls._voter_profile._meta.get_field('user')
         cls._batch_field = cls._voter_profile._meta.get_field('batch')
         cls._section_field = cls._voter_profile._meta.get_field('section')
+        cls._has_voted_field = cls._voter_profile._meta.get_field('has_voted')
 
     # Test user foreign key.
     def test_user_fk_is_one_to_one(self):
@@ -284,6 +291,24 @@ class VoterProfileModelTest(TestCase):
     def test_user_fk_related_name(self):
         related_name = getattr(self._user_field.remote_field, 'related_name')
         self.assertEquals(related_name, 'voter_profile')
+
+    # Test has_voted field.
+    def test_has_voted_field_is_boolean(self):
+        self.assertTrue(
+            isinstance(self._has_voted_field, models.BooleanField)
+        )
+
+    def test_has_voted_field_null(self):
+        self.assertFalse(self._has_voted_field.null)
+
+    def test_has_voted_field_blank(self):
+        self.assertFalse(self._has_voted_field.blank)
+
+    def test_has_voted_field_default(self):
+        self.assertFalse(self._has_voted_field.default)
+
+    def test_has_voted_field_unique(self):
+        self.assertFalse(self._has_voted_field.unique)
 
     # Test batch foreign key.
     def test_batch_fk_is_fk(self):
