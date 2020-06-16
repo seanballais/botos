@@ -118,6 +118,7 @@ article#login form#login input[type=submit]:disabled {
 article#login div#messages,
 header#voting div#messages {
     min-width: 40%;
+    margin: 3%;
 }
 
 article#login div#messages p,

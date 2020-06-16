@@ -9,15 +9,28 @@ from phe import paillier
 
 from django.conf import settings
 from django.contrib import messages
+from django.shortcuts import redirect
+from django.urls import reverse
+from django.utils.decorators import method_decorator
 from django.utils.timezone import utc
 from django.views.generic.base import TemplateView
 
+from core.decorators import (
+    user_passes_test, login_required
+)
 from core.models import (
-    User, Candidate, Vote
+    User, Candidate, Vote, UserType
 )
 from core.utils import AppSettings
 
 
+@method_decorator(
+    login_required(
+        login_url='/admin/login',
+        next='/admin/results'
+    ),
+    name='dispatch',
+)
 class ResultsView(TemplateView):
     """
     The results view can be accessed by anyone --even anonymous users. It will
@@ -44,6 +57,17 @@ class ResultsView(TemplateView):
     """
     _template_name = AppSettings().get('template', default='default')
     template_name = '{}/results.html'.format(_template_name)
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.type != UserType.ADMIN:
+            messages.error(
+                request,
+                'You attempted to access a page you are not authorized '
+                'to access.'
+            )
+            return redirect(reverse('index'))
+
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

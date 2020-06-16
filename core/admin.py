@@ -62,6 +62,8 @@ class AdminUserAdmin(BaseUserAdmin):
 
     def save_model(self, request, obj, form, change):
         obj.type = UserType.ADMIN
+        obj.is_staff = True
+        obj.is_superuser = True
 
         super().save_model(request, obj, form, change)
 
@@ -81,6 +83,8 @@ class VoterAdmin(BaseUserAdmin):
 
     def save_model(self, request, obj, form, change):
         obj.type = UserType.VOTER
+        obj.is_staff = False
+        obj.is_superuser = False
 
         super().save_model(request, obj, form, change)
 
@@ -92,6 +96,8 @@ class AdminUser(User):
 
     def save(self, *args, **kwargs):
         self.type = UserType.ADMIN
+        self.is_staff = True
+        self.is_superuser = True
         super().save(*args, **kwargs)
 
 
@@ -102,6 +108,8 @@ class Voter(User):
 
     def save(self, *args, **kwargs):
         self.type = UserType.VOTER
+        self.is_staff = False
+        self.is_superuser = False
         super().save(*args, **kwargs)
 
 

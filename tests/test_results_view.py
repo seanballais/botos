@@ -203,6 +203,19 @@ class ResultsViewTest(TestCase):
     def setUp(self):
         self.client.login(username='admin', password='root')
 
+    def test_anonymous_redirected_to_admin_login(self):
+        self.client.logout()
+        response = self.client.get(reverse('results'), follow=True)
+        self.assertRedirects(
+            response,
+            '/admin/login/?next=%2Fadmin%2Fresults'
+        )
+
+    def test_non_admin_redirected_to_index(self):
+        self.client.login(username='juan', password='pepito')
+        response = self.client.get(reverse('results'), follow=True)
+        self.assertRedirects(response, '/')
+
     def test_results_vote_count_no_votes(self):
         response = self.client.get(reverse('results'))
         results = response.context['results']
