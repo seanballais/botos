@@ -172,7 +172,7 @@ class LogoutViewTest(TestCase):
             str(messages[0]),
             'Logged out successfully.'
         )
-        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.status_code, 200)
 
         # Make sure the user has been logged out.
         response = self.client.get(reverse('index'), follow=True)
