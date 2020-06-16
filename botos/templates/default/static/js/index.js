@@ -160,6 +160,14 @@ ready(function() {
         });
     }
 
+    var logoutLink = document.querySelector('a#logout-link');
+    if (logoutLink != null) {
+        logoutLink.addEventListener('click', function() {
+            var logoutForm = document.querySelector('form#logout');
+            logoutForm.submit();
+        });
+    }
+
     // Voted sub-view.
     var logoutBtn = document.querySelector('button.logout-btn');
     if (logoutBtn != null) {

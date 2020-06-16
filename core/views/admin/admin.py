@@ -1,5 +1,7 @@
 from django.db import models
-from django.db.models.functions import Cast
+from django.db.models.functions import (
+    Cast, Concat
+)
 
 from dal import autocomplete
 
@@ -8,8 +10,34 @@ from core.decorators import (
 )
 
 from core.models import (
-    Batch, CandidateParty, CandidatePosition, UserType
+    User, Batch, CandidateParty, CandidatePosition, UserType
 )
+
+
+class CandidateUserAutoCompleteView(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # Only admins should be able to access this view.
+        if (not self.request.user.is_authenticated
+                or self.request.user.type == UserType.VOTER):
+            return []
+
+        qs = User.objects.filter(candidate__isnull=True)
+        election = self.forwarded.get('election', None)
+        if not election:
+            return []
+        else:
+            qs = qs.filter(
+                voter_profile__batch__election__id=election,
+                type=UserType.VOTER
+            )
+
+        if self.q:
+            qs = qs.annotate(
+                name=Concat('last_name', models.Value(', '), 'first_name')
+            )
+            qs = qs.filter(name__istartswith=self.q)
+
+        return qs
 
 
 class CandidatePartyAutoCompleteView(autocomplete.Select2QuerySetView):

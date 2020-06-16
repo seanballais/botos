@@ -101,6 +101,13 @@ class VoterCreationForm(BaseCreateForm, UserCreationForm):
 
 
 class CandidateForm(forms.ModelForm):
+    user = forms.ModelChoiceField(
+        queryset=User.objects.all(),
+        widget=autocomplete.ModelSelect2(
+            url='admin-candidate-user-autocomplete',
+            forward=['election']
+        )
+    )
     election = forms.ModelChoiceField(
         queryset=Election.objects.all()
     )

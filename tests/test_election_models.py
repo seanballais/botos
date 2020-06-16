@@ -256,8 +256,7 @@ class CandidateTest(TestCase):
         - blank = False
         - default = None
         - unique = True
-        - related_name = '+' (it doesn't make sense to have a reverse
-                              relationship in an is-a relationship)
+        - related_name = 'candidate'
 
     The avatar field must be a image field and have the following settings:
         - upload_to = 'avatars/'
@@ -374,7 +373,7 @@ class CandidateTest(TestCase):
             self._candidate_user_field.remote_field,
             'related_name'
         )
-        self.assertEquals(related_name, '+')
+        self.assertEquals(related_name, 'candidate')
 
     # Test avatar image field.
     def test_avatar_is_image_field(self):

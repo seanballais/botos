@@ -114,14 +114,22 @@ class CandidatePosition(Base):
 
 class Candidate(Base):
     """ Model for the candidates. """
+    election = models.ForeignKey(
+        Election,
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+        default=None,
+        unique=False,
+        related_name='candidates'
+    )
     user = models.OneToOneField(
         User,
         on_delete=models.PROTECT,
         null=False,
         blank=False,
         default=None,
-        related_name='+'  # It doesn't make sense to have a reverse
-                          # relationship in an is-a relationship.
+        related_name='candidate'
     )
     avatar = models.ImageField(
         upload_to='avatars/',
@@ -142,15 +150,6 @@ class Candidate(Base):
     position = models.ForeignKey(
         CandidatePosition,
         on_delete=models.PROTECT,
-        null=False,
-        blank=False,
-        default=None,
-        unique=False,
-        related_name='candidates'
-    )
-    election = models.ForeignKey(
-        Election,
-        on_delete=models.CASCADE,
         null=False,
         blank=False,
         default=None,

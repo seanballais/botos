@@ -1,6 +1,7 @@
 from django.urls import path
 
 from core.views.admin.admin import (
+    CandidateUserAutoCompleteView,
     CandidatePartyAutoCompleteView,
     CandidatePositionAutoCompleteView,
     ElectionBatchesAutoCompleteView
@@ -38,6 +39,11 @@ urlpatterns = [
         'admin/election/state',
         ElectionStateView.as_view(),
         name='admin-election-state'
+    ),
+    path(
+        'admin/autocomplete/candidate-user',
+        CandidateUserAutoCompleteView.as_view(),
+        name='admin-candidate-user-autocomplete'
     ),
     path(
         'admin/autocomplete/candidate-party',

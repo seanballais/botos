@@ -14,9 +14,6 @@ from core.models import (
     User, Batch, Section, Election, Candidate, CandidateParty,
     CandidatePosition, Vote, VoterProfile, UserType
 )
-from core.views.admin.admin import (
-    CandidatePartyAutoCompleteView, CandidatePositionAutoCompleteView
-)
 from core.utils import AppSettings
 
 
@@ -277,6 +274,167 @@ class ElectionSettingsElectionsStateViewTest(
             'Election state changed successfully.'
         )
         self.assertEquals(AppSettings().get('election_state'), 'closed')
+
+
+class CandidateUserAutoCompleteViewTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.election0 = Election.objects.create(name='Election 0')
+        cls.election1 = Election.objects.create(name='Election 1')
+
+        cls.batch0 = Batch.objects.create(year=0, election=cls.election0)
+        cls.batch1 = Batch.objects.create(year=1, election=cls.election1)
+
+        cls.section0 = Section.objects.create(section_name='Section 0')
+        cls.section1 = Section.objects.create(section_name='Section 1')
+
+        cls.voter0 = User.objects.create(
+            username='voter0',
+            first_name='Zero',
+            last_name='Voter',
+            type=UserType.VOTER
+        )
+        cls.voter0.set_password('voter_password')
+        cls.voter0.save()
+
+        cls.voter1 = User.objects.create(
+            username='voter1',
+            first_name='One',
+            last_name='Voter',
+            type=UserType.VOTER
+        )
+        cls.voter1.set_password('voter_password')
+        cls.voter1.save()
+
+        # NOTE: This voter should not appear in the view, since this is
+        #       already a candidate.
+        cls.voter2 = User.objects.create(
+            username='voter2',
+            first_name='Two',
+            last_name='Voter',
+            type=UserType.VOTER
+        )
+        cls.voter2.set_password('voter_password')
+        cls.voter2.save()
+
+        VoterProfile.objects.create(
+            user=cls.voter0,
+            batch=cls.batch0,
+            section=cls.section0
+        )
+
+        VoterProfile.objects.create(
+            user=cls.voter1,
+            batch=cls.batch1,
+            section=cls.section1
+        )
+
+        VoterProfile.objects.create(
+            user=cls.voter2,
+            batch=cls.batch0,
+            section=cls.section0
+        )
+
+        _party = CandidateParty.objects.create(
+            party_name='Awesome Party',
+            election=cls.election0
+        )
+        _position = CandidatePosition.objects.create(
+            position_name='Amazing Position',
+            position_level=0,
+            election=cls.election0
+        )
+        cls._candidate1 = Candidate.objects.create(
+            user=cls.voter2,
+            party=_party,
+            position=_position,
+            election=cls.election0
+        )
+
+        cls.admin = User.objects.create(
+            username='admin',
+            type=UserType.ADMIN
+        )
+        cls.admin.set_password('admin(root)')
+        cls.admin.save()
+
+    def test_anonymous_users_get_an_empty_message(self):
+        response = self.client.get(
+            reverse('admin-candidate-user-autocomplete'),
+            follow=True
+        )
+
+        json_response = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(
+            len(json_response['results']),
+            0
+        )
+
+    def test_voters_get_an_empty_message(self):
+        self.client.login(username='voter0', password='voter_password')
+        response = self.client.get(
+            reverse('admin-candidate-user-autocomplete'),
+            follow=True
+        )
+
+        json_response = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(
+            len(json_response['results']),
+            0
+        )
+
+    def test_admin_election_is_none(self):
+        self.client.login(username='admin', password='admin(root)')
+        response = self.client.get(
+            reverse('admin-candidate-user-autocomplete'),
+            follow=True
+        )
+
+        json_response = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(
+            len(json_response['results']),
+            0
+        )
+
+    def test_admin_election_is_not_none(self):
+        self.client.login(username='admin', password='admin(root)')
+
+        response = self.client.get(
+            reverse('admin-candidate-user-autocomplete'),
+            { 'forward': '{{ "election": "{}" }}'.format(self.election0.id) },
+            follow=True
+        )
+        results = json.loads(response.content.decode('utf-8'))['results']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['text'], 'Voter, Zero')
+        self.assertEqual(int(results[0]['id']), self.voter0.id)
+
+    def test_admin_election_with_query_substring(self):
+        self.client.login(username='admin', password='admin(root)')
+
+        response = self.client.get(
+            reverse('admin-candidate-user-autocomplete'),
+            {
+                'forward': '{{ "election": "{}" }}'.format(self.election0.id),
+                'q': 'A'
+            },
+            follow=True
+        )
+        results = json.loads(response.content.decode('utf-8'))['results']
+        self.assertEqual(len(results), 0)
+
+        response = self.client.get(
+            reverse('admin-candidate-user-autocomplete'),
+            {
+                'forward': '{{ "election": "{}" }}'.format(self.election0.id),
+                'q': 'V'
+            },
+            follow=True
+        )
+        results = json.loads(response.content.decode('utf-8'))['results']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['text'], 'Voter, Zero')
+        self.assertEqual(int(results[0]['id']), self.voter0.id)
 
 
 class CandidatePartyAutoCompleteViewTest(TestCase):
