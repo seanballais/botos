@@ -26,6 +26,8 @@ class UserManagerTest(TestCase):
             self.fail('Voter was not created.')
         else:
             self.assertEqual(user.type, UserType.VOTER)
+            self.assertFalse(user.is_staff)
+            self.assertFalse(user.is_superuser)
 
     def test_create_voter_user_with_no_username(self):
         self.assertRaises(
@@ -50,6 +52,8 @@ class UserManagerTest(TestCase):
             self.fail('Admin was not created.')
         else:
             self.assertEqual(user.type, UserType.ADMIN)
+            self.assertTrue(user.is_staff)
+            self.assertTrue(user.is_superuser)
 
     def test_create_admin_user_with_no_username(self):
         self.assertRaises(

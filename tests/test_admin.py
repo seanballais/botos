@@ -42,6 +42,8 @@ class AdminUserAdminTest(TestCase):
         query = admin.get_queryset(None)
 
         self.assertEqual(query.first().type, UserType.ADMIN)
+        self.assertTrue(query.first().is_staff)
+        self.assertTrue(query.first().is_superuser)
         self.assertEqual(query.count(), 1)
 
     def test_add_new_admin_from_admin(self):
@@ -78,6 +80,8 @@ class VoterAdminTest(TestCase):
         query = admin.get_queryset(None)
 
         self.assertEqual(query.first().type, UserType.VOTER)
+        self.assertFalse(query.first().is_staff)
+        self.assertFalse(query.first().is_superuser)
         self.assertEqual(query.count(), 1)
 
     def test_voter_admin_has_voter_profile_inline(self):
