@@ -144,3 +144,8 @@ class CandidatePositionForm(forms.ModelForm):
     class Meta:
         model = CandidatePosition
         fields = ( '__all__' )
+
+class VoterProfileInlineForm(forms.ModelForm):
+    class Meta:
+        model = VoterProfile
+        fields = ( 'batch', 'section', )

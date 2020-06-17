@@ -244,17 +244,22 @@ class VoterProfileModelTest(TestCase):
 
     The model must have the following meta settings:
         - Index must be set to the user field.
-        - The singular verbose name will be "voter", with the plural being
-          "voters".
+        - The singular verbose name will be "voter profile", with the plural
+          being "voter profiles".
 
-    The __str___() method should return "<Voter Profile '{username}'>".
+    The __str___() method should return the string version of the user object.
     """
     @classmethod
     def setUpTestData(cls):
         _election = Election.objects.create(name='Election')
         cls._batch = Batch.objects.create(year=2019, election=_election)
         cls._section = Section.objects.create(section_name='Emerald')
-        cls._user = User.objects.create(username='juan', type=UserType.VOTER)
+        cls._user = User.objects.create(
+            username='juan',
+            first_name='Juan',
+            last_name='Miguel',
+            type=UserType.VOTER
+        )
         cls._voter_profile = VoterProfile.objects.create(
             user=cls._user,
             batch=cls._batch,
@@ -394,17 +399,14 @@ class VoterProfileModelTest(TestCase):
 
     def test_meta_verbose_name(self):
         verbose_name = self._voter_profile._meta.verbose_name
-        self.assertEquals(verbose_name, 'voter_profile')
+        self.assertEquals(verbose_name, 'voter profile')
 
     def test_meta_verbose_name_plural(self):
         verbose_name_plural = self._voter_profile._meta.verbose_name_plural
-        self.assertEquals(verbose_name_plural, 'voter_profiles')
+        self.assertEquals(verbose_name_plural, 'voter profiles')
 
     def test_str(self):
-        self.assertEquals(
-            str(self._voter_profile),
-            '<Voter Profile, \'juan\'>'
-        )
+        self.assertEquals(str(self._voter_profile), str(self._user))
 
 
 class BatchModelTest(TestCase):

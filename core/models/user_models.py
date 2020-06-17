@@ -192,11 +192,11 @@ class VoterProfile(Base):
     class Meta:
         indexes = [ models.Index(fields=[ 'user' ]) ]
         ordering = [ 'user__username' ]
-        verbose_name = 'voter_profile'
-        verbose_name_plural = 'voter_profiles'
+        verbose_name = 'voter profile'
+        verbose_name_plural = 'voter profiles'
 
     def __str__(self):
-        return '<Voter Profile, \'{}\'>'.format(self.user.username)
+        return str(self.user)
 
 
 class Batch(Base):

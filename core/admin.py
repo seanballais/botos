@@ -5,7 +5,8 @@ from django.contrib.auth.models import Group
 
 from core.forms.admin import (
     AdminChangeForm, AdminCreationForm, VoterChangeForm,
-    VoterCreationForm, CandidateForm, CandidatePositionForm
+    VoterCreationForm, CandidateForm, CandidatePositionForm,
+    VoterProfileInlineForm
 )
 from core.models import (
     User, Batch, Section, VoterProfile, Candidate, CandidateParty,
@@ -70,6 +71,12 @@ class AdminUserAdmin(BaseUserAdmin):
 
 class VoterProfileInline(admin.StackedInline):
     model = VoterProfile
+    form = VoterProfileInlineForm
+
+    # We gotta use this, since Django Admin (in v2.2) still uses the plural
+    # verbose name of VoterProfile for some reason, despite it having a
+    # one-to-one relationship with the user model.
+    verbose_name_plural = 'voter profile'
 
 
 class VoterAdmin(BaseUserAdmin):
