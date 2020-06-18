@@ -84,6 +84,85 @@ class VoterAdminTest(TestCase):
         self.assertFalse(query.first().is_superuser)
         self.assertEqual(query.count(), 1)
 
+    def test_queryset_returns_in_the_proper_order(self):
+        election0 = Election.objects.create(name='Election 0')
+        election1 = Election.objects.create(name='Election 1')
+        
+        batch0 = Batch.objects.create(year=0, election=election0)
+        batch1 = Batch.objects.create(year=1, election=election1)
+
+        section0 = Section.objects.create(section_name='Section 0')
+        section1 = Section.objects.create(section_name='Section 1')
+
+        User.objects.create(username='admin', type=UserType.ADMIN)
+        
+        voter0 = User.objects.create(
+            username='voter0',
+            first_name='A',
+            last_name='A',
+            type=UserType.VOTER
+        )
+        voter1 = User.objects.create(
+            username='voter1',
+            first_name='B',
+            last_name='B',
+            type=UserType.VOTER
+        )
+        voter2 = User.objects.create(
+            username='voter2',
+            first_name='B',
+            last_name='B',
+            type=UserType.VOTER
+        )
+
+        VoterProfile.objects.create(
+            user=voter0,
+            batch=batch0,
+            section=section0
+        )
+        VoterProfile.objects.create(
+            user=voter1,
+            batch=batch0,
+            section=section0
+        )
+        VoterProfile.objects.create(
+            user=voter2,
+            batch=batch1,
+            section=section1
+        )
+
+        admin = VoterAdmin(model=Voter, admin_site=AdminSite())
+        query = admin.get_queryset(None)
+
+        self.assertEqual(query[0].type, UserType.VOTER)
+        self.assertEqual(query[0].first_name, 'A')
+        self.assertEqual(query[0].last_name, 'A')
+        self.assertEqual(query[0].voter_profile.batch.year, 0)
+        self.assertEqual(
+            query[0].voter_profile.section.section_name,
+            'Section 0'
+        )
+
+        self.assertEqual(query[1].type, UserType.VOTER)
+        self.assertEqual(query[1].first_name, 'B')
+        self.assertEqual(query[1].last_name, 'B')
+        self.assertEqual(query[1].voter_profile.batch.year, 0)
+        self.assertEqual(
+            query[1].voter_profile.section.section_name,
+            'Section 0'
+        )
+
+        self.assertEqual(query[1].type, UserType.VOTER)
+        self.assertEqual(query[1].first_name, 'B')
+        self.assertEqual(query[1].last_name, 'B')
+        self.assertEqual(query[1].voter_profile.batch.year, 1)
+        self.assertEqual(
+            query[1].voter_profile.section.section_name,
+            'Section 1'
+        )
+
+        self.assertEqual(query.count(), 2)
+
     def test_voter_admin_has_voter_profile_inline(self):
         admin = VoterAdmin(Voter, AdminSite())
         self.assertTrue(lambda: VoterProfileInline in admin.inlines)
@@ -102,6 +181,26 @@ class VoterAdminTest(TestCase):
             self.fail('Voter was not created.')
         else:
             self.assertEqual(voter.type, UserType.VOTER)
+
+    def test_batch_function(self):
+        election = Election.objects.create(name='Election')
+        batch = Batch.objects.create(year=0, election=election)
+        section = Section.objects.create(section_name='Section')
+        user = User.objects.create(username='voter', type=UserType.VOTER)
+        VoterProfile.objects.create(user=user, batch=batch, section=section)
+
+        admin = VoterAdmin(model=Voter, admin_site=AdminSite())
+        self.assertEqual(admin.batch(user), 0)
+
+    def test_section_function(self):
+        election = Election.objects.create(name='Election')
+        batch = Batch.objects.create(year=0, election=election)
+        section = Section.objects.create(section_name='Section')
+        user = User.objects.create(username='voter', type=UserType.VOTER)
+        VoterProfile.objects.create(user=user, batch=batch, section=section)
+
+        admin = VoterAdmin(model=Voter, admin_site=AdminSite())
+        self.assertEqual(admin.section(user), 'Section')
 
 
 class AdminUserProxyUserTest(TestCase):

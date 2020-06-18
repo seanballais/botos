@@ -83,10 +83,33 @@ class VoterAdmin(BaseUserAdmin):
     form = VoterChangeForm
     add_form = VoterCreationForm
     inlines = [ VoterProfileInline ]
-    list_display = ('username', 'first_name', 'last_name',)
+    list_display = (
+        'username', 'first_name', 'last_name','batch', 'section',
+    )
+    list_filter = (
+        'voter_profile__batch', 'voter_profile__section',
+    )
+
+    def batch(self, obj):
+        return obj.voter_profile.batch.year
+
+    batch.short_description = 'Batch'
+    batch.admin_order_field = 'batch'
+
+    def section(self, obj):
+        return obj.voter_profile.section.section_name
+
+    section.short_description = 'Section'
+    section.admin_order_field = 'section'
+
+    # TODO: Fix error when sorting by batch. This error may also occur when
+    #       sorting by section.
 
     def get_queryset(self, request):
-        return self.model.objects.filter(type=UserType.VOTER)
+        return self.model.objects \
+                         .filter(type=UserType.VOTER) \
+                         .select_related('voter_profile') \
+                         .order_by('username')
 
     def save_model(self, request, obj, form, change):
         obj.type = UserType.VOTER
