@@ -51,7 +51,7 @@ class CandidateParty(Base):
 
     class Meta:
         indexes = [ models.Index(fields=[ 'party_name' ]) ]
-        ordering = [ 'party_name' ]
+        ordering = [ 'election', 'party_name' ]
         unique_together = ( ( 'party_name', 'election', ), )
         verbose_name = 'party'
         verbose_name_plural = 'parties'
@@ -78,12 +78,12 @@ class CandidatePosition(Base):
         unique=False
     )
     max_num_selected_candidates = models.PositiveSmallIntegerField(
-        'max_num_selected_candidates',
+        'Maximum Number of Selectable Candidates',
         null=False,
         blank=False,
         default=1,
         unique=False,
-        validators=[ MinValueValidator(1) ]
+        validators=[ MinValueValidator(1) ],
     )
     election = models.ForeignKey(
         Election,
@@ -103,7 +103,7 @@ class CandidatePosition(Base):
 
     class Meta:
         indexes = [ models.Index(fields=[ 'position_name' ]) ]
-        ordering = [ 'position_level', 'position_name' ]
+        ordering = [ 'election', 'position_level', 'position_name' ]
         unique_together = ( ( 'position_name', 'election', ), )
         verbose_name = 'candidate position'
         verbose_name_plural = 'candidate positions'
@@ -160,6 +160,7 @@ class Candidate(Base):
     class Meta:
         indexes = [ models.Index(fields=[ 'user' ]) ]
         ordering = [
+            'election',
             'position__position_level',
             'party__party_name',
             'user__last_name',

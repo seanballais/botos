@@ -54,10 +54,45 @@ class BaseUserAdmin(UserAdmin):
     filter_horizontal = ()
 
 
+class VoterProfileInline(admin.StackedInline):
+    model = VoterProfile
+    form = VoterProfileInlineForm
+
+    # We gotta use this, since Django Admin (in v2.2) still uses the plural
+    # verbose name of VoterProfile for some reason, despite it having a
+    # one-to-one relationship with the user model.
+    verbose_name_plural = 'voter profile'
+
+
+class AdminUser(User):
+    class Meta:
+        proxy = True
+        verbose_name = 'Admin'
+
+    def save(self, *args, **kwargs):
+        self.type = UserType.ADMIN
+        self.is_staff = True
+        self.is_superuser = True
+        super().save(*args, **kwargs)
+
+
+class Voter(User):
+    class Meta:
+        proxy = True
+        verbose_name = 'Voter'
+
+    def save(self, *args, **kwargs):
+        self.type = UserType.VOTER
+        self.is_staff = False
+        self.is_superuser = False
+        super().save(*args, **kwargs)
+
+
 class AdminUserAdmin(BaseUserAdmin):
     form = AdminChangeForm
     add_form = AdminCreationForm
-    list_display = ('username', 'first_name', 'last_name',)
+    list_display = ( 'username', 'first_name', 'last_name', 'email', )
+    list_filter = ( 'email', )
 
     def get_queryset(self, request):
         return self.model.objects.filter(type=UserType.ADMIN)
@@ -70,22 +105,12 @@ class AdminUserAdmin(BaseUserAdmin):
         super().save_model(request, obj, form, change)
 
 
-class VoterProfileInline(admin.StackedInline):
-    model = VoterProfile
-    form = VoterProfileInlineForm
-
-    # We gotta use this, since Django Admin (in v2.2) still uses the plural
-    # verbose name of VoterProfile for some reason, despite it having a
-    # one-to-one relationship with the user model.
-    verbose_name_plural = 'voter profile'
-
-
 class VoterAdmin(BaseUserAdmin):
     form = VoterChangeForm
     add_form = VoterCreationForm
     inlines = [ VoterProfileInline ]
     list_display = (
-        'username', 'first_name', 'last_name','batch', 'section',
+        'username', 'first_name', 'last_name', 'batch', 'section',
     )
     list_filter = (
         'voter_profile__batch', 'voter_profile__section',
@@ -123,44 +148,39 @@ class VoterAdmin(BaseUserAdmin):
         super().save_model(request, obj, form, change)
 
 
-class AdminUser(User):
-    class Meta:
-        proxy = True
-        verbose_name = 'Admin'
-
-    def save(self, *args, **kwargs):
-        self.type = UserType.ADMIN
-        self.is_staff = True
-        self.is_superuser = True
-        super().save(*args, **kwargs)
-
-
-class Voter(User):
-    class Meta:
-        proxy = True
-        verbose_name = 'Voter'
-
-    def save(self, *args, **kwargs):
-        self.type = UserType.VOTER
-        self.is_staff = False
-        self.is_superuser = False
-        super().save(*args, **kwargs)
+class BatchAdmin(admin.ModelAdmin):
+    list_display = ( 'year', 'election', )
+    list_filter = ( 'election', )
 
 
 class CandidateAdmin(admin.ModelAdmin):
     form = CandidateForm
+    list_display = ( 'user', 'party', 'position','election', )
+    list_filter = ( 'party', 'position', 'election', )
+
+
+class CandidatePartyAdmin(admin.ModelAdmin):
+    list_display = ( 'party_name', 'election', )
+    list_filter = ( 'election', )
 
 
 class CandidatePositionAdmin(admin.ModelAdmin):
     form = CandidatePositionForm
+    list_display = (
+        'position_name', 'position_level', 'max_num_selected_candidates',
+        'election',
+    )
+    list_filter = (
+        'position_level', 'max_num_selected_candidates', 'election',
+    )
 
 
 admin.site.register(AdminUser, AdminUserAdmin)
 admin.site.register(Voter, VoterAdmin)
-admin.site.register(Batch)
+admin.site.register(Batch, BatchAdmin)
 admin.site.register(Section)
 admin.site.register(Candidate, CandidateAdmin)
-admin.site.register(CandidateParty)
+admin.site.register(CandidateParty, CandidatePartyAdmin)
 admin.site.register(CandidatePosition, CandidatePositionAdmin)
 admin.site.register(Election)
 admin.site.unregister(Group)  # We don't need this at the moment.

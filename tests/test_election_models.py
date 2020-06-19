@@ -536,6 +536,7 @@ class CandidateTest(TestCase):
         self.assertEquals(
             ordering,
             [
+                'election',
                 'position__position_level',
                 'party__party_name',
                 'user__last_name',
@@ -673,7 +674,8 @@ class CandidatePartyTest(TestCase):
         self.assertEquals(indexes[0].fields, [ 'party_name' ])
 
     def test_meta_ordering(self):
-        self.assertEquals(self._party._meta.ordering, [ 'party_name' ])
+        self.assertEquals(
+            self._party._meta.ordering, [ 'election', 'party_name' ])
 
     def test_meta_unique_together(self):
         self.assertEquals(
@@ -727,6 +729,7 @@ class CandidatePositionTest(TestCase):
         - default = 1
         - unique = False
         - validator = [ MinValueValidator(1) ]
+        - verbose_name = 'Maximum Number of Selectable Candidates'
 
     The election field must be a foreign key and have the following settings:
         - to = 'Election'
@@ -852,6 +855,12 @@ class CandidatePositionTest(TestCase):
             )
         )
 
+    def test_max_num_selected_candidates_verbose_name(self):
+        self.assertEqual(
+            self._max_num_selected_candidates.verbose_name,
+            'Maximum Number of Selectable Candidates'
+        )
+
     # Test election foreign key.
     def test_position_election_fk_is_fk(self):
         self.assertTrue(
@@ -926,7 +935,7 @@ class CandidatePositionTest(TestCase):
     def test_meta_ordering(self):
         self.assertEquals(
             self._position._meta.ordering,
-            [ 'position_level', 'position_name' ]
+            [ 'election', 'position_level', 'position_name' ]
         )
 
     def test_meta_unique_together(self):
