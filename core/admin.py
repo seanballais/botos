@@ -15,11 +15,6 @@ from core.models import (
 )
 
 
-# TODO: Add a list filter to the admin instances.
-# Resource: https://medium.com/elements/
-#               getting-the-most-out-of-django-admin-filters-2aecbb539c9a
-
-
 class BaseUserAdmin(UserAdmin):
     fieldsets = (
         (
