@@ -2,6 +2,7 @@ from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
+from django.db.models import F
 
 from core.forms.admin import (
     AdminChangeForm, AdminCreationForm, VoterChangeForm,
@@ -109,7 +110,10 @@ class VoterAdmin(BaseUserAdmin):
         return self.model.objects \
                          .filter(type=UserType.VOTER) \
                          .select_related('voter_profile') \
-                         .order_by('username')
+                         .annotate(
+                            batch=F('voter_profile__batch'),
+                            section=F('voter_profile__section')
+                          )
 
     def save_model(self, request, obj, form, change):
         obj.type = UserType.VOTER

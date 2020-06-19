@@ -152,16 +152,16 @@ class VoterAdminTest(TestCase):
             'Section 0'
         )
 
-        self.assertEqual(query[1].type, UserType.VOTER)
-        self.assertEqual(query[1].first_name, 'B')
-        self.assertEqual(query[1].last_name, 'B')
-        self.assertEqual(query[1].voter_profile.batch.year, 1)
+        self.assertEqual(query[2].type, UserType.VOTER)
+        self.assertEqual(query[2].first_name, 'B')
+        self.assertEqual(query[2].last_name, 'B')
+        self.assertEqual(query[2].voter_profile.batch.year, 1)
         self.assertEqual(
-            query[1].voter_profile.section.section_name,
+            query[2].voter_profile.section.section_name,
             'Section 1'
         )
 
-        self.assertEqual(query.count(), 2)
+        self.assertEqual(query.count(), 3)
 
     def test_voter_admin_has_voter_profile_inline(self):
         admin = VoterAdmin(Voter, AdminSite())
