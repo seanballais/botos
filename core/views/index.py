@@ -40,7 +40,7 @@ class IndexView(TemplateView):
     def get(self, request):
         user = self.request.user
         if user.is_authenticated and user.type == UserType.ADMIN:
-                return HttpResponseRedirect('/admin/')
+            return HttpResponseRedirect(reverse('admin:index'))
         else:
             return super().get(request)
 

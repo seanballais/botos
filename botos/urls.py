@@ -22,5 +22,5 @@ import core.urls
 
 urlpatterns = [
     *core.urls.urlpatterns,
-    path('admin/', admin.site.urls)
+    path('admin/', admin.site.urls, name='admin')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
