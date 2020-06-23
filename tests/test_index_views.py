@@ -24,6 +24,10 @@ class IndexViewTest(TestCase):
         cls._section = Section.objects.create(section_name='Section')
 
         # Set up the users.
+        _admin = User.objects.create(username='admin', type=UserType.ADMIN)
+        _admin.set_password('root')
+        _admin.save()
+
         _user1 = User.objects.create(username='juan', type=UserType.VOTER)
         _user1.set_password('sample')
         _user1.save()
@@ -83,6 +87,11 @@ class IndexViewTest(TestCase):
 
         response = self.client.post(reverse('index'), follow=True)
         self.assertRedirects(response, reverse('index'))
+
+    def test_admin_users_get_redirected_to_admin(self):
+        self.client.login(username='admin', password='root')
+        response = self.client.get(reverse('index'), follow=True)
+        self.assertRedirects(response, '/admin/')
 
 
 class LoginSubviewTest(TestCase):

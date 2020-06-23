@@ -1,12 +1,13 @@
 from collections import OrderedDict
 
 from django.contrib import messages
+from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic.base import TemplateView
 
 from core.models import (
-    Candidate, Vote
+    Candidate, Vote, UserType
 )
 from core.utils import AppSettings
 
@@ -35,6 +36,13 @@ class IndexView(TemplateView):
     """
     _template_name = AppSettings().get('template', default='default')
     template_name = '{}/index.html'.format(_template_name)
+
+    def get(self, request):
+        user = self.request.user
+        if user.is_authenticated and user.type == UserType.ADMIN:
+                return HttpResponseRedirect('/admin/')
+        else:
+            return super().get(request)
 
     def post(self, request):
         return redirect(reverse('index'))
