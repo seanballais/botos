@@ -179,3 +179,7 @@ admin.site.register(CandidateParty, CandidatePartyAdmin)
 admin.site.register(CandidatePosition, CandidatePositionAdmin)
 admin.site.register(Election)
 admin.site.unregister(Group)  # We don't need this at the moment.
+
+# Customize admin texts.
+admin.site.site_title = 'Botos Admin'
+admin.site.site_header = 'Botos Administration'
