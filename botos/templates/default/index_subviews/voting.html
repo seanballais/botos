@@ -25,6 +25,10 @@
                 <button class="vote-btn" value="{{ candidate.id }}">Vote</button>
             </div>
             {% endfor %}
+            TODO: Try out using a different card design when the card is the only one in a row.
+            {% if not position_data.candidates|length|divisibleby:"2" %}
+            <div class="invisible-candidate-block"></div>
+            {% endif %}
         </div>
     </section>
     {% endfor %}

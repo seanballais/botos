@@ -192,6 +192,11 @@ header#voting p {
     margin-top: -4%;
 }
 
+article#voting,
+article#voting section {
+    width: 100%;
+}
+
 article#voting section h2 {
     font-family: 'PT Sans', sans-serif;
     font-size: 1.75em;
@@ -204,13 +209,17 @@ article#voting section h2 {
 article#voting section div.candidates {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
 
-    min-width: 100%;
+    max-width: 600px;
+
+    margin: 0 auto;
 }
 
 article#voting section div.candidates div.candidate {
+    display: flex;
     font-family: 'Source Sans Pro', sans-serif;
 
     background: rgb(198, 198, 198);
@@ -221,10 +230,15 @@ article#voting section div.candidates div.candidate {
 
     box-shadow: 0 4px 20px 1px hsl(0, 0%, 60%);
 
-    min-width: 60%;
+    flex-direction: column;
+    flex-basis: 0;
+    flex-grow: 1;
 
-    padding: 8%;
-    margin: 5%;
+    justify-content: center;
+    align-items: center;
+
+    padding: 5%;
+    margin: 2%;
 
     opacity: 0.3;
 
@@ -303,14 +317,23 @@ article#voting section div.candidates div.candidate button.disabled-vote-btn {
     box-shadow: none;
 }
 
+article#voting section div.candidates div.invisible-candidate-block {
+    display: flex;
+    flex-grow: 1;
+
+    padding: 5%;
+    margin: 2%;
+}
+
 article#voting div#voting-actions {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 
-    min-width: 100%;
+    max-width: 400px;
 
+    margin: 0 auto;
     margin-top: 15%;
 }
 

@@ -137,8 +137,9 @@ class CandidatePositionForm(forms.ModelForm):
         queryset=Batch.objects.all(),
         widget=autocomplete.ModelSelect2Multiple(
             url='admin-election-batches-autocomplete',
-            forward=['election']
-        )
+            forward=['election'],
+        ),
+        required=False
     )
 
     class Meta:
