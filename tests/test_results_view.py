@@ -39,11 +39,11 @@ class ResultsViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         # Set up the test users, candidate, and vote.
-        _election0 = Election.objects.create(name='Election 0')
-        _election1 = Election.objects.create(name='Election 1')
+        cls._election0 = Election.objects.create(name='Election 0')
+        cls._election1 = Election.objects.create(name='Election 1')
 
-        _batch0 = Batch.objects.create(year=0, election=_election0)
-        _batch1 = Batch.objects.create(year=1, election=_election1)
+        _batch0 = Batch.objects.create(year=0, election=cls._election0)
+        _batch1 = Batch.objects.create(year=1, election=cls._election1)
         _section0 = Section.objects.create(section_name='Section 0')
         _section1 = Section.objects.create(section_name='Section 1')
 
@@ -98,31 +98,31 @@ class ResultsViewTest(TestCase):
 
         _party0 = CandidateParty.objects.create(
             party_name='Awesome Party 0',
-            election=_election0
+            election=cls._election0
         )
         _position0 = CandidatePosition.objects.create(
             position_name='Amazing Position 0',
             position_level=0,
-            election=_election0
+            election=cls._election0
         )
 
         cls._candidate1 = Candidate.objects.create(
             user=cls._user1,
             party=_party0,
             position=_position0,
-            election=_election0
+            election=cls._election0
         )
         cls._candidate2 = Candidate.objects.create(
             user=cls._user2,
             party=_party0,
             position=_position0,
-            election=_election0
+            election=cls._election0
         )
         cls._candidate3 = Candidate.objects.create(
             user=cls._user3,
             party=_party0,
             position=_position0,
-            election=_election0
+            election=cls._election0
         )
 
         # Election 1 Entities.
@@ -173,31 +173,31 @@ class ResultsViewTest(TestCase):
 
         _party1 = CandidateParty.objects.create(
             party_name='Awesome Party 1',
-            election=_election1
+            election=cls._election1
         )
         _position1 = CandidatePosition.objects.create(
             position_name='Amazing Position 1',
             position_level=0,
-            election=_election1
+            election=cls._election1
         )
 
         cls._candidate4 = Candidate.objects.create(
             user=cls._user4,
             party=_party1,
             position=_position1,
-            election=_election1
+            election=cls._election1
         )
         cls._candidate5 = Candidate.objects.create(
             user=cls._user5,
             party=_party1,
             position=_position1,
-            election=_election1
+            election=cls._election1
         )
         cls._candidate6 = Candidate.objects.create(
             user=cls._user6,
             party=_party1,
             position=_position1,
-            election=_election1
+            election=cls._election1
         )
 
     def setUp(self):
@@ -386,3 +386,27 @@ class ResultsViewTest(TestCase):
             results['Amazing Position 1'][0].party_name,
             'Awesome Party 1'
         )
+
+    def test_results_with_election_0_only(self):
+        response = self.client.get(
+            reverse('results'),
+            { 'election': str(self._election0.id) }
+        )
+        results = response.context['results']
+
+        self.assertEqual(
+            results['Amazing Position 0'][0].name,
+            'Pedro, Emmanuel'
+        )
+        self.assertEqual(
+            results['Amazing Position 0'][1].name,
+            'Pendoko, Pedro'
+        )
+        self.assertEqual(
+            results['Amazing Position 0'][2].name,
+            'Pepito, Juan'
+        )
+        self.assertEqual(len(results), 1)
+
+    def test_results_view_election_tabs(self):
+        pass

@@ -71,7 +71,12 @@ class ResultsView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['results'] = self._get_vote_results()
+
+        election_id = self.request.GET.get('election', None)
+        if election_id:
+            election_id = int(election_id)
+
+        context['results'] = self._get_vote_results(election_id)
         context['current_time'] = datetime    \
                                     .datetime \
                                     .utcnow() \
@@ -84,7 +89,7 @@ class ResultsView(TemplateView):
 
         return context
 
-    def _get_vote_results(self):
+    def _get_vote_results(self, election_id=None):
         election_state = AppSettings().get('election_state', 'closed')
         CandidateResult = namedtuple(
             'CandidateResult',
@@ -92,7 +97,12 @@ class ResultsView(TemplateView):
         )
 
         results = OrderedDict()
-        candidates = Candidate.objects.all()
+
+        if election_id:
+            candidates = Candidate.objects.filter(election__id=election_id)
+        else:
+            candidates = Candidate.objects.all()
+
         for candidate in candidates:
             total_num_votes = Vote.objects.filter(candidate=candidate).count()
 
