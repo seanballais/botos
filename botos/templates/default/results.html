@@ -10,8 +10,8 @@
 <link rel="stylesheet" href="{% static template|add:'/static/css/fonts.css' %}">
 <link rel="stylesheet" href="{% static template|add:'/static/css/base.css' %}">
 <link rel="stylesheet" href="{% static template|add:'/static/css/results.css' %}">
-<script type="text/javascript" src="{% static template|add:'/static/js/index.js' %}" async></script>
-<script type="text/javascript" src="{% static template|add:'/static/js/results.js' %}" async></script>
+<script type="text/javascript" src="{% static template|add:'/static/js/base.js' %}"></script>
+<script type="text/javascript" src="{% static template|add:'/static/js/results.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -28,6 +28,15 @@
     {% endif %}
 </header>
 <article>
+    <section>
+        <div id="tab-links-bar">
+            <ul id="tab-links">
+            {% for link in election_tab_links %}
+                <li{% if link.election_id == active_election %} class="active-election-link"{% else %} class="non-active-election-link"{% endif %}><a class="tab-link" href="{{ link.url }}">{{ link.title }}</a></li>
+            {% endfor %}
+            </ul>
+        </div>
+    </section>
     {% for position, candidates in results.items %}
     <section>
         <h2>{{ position }}</h2>

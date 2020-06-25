@@ -19,7 +19,7 @@ from core.decorators import (
     user_passes_test, login_required
 )
 from core.models import (
-    User, Candidate, Vote, UserType
+    User, Candidate, Vote, UserType, Election
 )
 from core.utils import AppSettings
 
@@ -86,6 +86,8 @@ class ResultsView(TemplateView):
             'election_state',
             'closed'
         )
+        context['election_tab_links'] = self._get_election_tab_links()
+        context['active_election'] = election_id
 
         return context
 
@@ -142,6 +144,27 @@ class ResultsView(TemplateView):
                 random.shuffle(results[position])
 
         return results
+
+    def _get_election_tab_links(self):
+        ElectionTabLink = namedtuple(
+            'ElectionTabLink',
+            'election_id title url'
+        )
+
+        tab_links = list()
+        tab_links.append(ElectionTabLink(None, 'All', reverse('results')))
+
+        elections = Election.objects.all().order_by('name')
+        for election in elections:
+            tab_links.append(
+                ElectionTabLink(
+                    election.id,
+                    election.name,
+                    reverse('results') + '?election={}'.format(election.id)
+                )
+            )
+
+        return tab_links
 
     def _get_random_candidate_name(self):
         random_names = [

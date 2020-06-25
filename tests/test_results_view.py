@@ -409,4 +409,34 @@ class ResultsViewTest(TestCase):
         self.assertEqual(len(results), 1)
 
     def test_results_view_election_tabs(self):
-        pass
+        response = self.client.get(reverse('results'))
+        tab_links = response.context['election_tab_links']
+
+        self.assertEqual(tab_links[0].election_id, None)
+        self.assertEqual(tab_links[1].election_id, 0)
+        self.assertEqual(tab_links[2].election_id, 1)
+
+        self.assertEqual(tab_links[0].title, 'All')
+        self.assertEqual(tab_links[1].title, 'Election 0')
+        self.assertEqual(tab_links[2].title, 'Election 1')
+
+        self.assertEqual(tab_links[0].url, reverse('results'))
+        self.assertEqual(tab_links[1].url, reverse('results') + '?election=1')
+        self.assertEqual(tab_links[2].url, reverse('results') + '?election=2')
+
+        self.assertEqual(len(tab_links), 3)
+
+    def test_results_view_active_election_no_selection(self):
+        response = self.client.get(reverse('results'))
+        active_election = response.context['active_election']
+
+        self.assertEqual(active_election, None)
+
+    def test_results_view_active_election_select_1(self):
+        response = self.client.get(
+            reverse('results'),
+            { 'election': str(self._election0.id) }
+        )
+        active_election = response.context['active_election']
+
+        self.assertEqual(active_election, 1)

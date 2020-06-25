@@ -32,6 +32,97 @@ article section h2 {
     margin-bottom: 0;
 }
 
+article section div#tab-links-bar {
+    margin-bottom: 2%;
+}
+
+article section div#tab-links-bar ul#tab-links {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    padding: 0;
+
+    margin: 0 auto;
+    margin-left: 25%;
+    margin-right: 25%;
+}
+
+article section div#tab-links-bar ul#tab-links li {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
+    justify-content: center;
+    align-items: center;
+
+    list-style-type: none;
+
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1.25em;
+    font-weight: 300;
+
+    border-color: rgb(255, 255, 255);
+    border-style: solid;
+    border-width: 1px;
+    border-right-width: 0px;
+
+    padding: 0;
+    margin: 0;
+
+    transition: 0.15s all linear;
+}
+
+article section div#tab-links-bar ul#tab-links li:first-child {
+    border-top-left-radius: 7px;
+    border-bottom-left-radius: 7px;
+}
+
+article section div#tab-links-bar ul#tab-links li:last-child {
+    border-top-right-radius: 7px;
+    border-bottom-right-radius: 7px;
+    border-right-width: 1px;
+}
+
+article section div#tab-links-bar ul#tab-links li.non-active-election-link:hover {
+    background-color: rgb(255, 255, 255);
+}
+
+article section div#tab-links-bar ul#tab-links li.non-active-election-link:hover a {
+    color: rgb(36, 97, 203);
+}
+
+article section div#tab-links-bar ul#tab-links li.active-election-link {
+    background-color: rgb(255, 255, 255);
+}
+
+article section div#tab-links-bar ul#tab-links li.active-election-link a {
+    color: rgb(36, 97, 203);
+}
+
+article section div#tab-links-bar ul#tab-links li a {
+    display: block;
+
+    color: rgb(255, 255, 255);
+
+    padding-top: 5%;
+    padding-bottom: 5%;
+    padding-left: 12%;
+    padding-right: 12%;
+
+    width: 100%;
+
+    vertical-align: middle;
+
+    text-decoration: none;
+}
+
+article section div#tab-links-bar ul#tab-links li a:focus {
+    outline: 0;
+}
+
 article section div.candidates {
     display: flex;
     flex-direction: row;
