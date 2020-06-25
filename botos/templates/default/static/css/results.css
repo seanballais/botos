@@ -18,6 +18,11 @@ header p {
     margin-top: -4%;
 }
 
+article,
+article section {
+    width: 100%;
+}
+
 article section h2 {
     font-family: 'PT Sans', sans-serif;
     font-size: 1.75em;
@@ -30,10 +35,13 @@ article section h2 {
 article section div.candidates {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
 
-    min-width: 100%;
+    max-width: 600px;
+
+    margin: 0 auto;
 }
 
 article section div.candidates div.candidate {
@@ -47,10 +55,16 @@ article section div.candidates div.candidate {
 
     box-shadow: 0 4px 20px 1px hsl(0, 0%, 60%);
 
-    min-width: 60%;
+    display: flex;
+    flex-direction: column;
+    flex-basis: 0;
+    flex-grow: 1;
 
-    padding: 8%;
-    margin: 5%;
+    justify-content: center;
+    align-items: center;
+
+    padding: 5%;
+    margin: 2%;
 
     transition: 0.15s opacity linear;
 }
@@ -74,6 +88,14 @@ article section div.candidates div.candidate img {
 
     width: 150px;
     height: 150px;
+}
+
+article section div.candidates div.invisible-candidate-block {
+    display: flex;
+    flex-grow: 1;
+
+    padding: 5%;
+    margin: 2%;
 }
 
 footer p {

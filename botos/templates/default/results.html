@@ -40,6 +40,9 @@
                 <p>Number of Votes: {{ candidate.total_votes }}</p>
             </div>
             {% endfor %}
+            {% if not candidates|length|divisibleby:"2" %}
+            <div class="invisible-candidate-block"></div>
+            {% endif %}
         </div>
     </section>
     {% endfor %}

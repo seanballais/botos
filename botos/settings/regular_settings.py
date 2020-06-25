@@ -109,7 +109,9 @@ DATABASES = {
 
 # Static and media roots setup
 STATIC_ROOT = get_env_var('BOTOS_STATIC_ROOT', debug=DEBUG, debug_value=None)
-MEDIA_ROOT = get_env_var('BOTOS_MEDIA_ROOT', debug=DEBUG, debug_value=None)
+MEDIA_ROOT = get_env_var('BOTOS_MEDIA_ROOT',
+                         debug=DEBUG,
+                         debug_value=os.path.join(BASE_DIR, 'botos/media/'))
 
 # Allowed hosts setup
 ALLOWED_HOSTS = list(
