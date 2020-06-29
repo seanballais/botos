@@ -18,7 +18,7 @@ psycopg2 = "*"
 # the version was suggested from this GitHub Issue page for the library:
 #   https://github.com/yourlabs/django-autocomplete-light/issues/1137
 django-autocomplete-light = "==3.5.0"
-openpyxl = "*"
+openpyxl = "~==2.6.4"
 
 [requires]
 python_version = "3.5"
