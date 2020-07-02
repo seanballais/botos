@@ -5,8 +5,6 @@ import datetime
 import json
 import random
 
-from phe import paillier
-
 from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import redirect

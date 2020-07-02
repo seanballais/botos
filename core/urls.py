@@ -16,47 +16,53 @@ from core.views.auth import (
 )
 from core.views.index import IndexView
 from core.views.results import ResultsView
+from core.views.results_exporter import ResultsExporterView
 from core.views.vote import VoteProcessingView
 
 
 urlpatterns = [
     path('', IndexView.as_view(), name='index'),
-    path('vote', VoteProcessingView.as_view(), name='vote-processing'),
-    path('auth/login', LoginView.as_view(), name='auth-login'),
-    path('auth/logout', LogoutView.as_view(), name='auth-logout'),
-    path('admin/results', ResultsView.as_view(), name='results'),
+    path('vote/', VoteProcessingView.as_view(), name='vote-processing'),
+    path('auth/login/', LoginView.as_view(), name='auth-login'),
+    path('auth/logout/', LogoutView.as_view(), name='auth-logout'),
+    path('admin/results/', ResultsView.as_view(), name='results'),
     path(
-        'admin/election',
+        'admin/results/export/',
+        ResultsExporterView.as_view(),
+        name='results-export'
+    ),
+    path(
+        'admin/election/',
         ElectionSettingsIndexView.as_view(),
         name='admin-election-index'
     ),
     path(
-        'admin/election/template',
+        'admin/election/template/',
         CurrentTemplateView.as_view(),
         name='admin-election-template'
     ),
     path(
-        'admin/election/state',
+        'admin/election/state/',
         ElectionStateView.as_view(),
         name='admin-election-state'
     ),
     path(
-        'admin/autocomplete/candidate-user',
+        'admin/autocomplete/candidate-user/',
         CandidateUserAutoCompleteView.as_view(),
         name='admin-candidate-user-autocomplete'
     ),
     path(
-        'admin/autocomplete/candidate-party',
+        'admin/autocomplete/candidate-party/',
         CandidatePartyAutoCompleteView.as_view(),
         name='admin-candidate-party-autocomplete'
     ),
     path(
-        'admin/autocomplete/candidate-position',
+        'admin/autocomplete/candidate-position/',
         CandidatePositionAutoCompleteView.as_view(),
         name='admin-candidate-position-autocomplete'
     ),
     path(
-        'admin/autocomplete/election-batches',
+        'admin/autocomplete/election-batches/',
         ElectionBatchesAutoCompleteView.as_view(),
         name='admin-election-batches-autocomplete'
     )
