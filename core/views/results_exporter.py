@@ -10,19 +10,31 @@ from django.db.models import (
     Count, Q
 )
 from django.http import HttpResponse
+from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views import View
 
-from core.decorators import login_required
+from core.decorators import (
+    login_required, user_passes_test
+)
 from core.models import (
     Batch, Candidate, CandidateParty, CandidatePosition,
-    Election, Section, Vote, VoterProfile
+    Election, Section, UserType, Vote, VoterProfile
 )
 
 
 @method_decorator(
     login_required(
+        login_url='/',
+        next='',
+        redirect_field_name=None  # TODO: Check if we should redirect anonymous users only to the login URL.
+    ),
+    name='dispatch',
+)
+@method_decorator(
+    user_passes_test(
+        lambda u: u.type == UserType.ADMIN,
         login_url='/',
         next='',
         redirect_field_name=None
@@ -54,10 +66,18 @@ class ResultsExporterView(View):
                     request,
                     'You specified a non-integer election ID.'
                 )
-                return
+                return redirect(request.META.get('HTTP_REFERER', '/'))
             else:
-                election_name = Election.objects.get(id=election_id).name
-                filename = '{} Results.xlsx'.format(election_name)
+                try:
+                    election_name = Election.objects.get(id=election_id).name
+                except Election.DoesNotExist:
+                    messages.error(
+                        request,
+                        'You specified an ID for a non-existent election.'
+                    )
+                    return redirect(request.META.get('HTTP_REFERER', '/'))
+                else:
+                    filename = '{} Results.xlsx'.format(election_name)
         else:
             filename = 'Election Results.xlsx'
 
@@ -77,7 +97,7 @@ class ResultsExporterView(View):
     def _generate_xlsx_file(self, election_id):
         elections = Election.objects.all()
         if election_id:
-            elections = elections.get(id=election_id)
+            elections = [ elections.get(id=election_id) ]
 
         num_worksheets = len(elections)
         wb = Workbook()
@@ -154,7 +174,6 @@ class ResultsExporterView(View):
 
             curr_batch_col = 2
             for batch in batches:
-                print(batch)
                 sections = Section.objects                             \
                                   .filter(voter_profiles__batch=batch) \
                                   .distinct()
@@ -227,12 +246,12 @@ class ResultsExporterView(View):
                         dist_to_curr_pos_cell += len(candidates)
                     else:
                         candidate_row = party_pos + 1
-                        total_votes_cell = ws.cell(candidate_row, num_columns)
-
-                        ws.cell(candidate_row, 1).value = 'None'
-                        total_votes_cell.value = 'N/A'
-                        total_votes_cell.alignment = Alignment(
-                            horizontal='right'
+                        
+                        self._write_no_candidate_cells(
+                            ws,
+                            election,
+                            candidate_row,
+                            num_columns
                         )
 
                         dist_to_curr_pos_cell += 1
@@ -258,14 +277,47 @@ class ResultsExporterView(View):
         ws.cell(candidate_row, 1).value = str(candidate)
 
         batches = Batch.objects.filter(election=election)
+        curr_section_col = 2
         for batch in batches:
-            sections = Vote.objects.filter(
-                election=election,
-                user__voter_profile__batch=batch
-            )
+            sections = Section.objects                             \
+                              .filter(voter_profiles__batch=batch) \
+                              .distinct()
             for section in sections:
-                pass
+                num_votes = Vote.objects.filter(
+                    candidate=candidate,
+                    election=election,
+                    user__voter_profile__section=section
+                ).count()
+
+                ws.cell(candidate_row, curr_section_col).value = num_votes
+
+                curr_section_col += 1
 
         total_votes_cell = ws.cell(candidate_row, num_columns)
         total_votes_cell.value = candidate.total_votes
+        total_votes_cell.alignment = Alignment(horizontal='right')
+
+    def _write_no_candidate_cells(self,
+                                  ws,
+                                  election,
+                                  candidate_row,
+                                  num_columns):
+        total_votes_cell = ws.cell(candidate_row, num_columns)
+
+        batches = Batch.objects.filter(election=election)
+        curr_section_col = 2
+        for batch in batches:
+            sections = Section.objects                             \
+                              .filter(voter_profiles__batch=batch) \
+                              .distinct()
+            for section in sections:
+                ws.cell(candidate_row, curr_section_col).value = 'N/A'
+                ws.cell(candidate_row, curr_section_col).alignment = Alignment(
+                    horizontal='right'
+                )
+
+                curr_section_col += 1
+
+        ws.cell(candidate_row, 1).value = 'None'
+        total_votes_cell.value = 'N/A'
         total_votes_cell.alignment = Alignment(horizontal='right')

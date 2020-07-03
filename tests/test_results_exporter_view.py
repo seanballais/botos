@@ -40,8 +40,10 @@ class ResultsExporter(TestCase):
         candidate_num = 0
         num_elections = 2
         voters = list()
+        positions = dict()
         for i in range(num_elections):
             election = Election.objects.create(name='Election {}'.format(i))
+            positions[str(election.name)] = list()
 
             num_batches = 2
             for j in range(num_batches):
@@ -77,18 +79,16 @@ class ResultsExporter(TestCase):
 
             num_positions = 3
             for i in range(num_positions):
-                if str(election.name) not in positions:
-                    positions[str(election.name)] = list()
-
                 position = CandidatePosition.objects.create(
-                    position_name='Position {}'.format(position_num)
+                    position_name='Position {}'.format(position_num),
+                    election=election
                 )
-
-                position_num += 1
 
                 positions[str(election.name)].append(position)
 
-            num_parties = 2
+                position_num += 1
+
+            num_parties = 3
             for j in range(num_parties):
                 party = CandidateParty.objects.create(
                     party_name='Party {}'.format(party_num),
@@ -96,24 +96,25 @@ class ResultsExporter(TestCase):
                 )
                 party_num += 1
 
-                num_positions = 3
-                for k in range(num_positions):
-                    position = positions[str(election.name)][k]
+                if j != 2:  # Let every third party have no candidates.
+                    num_positions = 3
+                    for k in range(num_positions):
+                        position = positions[str(election.name)][k]
 
-                    candidate = Candidate.objects.create(
-                        user=voters[candidate_num],
-                        party=party,
-                        position=position,
-                        election=election
-                    )
+                        candidate = Candidate.objects.create(
+                            user=voters[candidate_num],
+                            party=party,
+                            position=position,
+                            election=election
+                        )
 
-                    Vote.objects.create(
-                        user=voters[candidate_num],
-                        candidate=candidate,
-                        election=election
-                    )
+                        Vote.objects.create(
+                            user=voters[candidate_num],
+                            candidate=candidate,
+                            election=election
+                        )
 
-                    candidate_num += 1
+                        candidate_num += 1
 
         # Let's give one candidate an additional vote to really make sure that
         # we all got the correct number of votes.
@@ -150,7 +151,11 @@ class ResultsExporter(TestCase):
         self.assertEqual(response.status_code, 200)
 
         xlsx_file = zipfile.ZipFile(io.BytesIO(response.content), 'r')
-        self.assertIn('Election Results.xlsx', xlsx_file.namelist())
+
+        self.assertEqual(
+            response['Content-Disposition'],
+            'attachment; filename="Election Results.xlsx"'
+        )
 
         wb = openpyxl.load_workbook(xlsx_file)
 
@@ -163,65 +168,91 @@ class ResultsExporter(TestCase):
 
         row_count = ws.max_row
         col_count = ws.max_col
-        self.assertEqual(row_count, 13)
+        self.assertEqual(row_count, 25)
         self.assertEqual(col_count, 5)
 
         self.assertEqual(str(ws.cell(1, 1).value), 'Election 0 Results')
 
         self.assertEqual(str(ws.cell(2, 1).value), 'Candidates')
-        self.assertEqual(str(ws.cell(5, 1).value), 'Position 0')
-        self.assertEqual(str(ws.cell(6, 1).value), 'Party 0')
-        self.assertEqual(str(ws.cell(7, 1).value), '0, 0')
-        self.assertEqual(str(ws.cell(8, 1).value), 'Party 1')
-        self.assertEqual(str(ws.cell(9, 1).value), '3, 3')
-        self.assertEqual(str(ws.cell(10, 1).value), 'Position 1')
-        self.assertEqual(str(ws.cell(11, 1).value), 'Party 0')
-        self.assertEqual(str(ws.cell(12, 1).value), '1, 1')
-        self.assertEqual(str(ws.cell(13, 1).value), 'Party 1')
-        self.assertEqual(str(ws.cell(14, 1).value), '4, 4')
-        self.assertEqual(str(ws.cell(15, 1).value), 'Position 2')
-        self.assertEqual(str(ws.cell(16, 1).value), 'Party 0')
-        self.assertEqual(str(ws.cell(17, 1).value), '2, 2')
-        self.assertEqual(str(ws.cell(18, 1).value), 'Party 1')
-        self.assertEqual(str(ws.cell(19, 1).value), '5, 5')
+
+        cellContents = [
+            'Position 0',
+            'Party 0',
+            '0, 0',
+            'Party 1',
+            '3, 3',
+            'Party 2',
+            'None',
+            'Position 1',
+            'Party 0',
+            '1, 1',
+            'Party 1',
+            '4, 4',
+            'Party 2',
+            'None',
+            'Position 2',
+            'Party 0',
+            '2, 2',
+            'Party 1',
+            '5, 5',
+            'Party 2',
+            'None'
+        ]
+        for cellIndex, content in enumerate(cellContents, 5):
+            self.assertEqual(str(ws.cell(cellIndex, 1).value), content) 
 
         self.assertEqual(str(ws.cell(2, 2).value), 'Number of Votes')
 
         self.assertEqual(str(ws.cell(3, 2).value), 'Batch 0')
 
         self.assertEqual(str(ws.cell(4, 2).value), '0') # Section
+
         self.assertEqual(str(ws.cell(7, 2).value), '1')
         self.assertEqual(str(ws.cell(9, 2).value), '0')
-        self.assertEqual(str(ws.cell(12, 2).value), '2')
-        self.assertEqual(str(ws.cell(14, 2).value), '0')
-        self.assertEqual(str(ws.cell(17, 2).value), '0')
-        self.assertEqual(str(ws.cell(19, 2).value), '0')
+        self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
+        self.assertEqual(str(ws.cell(14, 2).value), '2')
+        self.assertEqual(str(ws.cell(16, 2).value), '0')
+        self.assertEqual(str(ws.cell(18, 2).value), 'N/A')
+        self.assertEqual(str(ws.cell(21, 2).value), '0')
+        self.assertEqual(str(ws.cell(23, 2).value), '0')
+        self.assertEqual(str(ws.cell(25, 2).value), 'N/A')
 
         self.assertEqual(str(ws.cell(4, 3).value), '1') # Section
+
         self.assertEqual(str(ws.cell(7, 3).value), '0')
         self.assertEqual(str(ws.cell(9, 3).value), '1')
-        self.assertEqual(str(ws.cell(12, 3).value), '0')
+        self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
         self.assertEqual(str(ws.cell(14, 3).value), '0')
-        self.assertEqual(str(ws.cell(17, 3).value), '1')
-        self.assertEqual(str(ws.cell(19, 3).value), '0')
+        self.assertEqual(str(ws.cell(16, 3).value), '0')
+        self.assertEqual(str(ws.cell(18, 2).value), 'N/A')
+        self.assertEqual(str(ws.cell(21, 3).value), '1')
+        self.assertEqual(str(ws.cell(23, 3).value), '0')
+        self.assertEqual(str(ws.cell(25, 2).value), 'N/A')
 
         self.assertEqual(str(ws.cell(3, 4).value), 'Batch 1')
 
         self.assertEqual(str(ws.cell(4, 4).value), '2') # Section
+
         self.assertEqual(str(ws.cell(7, 4).value), '0')
         self.assertEqual(str(ws.cell(9, 4).value), '0')
-        self.assertEqual(str(ws.cell(12, 4).value), '0')
-        self.assertEqual(str(ws.cell(14, 4).value), '1')
-        self.assertEqual(str(ws.cell(17, 4).value), '0')
-        self.assertEqual(str(ws.cell(19, 4).value), '1')
+        self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
+        self.assertEqual(str(ws.cell(14, 4).value), '0')
+        self.assertEqual(str(ws.cell(16, 4).value), '1')
+        self.assertEqual(str(ws.cell(18, 2).value), 'N/A')
+        self.assertEqual(str(ws.cell(21, 4).value), '0')
+        self.assertEqual(str(ws.cell(23, 4).value), '1')
+        self.assertEqual(str(ws.cell(25, 2).value), 'N/A')
 
         self.assertEqual(str(ws.cell(3, 5).value), 'Total Votes')
         self.assertEqual(str(ws.cell(7, 5).value), '1')
         self.assertEqual(str(ws.cell(9, 5).value), '1')
+        self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
         self.assertEqual(str(ws.cell(12, 5).value), '2')
         self.assertEqual(str(ws.cell(14, 5).value), '1')
+        self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
         self.assertEqual(str(ws.cell(17, 5).value), '1')
         self.assertEqual(str(ws.cell(19, 5).value), '1')
+        self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
 
         # Check second worksheet.
         ws = wb.worksheets[1]
@@ -230,65 +261,93 @@ class ResultsExporter(TestCase):
 
         row_count = ws.max_row
         col_count = ws.max_col
-        self.assertEqual(row_count, 13)
+        self.assertEqual(row_count, 25)
         self.assertEqual(col_count, 5)
 
         self.assertEqual(str(ws.cell(1, 1).value), 'Election 1 Results')
 
         self.assertEqual(str(ws.cell(2, 1).value), 'Candidates')
-        self.assertEqual(str(ws.cell(5, 1).value), 'Position 3')
-        self.assertEqual(str(ws.cell(6, 1).value), 'Party 2')
-        self.assertEqual(str(ws.cell(7, 1).value), '6, 6')
-        self.assertEqual(str(ws.cell(8, 1).value), 'Party 3')
-        self.assertEqual(str(ws.cell(9, 1).value), '9, 9')
-        self.assertEqual(str(ws.cell(10, 1).value), 'Position 4')
-        self.assertEqual(str(ws.cell(11, 1).value), 'Party 2')
-        self.assertEqual(str(ws.cell(12, 1).value), '7, 7')
-        self.assertEqual(str(ws.cell(13, 1).value), 'Party 3')
-        self.assertEqual(str(ws.cell(14, 1).value), '10, 10')
-        self.assertEqual(str(ws.cell(15, 1).value), 'Position 5')
-        self.assertEqual(str(ws.cell(16, 1).value), 'Party 2')
-        self.assertEqual(str(ws.cell(17, 1).value), '8, 8')
-        self.assertEqual(str(ws.cell(18, 1).value), 'Party 3')
-        self.assertEqual(str(ws.cell(19, 1).value), '11, 11')
+
+        self.assertEqual(str(ws.cell(2, 1).value), 'Candidates')
+
+        cellContents = [
+            'Position 3',
+            'Party 3',
+            '6, 6',
+            'Party 4',
+            '9, 9',
+            'Party 5',
+            'None',
+            'Position 4',
+            'Party 3',
+            '7, 7',
+            'Party 4',
+            '10, 10',
+            'Party 5',
+            'None',
+            'Position 5',
+            'Party 3',
+            '9, 9',
+            'Party 4',
+            '11, 11',
+            'Party 5',
+            'None'
+        ]
+        for cellIndex, content in enumerate(cellContents, 5):
+            self.assertEqual(str(ws.cell(cellIndex, 1).value), content) 
 
         self.assertEqual(str(ws.cell(2, 2).value), 'Number of Votes')
 
         self.assertEqual(str(ws.cell(3, 2).value), 'Batch 0')
 
         self.assertEqual(str(ws.cell(4, 2).value), '0') # Section
+
         self.assertEqual(str(ws.cell(7, 2).value), '1')
         self.assertEqual(str(ws.cell(9, 2).value), '0')
-        self.assertEqual(str(ws.cell(12, 2).value), '2')
-        self.assertEqual(str(ws.cell(14, 2).value), '0')
-        self.assertEqual(str(ws.cell(17, 2).value), '0')
-        self.assertEqual(str(ws.cell(19, 2).value), '0')
+        self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
+        self.assertEqual(str(ws.cell(14, 2).value), '2')
+        self.assertEqual(str(ws.cell(16, 2).value), '0')
+        self.assertEqual(str(ws.cell(18, 2).value), 'N/A')
+        self.assertEqual(str(ws.cell(21, 2).value), '0')
+        self.assertEqual(str(ws.cell(23, 2).value), '0')
+        self.assertEqual(str(ws.cell(25, 2).value), 'N/A')
 
         self.assertEqual(str(ws.cell(4, 3).value), '1') # Section
+
         self.assertEqual(str(ws.cell(7, 3).value), '0')
         self.assertEqual(str(ws.cell(9, 3).value), '1')
-        self.assertEqual(str(ws.cell(12, 3).value), '0')
+        self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
         self.assertEqual(str(ws.cell(14, 3).value), '0')
-        self.assertEqual(str(ws.cell(17, 3).value), '1')
-        self.assertEqual(str(ws.cell(19, 3).value), '0')
+        self.assertEqual(str(ws.cell(16, 3).value), '0')
+        self.assertEqual(str(ws.cell(18, 2).value), 'N/A')
+        self.assertEqual(str(ws.cell(21, 3).value), '1')
+        self.assertEqual(str(ws.cell(23, 3).value), '0')
+        self.assertEqual(str(ws.cell(25, 2).value), 'N/A')
 
         self.assertEqual(str(ws.cell(3, 4).value), 'Batch 1')
 
         self.assertEqual(str(ws.cell(4, 4).value), '2') # Section
+
         self.assertEqual(str(ws.cell(7, 4).value), '0')
         self.assertEqual(str(ws.cell(9, 4).value), '0')
-        self.assertEqual(str(ws.cell(12, 4).value), '0')
-        self.assertEqual(str(ws.cell(14, 4).value), '1')
-        self.assertEqual(str(ws.cell(17, 4).value), '0')
-        self.assertEqual(str(ws.cell(19, 4).value), '1')
+        self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
+        self.assertEqual(str(ws.cell(14, 4).value), '0')
+        self.assertEqual(str(ws.cell(16, 4).value), '1')
+        self.assertEqual(str(ws.cell(18, 2).value), 'N/A')
+        self.assertEqual(str(ws.cell(21, 4).value), '0')
+        self.assertEqual(str(ws.cell(23, 4).value), '1')
+        self.assertEqual(str(ws.cell(25, 2).value), 'N/A')
 
         self.assertEqual(str(ws.cell(3, 5).value), 'Total Votes')
         self.assertEqual(str(ws.cell(7, 5).value), '1')
         self.assertEqual(str(ws.cell(9, 5).value), '1')
+        self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
         self.assertEqual(str(ws.cell(12, 5).value), '2')
         self.assertEqual(str(ws.cell(14, 5).value), '1')
+        self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
         self.assertEqual(str(ws.cell(17, 5).value), '1')
         self.assertEqual(str(ws.cell(19, 5).value), '1')
+        self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
 
     def test_get_election0_xlsx(self):
         response = self.client.get(
@@ -299,7 +358,12 @@ class ResultsExporter(TestCase):
         self.assertEqual(response.status_code, 200)
 
         xlsx_file = zipfile.ZipFile(io.BytesIO(response.content), 'r')
-        self.assertIn('Election 0 Results.xlsx', xlsx_file.namelist())
+        
+
+        self.assertEqual(
+            response['Content-Disposition']
+            'attachment; filename="Election 0 Results.xlsx"'
+        )
 
         wb = openpyxl.load_workbook(xlsx_file)
 
@@ -318,64 +382,91 @@ class ResultsExporter(TestCase):
         self.assertEqual(str(ws.cell(1, 1).value), 'Election 0 Results')
 
         self.assertEqual(str(ws.cell(2, 1).value), 'Candidates')
-        self.assertEqual(str(ws.cell(5, 1).value), 'Position 0')
-        self.assertEqual(str(ws.cell(6, 1).value), 'Party 0')
-        self.assertEqual(str(ws.cell(7, 1).value), '0, 0')
-        self.assertEqual(str(ws.cell(8, 1).value), 'Party 1')
-        self.assertEqual(str(ws.cell(9, 1).value), '3, 3')
-        self.assertEqual(str(ws.cell(10, 1).value), 'Position 1')
-        self.assertEqual(str(ws.cell(11, 1).value), 'Party 0')
-        self.assertEqual(str(ws.cell(12, 1).value), '1, 1')
-        self.assertEqual(str(ws.cell(13, 1).value), 'Party 1')
-        self.assertEqual(str(ws.cell(14, 1).value), '4, 4')
-        self.assertEqual(str(ws.cell(15, 1).value), 'Position 2')
-        self.assertEqual(str(ws.cell(16, 1).value), 'Party 0')
-        self.assertEqual(str(ws.cell(17, 1).value), '2, 2')
-        self.assertEqual(str(ws.cell(18, 1).value), 'Party 1')
-        self.assertEqual(str(ws.cell(19, 1).value), '5, 5')
+
+        cellContents = [
+            'Position 0',
+            'Party 0',
+            '0, 0',
+            'Party 1',
+            '3, 3',
+            'Party 2',
+            'None',
+            'Position 1',
+            'Party 0',
+            '1, 1',
+            'Party 1',
+            '4, 4',
+            'Party 2',
+            'None',
+            'Position 2',
+            'Party 0',
+            '2, 2',
+            'Party 1',
+            '5, 5',
+            'Party 2',
+            'None'
+        ]
+        for cellIndex, content in enumerate(cellContents, 5):
+            self.assertEqual(str(ws.cell(cellIndex, 1).value), content) 
 
         self.assertEqual(str(ws.cell(2, 2).value), 'Number of Votes')
 
         self.assertEqual(str(ws.cell(3, 2).value), 'Batch 0')
 
         self.assertEqual(str(ws.cell(4, 2).value), '0') # Section
+
         self.assertEqual(str(ws.cell(7, 2).value), '1')
         self.assertEqual(str(ws.cell(9, 2).value), '0')
-        self.assertEqual(str(ws.cell(12, 2).value), '2')
-        self.assertEqual(str(ws.cell(14, 2).value), '0')
-        self.assertEqual(str(ws.cell(17, 2).value), '0')
-        self.assertEqual(str(ws.cell(19, 2).value), '0')
+        self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
+        self.assertEqual(str(ws.cell(14, 2).value), '2')
+        self.assertEqual(str(ws.cell(16, 2).value), '0')
+        self.assertEqual(str(ws.cell(18, 2).value), 'N/A')
+        self.assertEqual(str(ws.cell(21, 2).value), '0')
+        self.assertEqual(str(ws.cell(23, 2).value), '0')
+        self.assertEqual(str(ws.cell(25, 2).value), 'N/A')
 
         self.assertEqual(str(ws.cell(4, 3).value), '1') # Section
+
         self.assertEqual(str(ws.cell(7, 3).value), '0')
         self.assertEqual(str(ws.cell(9, 3).value), '1')
-        self.assertEqual(str(ws.cell(12, 3).value), '0')
+        self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
         self.assertEqual(str(ws.cell(14, 3).value), '0')
-        self.assertEqual(str(ws.cell(17, 3).value), '1')
-        self.assertEqual(str(ws.cell(19, 3).value), '0')
+        self.assertEqual(str(ws.cell(16, 3).value), '0')
+        self.assertEqual(str(ws.cell(18, 2).value), 'N/A')
+        self.assertEqual(str(ws.cell(21, 3).value), '1')
+        self.assertEqual(str(ws.cell(23, 3).value), '0')
+        self.assertEqual(str(ws.cell(25, 2).value), 'N/A')
 
         self.assertEqual(str(ws.cell(3, 4).value), 'Batch 1')
 
         self.assertEqual(str(ws.cell(4, 4).value), '2') # Section
+
         self.assertEqual(str(ws.cell(7, 4).value), '0')
         self.assertEqual(str(ws.cell(9, 4).value), '0')
-        self.assertEqual(str(ws.cell(12, 4).value), '0')
-        self.assertEqual(str(ws.cell(14, 4).value), '1')
-        self.assertEqual(str(ws.cell(17, 4).value), '0')
-        self.assertEqual(str(ws.cell(19, 4).value), '1')
+        self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
+        self.assertEqual(str(ws.cell(14, 4).value), '0')
+        self.assertEqual(str(ws.cell(16, 4).value), '1')
+        self.assertEqual(str(ws.cell(18, 2).value), 'N/A')
+        self.assertEqual(str(ws.cell(21, 4).value), '0')
+        self.assertEqual(str(ws.cell(23, 4).value), '1')
+        self.assertEqual(str(ws.cell(25, 2).value), 'N/A')
 
         self.assertEqual(str(ws.cell(3, 5).value), 'Total Votes')
         self.assertEqual(str(ws.cell(7, 5).value), '1')
         self.assertEqual(str(ws.cell(9, 5).value), '1')
+        self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
         self.assertEqual(str(ws.cell(12, 5).value), '2')
         self.assertEqual(str(ws.cell(14, 5).value), '1')
+        self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
         self.assertEqual(str(ws.cell(17, 5).value), '1')
         self.assertEqual(str(ws.cell(19, 5).value), '1')
+        self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
 
     def test_get_with_invalid_election_id_non_existent_election_id(self):
         response = self.client.get(
             reverse('results-export'),
-            { 'election': '69' }
+            { 'election': '69' },
+            follow=True
         )
 
         messages = list(response.context['messages'])
@@ -383,11 +474,13 @@ class ResultsExporter(TestCase):
             messages[0].message,
             'You specified an ID for a non-existent election.'
         )
+        self.assertRedirects(response, reverse('index'))
 
     def test_get_with_invalid_election_id_non_integer_election_id(self):
         response = self.client.get(
             reverse('results-export'),
-            { 'election': 'hey' }
+            { 'election': 'hey' },
+            follow=True
         )
 
         messages = list(response.context['messages'])
@@ -395,3 +488,34 @@ class ResultsExporter(TestCase):
             messages[0].message,
             'You specified a non-integer election ID.'
         )
+        self.assertRedirects(response, reverse('index'))
+
+    def test_ref_get_with_invalid_election_id_non_existent_election_id(self):
+        response = self.client.get(
+            reverse('results-export'),
+            { 'election': '69' },
+            HTTP_REFERER=reverse('results'),
+            follow=True
+        )
+
+        messages = list(response.context['messages'])
+        self.assertEqual(
+            messages[0].message,
+            'You specified an ID for a non-existent election.'
+        )
+        self.assertRedirects(response, reverse('results'))
+
+    def test_ref_get_with_invalid_election_id_non_integer_election_id(self):
+        response = self.client.get(
+            reverse('results-export'),
+            { 'election': 'hey' },
+            HTTP_REFERER=reverse('results'),
+            follow=True
+        )
+
+        messages = list(response.context['messages'])
+        self.assertEqual(
+            messages[0].message,
+            'You specified a non-integer election ID.'
+        )
+        self.assertRedirects(response, reverse('results'))
