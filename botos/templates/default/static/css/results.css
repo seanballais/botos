@@ -1,7 +1,81 @@
+html {
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+    padding: 1%;
+    padding-bottom: 3%;
+
+    height: 100%;
+}
+
 header h1,
 header p,
 article section {
     text-align: center;
+}
+
+nav {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1em;
+    font-weight: 300;
+
+    margin: 0;
+
+    width: 100%;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+nav ul {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    position: fixed;
+    top: 0;
+
+    padding: 2%;
+    margin: 0;
+}
+
+nav ul li {
+    list-style-type: none;
+
+    padding: 0;
+    margin: 0;
+
+    transition: 0.15s all linear;
+}
+
+nav ul li a {
+    display: block;
+
+    background-color: hsl(0, 0%, 93%);
+    color: hsl(0, 0%, 40%);
+
+    box-shadow: 0 4px 20px 1px hsl(0, 0%, 70%);
+
+    border-radius: 7px;
+
+    text-decoration: none;
+
+    padding: 9%;
+    width: 100%;
+
+    transition: 0.15s all linear;
+}
+
+nav ul li:hover a,
+nav ul li a.clicked-link {
+    background-color: hsl(0, 0%, 100%);
+}
+
+nav ul li a:focus {
+    outline: 0;
 }
 
 header h1 {
@@ -39,7 +113,6 @@ article section div#tab-links-bar {
 article section div#tab-links-bar ul#tab-links {
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
     justify-content: center;
 
     padding: 0;
@@ -121,6 +194,29 @@ article section div#tab-links-bar ul#tab-links li a {
 
 article section div#tab-links-bar ul#tab-links li a:focus {
     outline: 0;
+}
+
+article section div#export-link {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1.15em;
+    font-weight: 300;
+    text-align: center;
+}
+
+article section div#export-link p {
+    transition: 0.15s all linear;
+}
+
+article section div#export-link p a {
+    color: hsl(0, 0%, 95%);
+}
+
+article section div#export-link p a:hover {
+    color: hsl(0, 0%, 87%);
+}
+
+article section div#export-link p a:active {
+    color: hsl(0, 0%, 80%);
 }
 
 article section div.candidates {

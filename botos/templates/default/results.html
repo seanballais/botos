@@ -15,6 +15,11 @@
 {% endblock %}
 
 {% block content %}
+<nav>
+    <ul>
+        <li><a id="admin-backlink" href="/admin/">&larr; Back to admin page</a></li>
+    </ul>
+</nav>
 <header>
     <h1>Election Results</h1>
     <p>{% if election_state == 'open' %}Tentative {% endif %}Results of the elections as of {{ current_time|date:'h:i:s A eO F d, Y D' }}.</p>
@@ -35,6 +40,9 @@
                 <li{% if link.election_id == active_election %} class="active-election-link"{% else %} class="non-active-election-link"{% endif %}><a class="tab-link" href="{{ link.url }}">{{ link.title }}</a></li>
             {% endfor %}
             </ul>
+        </div>
+        <div id="export-link">
+            <p><a href="/admin/results/export/{% if active_election %}?election={{ active_election }}{% endif %}">Export results of {% if active_election %}election{% else %}all elections{% endif %} to an Excel (XLSX) file.</a></p>
         </div>
     </section>
     {% for position, candidates in results.items %}

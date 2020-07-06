@@ -13,4 +13,11 @@ ready(function() {
             });
         });
     }
+
+    var adminBackLink = document.getElementById('admin-backlink');
+    if (adminBackLink != null) {
+        adminBackLink.addEventListener('click', function() {
+            this.classList.add('clicked-link');
+        });
+    }
 });
