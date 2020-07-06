@@ -35,13 +35,13 @@
         <script type="text/javascript">
             window.CSRF_TOKEN = '{{ csrf_token }}';
         </script>
-        <form id="voting" action="/vote" method="post">
+        <form id="voting" action="/vote/" method="post">
             {% csrf_token %}
             <input id="candidates-voted" name="candidates_voted" type="hidden" value="" />
             <input type="submit" value="Cast Votes" />
         </form>
         <div id="logout-action">
-            <p><a id="meme-1">Whaaat?</a> Not you or you don't want to vote? </p><form id="logout" action="/auth/logout" method="post">{% csrf_token %}<p>&nbsp;<a id="logout-link">Log out</a></p></form></span>.
+            <p><a id="meme-1">Whaaat?</a> Not you or you don't want to vote? </p><form id="logout" action="/auth/logout/" method="post">{% csrf_token %}<p>&nbsp;<a id="logout-link">Log out</a></p></form></span>.
         </div>
     </div>
 </article>

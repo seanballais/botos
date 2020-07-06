@@ -19,7 +19,7 @@
     </div>
     {% endif %}
     <div id="view-actions">
-        <form id="logout" action="/auth/logout" method="post">
+        <form id="logout" action="/auth/logout/" method="post">
             {% csrf_token %}
             <button class="logout-btn">Log out</button>
         </form>

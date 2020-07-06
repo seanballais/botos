@@ -27,8 +27,7 @@ from core.models import (
 @method_decorator(
     login_required(
         login_url='/',
-        next='',
-        redirect_field_name=None  # TODO: Check if we should redirect anonymous users only to the login URL.
+        next='/admin/results'
     ),
     name='dispatch',
 )
@@ -256,7 +255,7 @@ class ResultsExporterView(View):
 
                         dist_to_curr_pos_cell += 1
 
-                position_start_row += dist_to_curr_pos_cell + len(parties) + 1
+                position_start_row += dist_to_curr_pos_cell + 1
 
             # +12 for spacing.
             ws.column_dimensions['A'].width = len_longest_cand_name + 12
@@ -272,7 +271,6 @@ class ResultsExporterView(View):
                                candidate_idx,
                                party_pos,
                                num_columns):
-        # +1 because there's a row for the party name row.
         candidate_row = party_pos + candidate_idx
         ws.cell(candidate_row, 1).value = str(candidate)
 

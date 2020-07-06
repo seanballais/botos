@@ -413,16 +413,22 @@ class ResultsViewTest(TestCase):
         tab_links = response.context['election_tab_links']
 
         self.assertEqual(tab_links[0].election_id, None)
-        self.assertEqual(tab_links[1].election_id, 0)
-        self.assertEqual(tab_links[2].election_id, 1)
+        self.assertEqual(tab_links[1].election_id, self._election0.id)
+        self.assertEqual(tab_links[2].election_id, self._election1.id)
 
         self.assertEqual(tab_links[0].title, 'All')
         self.assertEqual(tab_links[1].title, 'Election 0')
         self.assertEqual(tab_links[2].title, 'Election 1')
 
         self.assertEqual(tab_links[0].url, reverse('results'))
-        self.assertEqual(tab_links[1].url, reverse('results') + '?election=1')
-        self.assertEqual(tab_links[2].url, reverse('results') + '?election=2')
+        self.assertEqual(
+            tab_links[1].url,
+            '{}?election={}'.format(reverse('results'), self._election0.id)
+        )
+        self.assertEqual(
+            tab_links[2].url,
+            '{}?election={}'.format(reverse('results'), self._election1.id)
+        )
 
         self.assertEqual(len(tab_links), 3)
 
@@ -439,4 +445,4 @@ class ResultsViewTest(TestCase):
         )
         active_election = response.context['active_election']
 
-        self.assertEqual(active_election, 1)
+        self.assertEqual(active_election, self._election0.id)

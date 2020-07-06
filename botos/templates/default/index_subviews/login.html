@@ -8,7 +8,7 @@
     </div>
 </header>
 <article id="login">
-    <form id="login" action="/auth/login" method="post">
+    <form id="login" action="/auth/login/" method="post">
         {% csrf_token %}
         <input type="text" name="username" placeholder="Username" required />
         <input type="password" name="password" placeholder="Password" required />

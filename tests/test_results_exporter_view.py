@@ -1,5 +1,4 @@
 import io
-import zipfile
 
 import openpyxl
 
@@ -53,7 +52,7 @@ class ResultsExporter(TestCase):
                 num_sections = 2 if j == 0 else 1
                 for k in range(num_sections):
                     section = Section.objects.create(
-                        section_name='Section {}'.format(section_num)
+                        section_name=str(section_num)
                     )
                     section_num += 1
 
@@ -137,9 +136,10 @@ class ResultsExporter(TestCase):
         self.client.logout()
 
         response = self.client.get(reverse('results-export'), follow=True)
-        self.assertRedirects(response, reverse('index'))
+        self.assertRedirects(response, '/?next=%2Fadmin%2Fresults')
 
     def test_voter_get_requests_redirected_to_index(self):
+        self.client.logout()
         self.client.login(username='user0', password='voter')
 
         response = self.client.get(reverse('results-export'), follow=True)
@@ -150,14 +150,12 @@ class ResultsExporter(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
-        xlsx_file = zipfile.ZipFile(io.BytesIO(response.content), 'r')
-
         self.assertEqual(
             response['Content-Disposition'],
             'attachment; filename="Election Results.xlsx"'
         )
 
-        wb = openpyxl.load_workbook(xlsx_file)
+        wb = openpyxl.load_workbook(io.BytesIO(response.content))
 
         self.assertEqual(len(wb.worksheets), 2)
 
@@ -167,7 +165,7 @@ class ResultsExporter(TestCase):
         self.assertEqual(wb.sheetnames[0], 'Election 0')
 
         row_count = ws.max_row
-        col_count = ws.max_col
+        col_count = ws.max_column
         self.assertEqual(row_count, 25)
         self.assertEqual(col_count, 5)
 
@@ -203,7 +201,7 @@ class ResultsExporter(TestCase):
 
         self.assertEqual(str(ws.cell(2, 2).value), 'Number of Votes')
 
-        self.assertEqual(str(ws.cell(3, 2).value), 'Batch 0')
+        self.assertEqual(str(ws.cell(3, 2).value), '0')
 
         self.assertEqual(str(ws.cell(4, 2).value), '0') # Section
 
@@ -229,7 +227,7 @@ class ResultsExporter(TestCase):
         self.assertEqual(str(ws.cell(23, 3).value), '0')
         self.assertEqual(str(ws.cell(25, 2).value), 'N/A')
 
-        self.assertEqual(str(ws.cell(3, 4).value), 'Batch 1')
+        self.assertEqual(str(ws.cell(3, 4).value), '1')
 
         self.assertEqual(str(ws.cell(4, 4).value), '2') # Section
 
@@ -247,20 +245,20 @@ class ResultsExporter(TestCase):
         self.assertEqual(str(ws.cell(7, 5).value), '1')
         self.assertEqual(str(ws.cell(9, 5).value), '1')
         self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
-        self.assertEqual(str(ws.cell(12, 5).value), '2')
-        self.assertEqual(str(ws.cell(14, 5).value), '1')
-        self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
-        self.assertEqual(str(ws.cell(17, 5).value), '1')
-        self.assertEqual(str(ws.cell(19, 5).value), '1')
-        self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
+        self.assertEqual(str(ws.cell(14, 5).value), '2')
+        self.assertEqual(str(ws.cell(16, 5).value), '1')
+        self.assertEqual(str(ws.cell(18, 2).value), 'N/A')
+        self.assertEqual(str(ws.cell(21, 5).value), '1')
+        self.assertEqual(str(ws.cell(23, 5).value), '1')
+        self.assertEqual(str(ws.cell(25, 2).value), 'N/A')
 
         # Check second worksheet.
         ws = wb.worksheets[1]
 
-        self.assertEqual(wb.sheetnames[0], 'Election 1')
+        self.assertEqual(wb.sheetnames[1], 'Election 1')
 
         row_count = ws.max_row
-        col_count = ws.max_col
+        col_count = ws.max_column
         self.assertEqual(row_count, 25)
         self.assertEqual(col_count, 5)
 
@@ -287,7 +285,7 @@ class ResultsExporter(TestCase):
             'None',
             'Position 5',
             'Party 3',
-            '9, 9',
+            '8, 8',
             'Party 4',
             '11, 11',
             'Party 5',
@@ -298,21 +296,21 @@ class ResultsExporter(TestCase):
 
         self.assertEqual(str(ws.cell(2, 2).value), 'Number of Votes')
 
-        self.assertEqual(str(ws.cell(3, 2).value), 'Batch 0')
+        self.assertEqual(str(ws.cell(3, 2).value), '2')
 
-        self.assertEqual(str(ws.cell(4, 2).value), '0') # Section
+        self.assertEqual(str(ws.cell(4, 2).value), '3') # Section
 
         self.assertEqual(str(ws.cell(7, 2).value), '1')
         self.assertEqual(str(ws.cell(9, 2).value), '0')
         self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
-        self.assertEqual(str(ws.cell(14, 2).value), '2')
+        self.assertEqual(str(ws.cell(14, 2).value), '1')
         self.assertEqual(str(ws.cell(16, 2).value), '0')
         self.assertEqual(str(ws.cell(18, 2).value), 'N/A')
         self.assertEqual(str(ws.cell(21, 2).value), '0')
         self.assertEqual(str(ws.cell(23, 2).value), '0')
         self.assertEqual(str(ws.cell(25, 2).value), 'N/A')
 
-        self.assertEqual(str(ws.cell(4, 3).value), '1') # Section
+        self.assertEqual(str(ws.cell(4, 3).value), '4') # Section
 
         self.assertEqual(str(ws.cell(7, 3).value), '0')
         self.assertEqual(str(ws.cell(9, 3).value), '1')
@@ -324,9 +322,9 @@ class ResultsExporter(TestCase):
         self.assertEqual(str(ws.cell(23, 3).value), '0')
         self.assertEqual(str(ws.cell(25, 2).value), 'N/A')
 
-        self.assertEqual(str(ws.cell(3, 4).value), 'Batch 1')
+        self.assertEqual(str(ws.cell(3, 4).value), '3')
 
-        self.assertEqual(str(ws.cell(4, 4).value), '2') # Section
+        self.assertEqual(str(ws.cell(4, 4).value), '5') # Section
 
         self.assertEqual(str(ws.cell(7, 4).value), '0')
         self.assertEqual(str(ws.cell(9, 4).value), '0')
@@ -342,12 +340,12 @@ class ResultsExporter(TestCase):
         self.assertEqual(str(ws.cell(7, 5).value), '1')
         self.assertEqual(str(ws.cell(9, 5).value), '1')
         self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
-        self.assertEqual(str(ws.cell(12, 5).value), '2')
         self.assertEqual(str(ws.cell(14, 5).value), '1')
-        self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
-        self.assertEqual(str(ws.cell(17, 5).value), '1')
-        self.assertEqual(str(ws.cell(19, 5).value), '1')
-        self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
+        self.assertEqual(str(ws.cell(16, 5).value), '1')
+        self.assertEqual(str(ws.cell(18, 2).value), 'N/A')
+        self.assertEqual(str(ws.cell(21, 5).value), '1')
+        self.assertEqual(str(ws.cell(23, 5).value), '1')
+        self.assertEqual(str(ws.cell(25, 2).value), 'N/A')
 
     def test_get_election0_xlsx(self):
         response = self.client.get(
@@ -355,19 +353,16 @@ class ResultsExporter(TestCase):
             { 'election': str(Election.objects.get(name='Election 0').id) }
         )
 
-        self.assertEqual(response.status_code, 200)
-
-        xlsx_file = zipfile.ZipFile(io.BytesIO(response.content), 'r')
-        
+        self.assertEqual(response.status_code, 200)        
 
         self.assertEqual(
-            response['Content-Disposition']
+            response['Content-Disposition'],
             'attachment; filename="Election 0 Results.xlsx"'
         )
 
-        wb = openpyxl.load_workbook(xlsx_file)
+        wb = openpyxl.load_workbook(io.BytesIO(response.content))
 
-        self.assertEqual(len(wb.worksheets), 2)
+        self.assertEqual(len(wb.worksheets), 1)
 
         # Check first worksheet.
         ws = wb.worksheets[0]
@@ -375,8 +370,8 @@ class ResultsExporter(TestCase):
         self.assertEqual(wb.sheetnames[0], 'Election 0')
 
         row_count = ws.max_row
-        col_count = ws.max_col
-        self.assertEqual(row_count, 13)
+        col_count = ws.max_column
+        self.assertEqual(row_count, 25)
         self.assertEqual(col_count, 5)
 
         self.assertEqual(str(ws.cell(1, 1).value), 'Election 0 Results')
@@ -411,7 +406,7 @@ class ResultsExporter(TestCase):
 
         self.assertEqual(str(ws.cell(2, 2).value), 'Number of Votes')
 
-        self.assertEqual(str(ws.cell(3, 2).value), 'Batch 0')
+        self.assertEqual(str(ws.cell(3, 2).value), '0')
 
         self.assertEqual(str(ws.cell(4, 2).value), '0') # Section
 
@@ -437,7 +432,7 @@ class ResultsExporter(TestCase):
         self.assertEqual(str(ws.cell(23, 3).value), '0')
         self.assertEqual(str(ws.cell(25, 2).value), 'N/A')
 
-        self.assertEqual(str(ws.cell(3, 4).value), 'Batch 1')
+        self.assertEqual(str(ws.cell(3, 4).value), '1')
 
         self.assertEqual(str(ws.cell(4, 4).value), '2') # Section
 
@@ -455,17 +450,18 @@ class ResultsExporter(TestCase):
         self.assertEqual(str(ws.cell(7, 5).value), '1')
         self.assertEqual(str(ws.cell(9, 5).value), '1')
         self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
-        self.assertEqual(str(ws.cell(12, 5).value), '2')
-        self.assertEqual(str(ws.cell(14, 5).value), '1')
-        self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
-        self.assertEqual(str(ws.cell(17, 5).value), '1')
-        self.assertEqual(str(ws.cell(19, 5).value), '1')
-        self.assertEqual(str(ws.cell(11, 2).value), 'N/A')
+        self.assertEqual(str(ws.cell(14, 5).value), '2')
+        self.assertEqual(str(ws.cell(16, 5).value), '1')
+        self.assertEqual(str(ws.cell(18, 2).value), 'N/A')
+        self.assertEqual(str(ws.cell(21, 5).value), '1')
+        self.assertEqual(str(ws.cell(23, 5).value), '1')
+        self.assertEqual(str(ws.cell(25, 2).value), 'N/A')
 
     def test_get_with_invalid_election_id_non_existent_election_id(self):
         response = self.client.get(
             reverse('results-export'),
             { 'election': '69' },
+            HTTP_REFERER=reverse('results'),
             follow=True
         )
 
@@ -474,12 +470,13 @@ class ResultsExporter(TestCase):
             messages[0].message,
             'You specified an ID for a non-existent election.'
         )
-        self.assertRedirects(response, reverse('index'))
+        self.assertRedirects(response, reverse('results'))
 
     def test_get_with_invalid_election_id_non_integer_election_id(self):
         response = self.client.get(
             reverse('results-export'),
             { 'election': 'hey' },
+            HTTP_REFERER=reverse('results'),
             follow=True
         )
 
@@ -488,7 +485,7 @@ class ResultsExporter(TestCase):
             messages[0].message,
             'You specified a non-integer election ID.'
         )
-        self.assertRedirects(response, reverse('index'))
+        self.assertRedirects(response, reverse('results'))
 
     def test_ref_get_with_invalid_election_id_non_existent_election_id(self):
         response = self.client.get(

@@ -108,7 +108,7 @@ class ElectionSettingsViewTest(BaseElectionSettingsViewTest, TestCase):
     def setUpTestData(cls):
         super().setUpTestData()
         
-        cls._view_url = '/admin/election'
+        cls._view_url = reverse('admin-election-index')
 
     def test_view_accepts_superusers(self):
         self.client.login(username='admin', password='root')
@@ -152,12 +152,12 @@ class ElectionSettingsCurrentTemplateViewTest(
 
     def test_view_accepts_superusers(self):
         self.client.login(username='admin', password='root')
-        response = self.client.get(self._view_url)
+        response = self.client.get(self._view_url, follow=True)
         self.assertRedirects(response, reverse('admin-election-index'))
 
     def test_view_properly_redirects_get_requests(self):
         self.client.login(username='admin', password='root')
-        response = self.client.get(self._view_url)
+        response = self.client.get(self._view_url, follow=True)
         self.assertRedirects(response, reverse('admin-election-index'))
 
     def test_view_with_invalid_post_requests(self):
@@ -235,12 +235,12 @@ class ElectionSettingsElectionsStateViewTest(
 
     def test_view_accepts_superusers(self):
         self.client.login(username='admin', password='root')
-        response = self.client.get(self._view_url)
+        response = self.client.get(self._view_url, follow=True)
         self.assertRedirects(response, reverse('admin-election-index'))
 
     def test_view_properly_redirects_get_requests(self):
         self.client.login(username='admin', password='root')
-        response = self.client.get(self._view_url)
+        response = self.client.get(self._view_url, follow=True)
         self.assertRedirects(response, reverse('admin-election-index'))
 
     def test_view_with_invalid_post_requests(self):
