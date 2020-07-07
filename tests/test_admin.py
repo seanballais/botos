@@ -224,6 +224,16 @@ class VoterAdminTest(TestCase):
         admin = VoterAdmin(model=Voter, admin_site=AdminSite())
         self.assertEqual(admin.section(user), 'Section')
 
+    def test_election_function(self):
+        election = Election.objects.create(name='Election')
+        batch = Batch.objects.create(year=0, election=election)
+        section = Section.objects.create(section_name='Section')
+        user = User.objects.create(username='voter', type=UserType.VOTER)
+        VoterProfile.objects.create(user=user, batch=batch, section=section)
+
+        admin = VoterAdmin(model=Voter, admin_site=AdminSite())
+        self.assertEqual(admin.election(user), 'Election')
+
 
 class AdminUserProxyUserTest(TestCase):
     """
