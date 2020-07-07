@@ -6,6 +6,15 @@
 {% load i18n static %}
 
 {% block userlinks %}
+    <style type="text/css">
+        form#logout-form {
+            display: inline-block;
+        }
+
+        a#logout-link {
+            cursor: pointer;
+        }
+    </style>
     <a href="{% url 'admin-election-index' %}">View election settings</a> /
     <a href="{% url 'results' %}">View election results</a> /
     {% if user.is_active and user.is_staff %}
@@ -17,5 +26,14 @@
     {% if user.has_usable_password %}
         <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> /
     {% endif %}
-    <a href="{% url 'admin:logout' %}">{% trans 'Log out' %}</a>
+    <form id="logout-form" action="/auth/logout/" method="post">{% csrf_token %}<a id="logout-link" href="#">Log out</a></form>
+    <script type="text/javascript">
+        var logoutLink = document.getElementById('logout-link');
+        if (logoutLink != null) {
+            logoutLink.addEventListener('click', function() {
+                var logoutForm = document.querySelector('form#logout-form');
+                logoutForm.submit();
+            });
+        }
+    </script>
 {% endblock %}
