@@ -12,6 +12,9 @@
         {% csrf_token %}
         <input type="text" name="username" placeholder="Username" required />
         <input type="password" name="password" placeholder="Password" required />
+        {% if next_url %}
+        <input type="hidden" id="next-url" name="next" value="{{ next_url }}" />
+        {% endif %}
         <input type="submit" value="Login" />
     </form>
     {% if messages %}

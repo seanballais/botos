@@ -23,7 +23,7 @@ from core.utils import AppSettings
 
 @method_decorator(
     login_required(
-        login_url='/admin/login',
+        login_url='/',
         next='/admin/election'
     ),
     name='dispatch',
@@ -31,8 +31,9 @@ from core.utils import AppSettings
 @method_decorator(
     user_passes_test(
         lambda u: u.type == UserType.ADMIN,
-        login_url='/admin/login',
-        next='/admin/election'
+        login_url='/',
+        next='',
+        redirect_field_name=None
     ),
     name='dispatch',
 )
@@ -69,7 +70,7 @@ class ElectionSettingsIndexView(TemplateView):
 @method_decorator(csrf_protect, name='dispatch')
 @method_decorator(
     login_required(
-        login_url='/admin/login',
+        login_url='/',
         next='/admin/election'
     ),
     name='dispatch',
@@ -77,8 +78,9 @@ class ElectionSettingsIndexView(TemplateView):
 @method_decorator(
     user_passes_test(
         lambda u: u.type == UserType.ADMIN,
-        login_url='/admin/login',
-        next='/admin/election'
+        login_url='/',
+        next='',
+        redirect_field_name=None
     ),
     name='dispatch',
 )
@@ -114,7 +116,7 @@ class CurrentTemplateView(View):
 @method_decorator(csrf_protect, name='dispatch')
 @method_decorator(
     login_required(
-        login_url='/admin/login',
+        login_url='/',
         next='/admin/election'
     ),
     name='dispatch',
@@ -122,8 +124,9 @@ class CurrentTemplateView(View):
 @method_decorator(
     user_passes_test(
         lambda u: u.type == UserType.ADMIN,
-        login_url='/admin/login',
-        next='/admin/election'
+        login_url='/',
+        next='',
+        redirect_field_name=None
     ),
     name='dispatch',
 )

@@ -34,6 +34,13 @@ class LoginViewTest(TestCase):
         _user.set_password('pepito')
         _user.save()
 
+        _admin = User.objects.create(
+            username='admin',
+            type=UserType.ADMIN
+        )
+        _admin.set_password('root')
+        _admin.save()
+
         VoterProfile.objects.create(
             user=_user,
             batch=_batch,
@@ -108,6 +115,58 @@ class LoginViewTest(TestCase):
             'Invalid data submitted for authentication.'
         )
         self.assertRedirects(response, reverse('index'))
+
+    def test_post_successful_login_with_next_url(self):
+        response = self.client.post(
+            reverse('auth-login'),
+            {
+                'username': 'admin',
+                'password': 'root',
+                'next': reverse('results')
+            },
+            follow=True
+        )
+
+        response_user = response.context['user']
+        self.assertTrue(response_user.is_authenticated)
+        self.assertEquals(response_user.username, 'admin')
+        self.assertRedirects(response, reverse('results'))
+
+    def test_post_successful_login_with_blank_next_url(self):
+        response = self.client.post(
+            reverse('auth-login'),
+            {
+                'username': 'juan',
+                'password': 'pepito',
+                'next': ''
+            },
+            follow=True
+        )
+
+        response_user = response.context['user']
+        self.assertTrue(response_user.is_authenticated)
+        self.assertEquals(response_user.username, 'juan')
+
+    def test_post_unsuccessful_login_with_next_url(self):
+        response = self.client.post(
+            reverse('auth-login'),
+            {
+                'username': 'admin',
+                'password': 'wrong password',
+                'next': reverse('results')
+            },
+            follow=True
+        )
+        messages = list(response.context['messages'])
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(
+            str(messages[0]),
+            'Wrong username/password combination.'
+        )
+        self.assertRedirects(
+            response,
+            '{}?next={}'.format(reverse('index'), reverse('results'))
+        )
 
 
 class LogoutViewTest(TestCase):

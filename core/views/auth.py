@@ -1,3 +1,5 @@
+import os
+
 from django.contrib import messages
 from django.contrib.auth import (
     authenticate, login, logout
@@ -39,9 +41,11 @@ class LoginView(View):
         return redirect(reverse('index'))
 
     def post(self, request):
+        next_url = None
         try:
             username = request.POST['username']
             password = request.POST['password']
+            next_url = request.POST.get('next', None)
         except KeyError:
             messages.error(
                 request,
@@ -52,13 +56,17 @@ class LoginView(View):
             if user is not None:
                 # Login success! Yey!
                 login(request, user)
+                return redirect(next_url or reverse('index'))
             else:
                 messages.error(
                     request,
                     'Wrong username/password combination.'
                 )
 
-        return redirect(reverse('index'))
+        if next_url:
+            return redirect('{}?next={}'.format(reverse('index'), next_url))
+        else:
+            return redirect(reverse('index'))
 
 
 @method_decorator(csrf_protect, name='dispatch')

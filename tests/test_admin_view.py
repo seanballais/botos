@@ -24,8 +24,8 @@ class BaseElectionSettingsViewTest(ABC):
     """
     @classmethod
     def setUpTestData(cls):
-        _election = Election.objects.create(name='Election')
-        cls._batch = Batch.objects.create(year=2019, election=_election)
+        cls._election = Election.objects.create(name='Election')
+        cls._batch = Batch.objects.create(year=2019, election=cls._election)
         cls._section = Section.objects.create(section_name='Section')
 
         user = User(
@@ -42,13 +42,13 @@ class BaseElectionSettingsViewTest(ABC):
         response = self.client.get(self._view_url, follow=True)
         self.assertRedirects(
             response,
-            '/admin/login/?next=%2Fadmin%2Felection'
+            '/?next=%2Fadmin%2Felection'
         )
 
         response = self.client.post(self._view_url, follow=True)
         self.assertRedirects(
             response,
-            '/admin/login/?next=%2Fadmin%2Felection'
+            '/?next=%2Fadmin%2Felection'
         )
 
     def test_view_denies_non_superusers(self):
@@ -60,18 +60,24 @@ class BaseElectionSettingsViewTest(ABC):
         user.set_password('123')
         user.save()
 
+        VoterProfile.objects.create(
+            user=user,
+            batch=self._batch,
+            section=self._section
+        )
+
         self.client.login(username='juan', password='123')
 
         response = self.client.get(self._view_url, follow=True)
         self.assertRedirects(
             response,
-            '/admin/login/?next=%2Fadmin%2Felection'
+            '/'
         )
 
         response = self.client.post(self._view_url, follow=True)
         self.assertRedirects(
             response,
-            '/admin/login/?next=%2Fadmin%2Felection'
+            '/'
         )
 
     @abstractmethod

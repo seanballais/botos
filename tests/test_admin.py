@@ -24,6 +24,28 @@ class MockSuperUser:
         return True
 
 
+class AdminLoginViewTest(TestCase):
+    """
+    Tests admin login view.
+    """
+    def test_admin_login_redirects_to_index(self):
+        response = self.client.get(reverse('admin:login'), follow=True)
+        self.assertRedirects(response, reverse('index'))
+
+    def test_admin_login_with_next_redirects_to_index(self):
+        response = self.client.get(
+            reverse('admin:login'),
+            {
+                'next': reverse('results')
+            },
+            follow=True
+        )
+        self.assertRedirects(
+            response,
+            '{}?next={}'.format(reverse('index'), reverse('results'))
+        )
+
+
 class AdminUserAdminTest(TestCase):
     """
     Tests the Admin user admin.

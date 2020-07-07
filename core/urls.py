@@ -6,6 +6,7 @@ from core.views.admin.admin import (
     CandidatePositionAutoCompleteView,
     ElectionBatchesAutoCompleteView
 )
+from core.views.admin.admin_login_view import AdminLoginView
 from core.views.admin.election_settings import (
     CurrentTemplateView,
     ElectionSettingsIndexView,
@@ -26,6 +27,7 @@ urlpatterns = [
     path('auth/login/', LoginView.as_view(), name='auth-login'),
     path('auth/logout/', LogoutView.as_view(), name='auth-logout'),
     path('admin/results/', ResultsView.as_view(), name='results'),
+    path('admin/login/', AdminLoginView.as_view()),
     path(
         'admin/results/export/',
         ResultsExporterView.as_view(),

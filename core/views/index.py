@@ -95,6 +95,9 @@ class IndexView(TemplateView):
 
                 context['candidates'] = candidates_by_position
         else:
+            next_url = self.request.GET.get('next', None)
+
+            context['next_url'] = next_url
             context['subview'] = 'login'
 
         return context

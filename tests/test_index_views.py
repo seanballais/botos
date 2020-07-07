@@ -1,5 +1,6 @@
 from collections import OrderedDict
 import json
+import os
 
 from bs4 import BeautifulSoup
 
@@ -112,6 +113,17 @@ class LoginSubviewTest(TestCase):
     def test_anonymous_users_login_subview(self):
         response = self.client.get('/')
         self.assertIsNotNone(self._get_login_form(str(response.content)))
+
+    def test_login_subview_with_next_url_form_has_correct_next_URL(self):
+        response = self.client.get('/', { 'next': '/admin/' })
+        form = self._get_login_form(str(response.content))
+        next_url = form.find('input', { 'id': 'next-url' }).get('value')
+        self.assertEquals(next_url, '/admin/')
+
+    def test_login_subview_with_no_next_url_form_has_no_next_URL(self):
+        response = self.client.get('/')
+        form = self._get_login_form(str(response.content))
+        self.assertIsNone(form.find('input', { 'id': 'next-url' }))
 
     def test_login_subview_form_has_correct_action_URL(self):
         response = self.client.get('/')

@@ -24,8 +24,8 @@ from core.utils import AppSettings
 
 @method_decorator(
     login_required(
-        login_url='/admin/login',
-        next='/admin/results'
+        login_url='/',
+        next='/admin/results/'
     ),
     name='dispatch',
 )

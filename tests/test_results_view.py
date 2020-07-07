@@ -208,7 +208,7 @@ class ResultsViewTest(TestCase):
         response = self.client.get(reverse('results'), follow=True)
         self.assertRedirects(
             response,
-            '/admin/login/?next=%2Fadmin%2Fresults'
+            '{}?next={}'.format(reverse('index'), reverse('results'))
         )
 
     def test_non_admin_redirected_to_index(self):
