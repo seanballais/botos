@@ -172,7 +172,7 @@ class VoterProfile(Base):
     )
     batch = models.ForeignKey(
         'Batch',
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         null=False,
         blank=False,
         default=None,
@@ -181,7 +181,7 @@ class VoterProfile(Base):
     )
     section = models.ForeignKey(
         'Section',
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         null=False,
         blank=False,
         default=None,

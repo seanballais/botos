@@ -235,7 +235,7 @@ class VoterProfileModelTest(TestCase):
         - unique = False
 
     The batch and section foreign keys must have the following settings:
-        - on_delete = models.PROTECT
+        - on_delete = models.CASCADE
         - null = False
         - blank = False
         - default = None
@@ -335,7 +335,7 @@ class VoterProfileModelTest(TestCase):
             self._batch_field.remote_field,
             'on_delete'
         )
-        self.assertEquals(on_delete_policy, models.PROTECT)
+        self.assertEquals(on_delete_policy, models.CASCADE)
 
     def test_batch_fk_null(self):
         self.assertFalse(self._batch_field.null)
@@ -366,7 +366,7 @@ class VoterProfileModelTest(TestCase):
             self._section_field.remote_field,
             'on_delete'
         )
-        self.assertEquals(on_delete_policy, models.PROTECT)
+        self.assertEquals(on_delete_policy, models.CASCADE)
 
     def test_section_fk_null(self):
         self.assertFalse(self._section_field.null)
