@@ -25,7 +25,7 @@ class VoteTest(TestCase):
 
     The user field must be a one-to-one field and have the following settings:
         - to = 'User'
-        - on_delete = models.PROTECT
+        - on_delete = models.CASCADE
         - null = False
         - blank = False
         - default = None
@@ -34,7 +34,7 @@ class VoteTest(TestCase):
 
     The candidate field must be a foreign key and have the following settings:
         - to = 'Candidate'
-        - on_delete = models.PROTECT
+        - on_delete = models.CASCADE
         - null = False
         - blank = False
         - default = None
@@ -108,7 +108,7 @@ class VoteTest(TestCase):
             self._vote_user_field.remote_field,
             'on_delete'
         )
-        self.assertEquals(on_delete_policy, models.PROTECT)
+        self.assertEquals(on_delete_policy, models.CASCADE)
 
     def test_user_fk_null(self):
         self.assertFalse(self._vote_user_field.null)
@@ -147,7 +147,7 @@ class VoteTest(TestCase):
             self._vote_candidate_field.remote_field,
             'on_delete'
         )
-        self.assertEquals(on_delete_policy, models.PROTECT)
+        self.assertEquals(on_delete_policy, models.CASCADE)
 
     def test_candidate_fk_null(self):
         self.assertFalse(self._vote_candidate_field.null)
@@ -251,7 +251,7 @@ class CandidateTest(TestCase):
     The user field must be a one-to-one field and have the following
     settings:
         - to = 'User'
-        - on_delete = models.PROTECT
+        - on_delete = models.CASCADE
         - null = False
         - blank = False
         - default = None
@@ -354,7 +354,7 @@ class CandidateTest(TestCase):
             self._candidate_user_field.remote_field,
             'on_delete'
         )
-        self.assertEquals(on_delete_policy, models.PROTECT)
+        self.assertEquals(on_delete_policy, models.CASCADE)
 
     def test_user_fk_null(self):
         self.assertFalse(self._candidate_user_field.null)

@@ -422,8 +422,8 @@ class BatchModelTest(TestCase):
 
     The election field must be a foreign key and have the following settings:
         - to = 'Election'
-        - on_delete = models.CASCADE
-        - null = False
+        - on_delete = models.SET_NULL
+        - null = True
         - blank = False
         - default = None
         - unique = False
@@ -479,13 +479,13 @@ class BatchModelTest(TestCase):
             self._batch_election_field.remote_field,
             'on_delete'
         )
-        self.assertEquals(on_delete_policy, models.CASCADE)
+        self.assertEquals(on_delete_policy, models.SET_NULL)
 
     def test_election_fk_null(self):
         # The election field shouldn't be null since, based on current use
         # cases, voters already have an election they will be participating
         # in.
-        self.assertFalse(self._batch_election_field.null)
+        self.assertTrue(self._batch_election_field.null)
 
     def test_election_fk_blank(self):
         self.assertFalse(self._batch_election_field.blank)

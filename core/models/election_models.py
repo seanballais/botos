@@ -125,7 +125,7 @@ class Candidate(Base):
     )
     user = models.OneToOneField(
         User,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         null=False,
         blank=False,
         default=None,
@@ -180,7 +180,7 @@ class Vote(Base):
     """
     user = models.ForeignKey(
         User,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         null=False,
         blank=False,
         default=None,
@@ -189,7 +189,7 @@ class Vote(Base):
     )
     candidate = models.ForeignKey(
         Candidate,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         null=False,
         blank=False,
         default=None,

@@ -213,8 +213,8 @@ class Batch(Base):
                      # itself would mean importing the model from
                      # election_models, which will cause a circular dependency
                      # since election_models also imports from this module.
-        on_delete=models.CASCADE,
-        null=False,
+        on_delete=models.SET_NULL,
+        null=True,
         blank=False,
         default=None,
         unique=False,

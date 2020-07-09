@@ -14,7 +14,9 @@ from django.views.decorators.csrf import csrf_protect
 from core.decorators import (
     login_required, user_passes_test
 )
-from core.models import User
+from core.models import (
+    User, UserType
+)
 
 
 @method_decorator(csrf_protect, name='dispatch')
@@ -54,9 +56,24 @@ class LoginView(View):
         else:
             user = authenticate(request, username=username, password=password)
             if user is not None:
-                # Login success! Yey!
-                login(request, user)
-                return redirect(next_url or reverse('index'))
+                if (user.type == UserType.VOTER
+                        and not hasattr(user, 'voter_profile')):
+                    messages.error(
+                        request,
+                        'Voter account is incompletely configured. Please '
+                        'contact the system administrator.'
+                    )
+                elif (user.type == UserType.VOTER
+                        and user.voter_profile.batch.election is None):
+                    messages.error(
+                        request,
+                        'Voter account is not configured to vote in any '
+                        'election. Please contact the system administrator.'
+                    )
+                else:
+                    # Login success! Yey!
+                    login(request, user)
+                    return redirect(next_url or reverse('index'))
             else:
                 messages.error(
                     request,
