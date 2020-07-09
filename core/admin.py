@@ -1,8 +1,11 @@
 from django import forms
-from django.contrib import admin
+from django.contrib import (
+    admin, messages
+)
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 from django.db.models import F
+from django.utils.translation import ngettext
 
 from core.forms.admin import (
     AdminChangeForm, AdminCreationForm, VoterChangeForm,
@@ -11,7 +14,7 @@ from core.forms.admin import (
 )
 from core.models import (
     User, Batch, Section, VoterProfile, Candidate, CandidateParty,
-    CandidatePosition, UserType, Election
+    CandidatePosition, UserType, Election, Vote
 )
 
 
@@ -174,6 +177,27 @@ class CandidatePositionAdmin(admin.ModelAdmin):
     )
 
 
+class ElectionAdmin(admin.ModelAdmin):
+    actions = [ 'clear_election' ]
+
+    def clear_election(self, request, queryset):
+        num_elections = queryset.count()
+        for election in queryset:
+            Vote.objects.filter(election=election).delete()
+            voter_profiles = VoterProfile.objects.filter(
+                batch__election=election
+            )
+            voter_profiles.update(has_voted=False)
+
+        self.message_user(request, ngettext(
+            '%d election was successfully cleared.',
+            '%d elections were successfully cleared.',
+            num_elections,
+        ) % num_elections, messages.SUCCESS)
+
+    clear_election.short_description = "Clear votes in selected elections"
+
+
 admin.site.register(AdminUser, AdminUserAdmin)
 admin.site.register(Voter, VoterAdmin)
 admin.site.register(Batch, BatchAdmin)
@@ -181,7 +205,7 @@ admin.site.register(Section)
 admin.site.register(Candidate, CandidateAdmin)
 admin.site.register(CandidateParty, CandidatePartyAdmin)
 admin.site.register(CandidatePosition, CandidatePositionAdmin)
-admin.site.register(Election)
+admin.site.register(Election, ElectionAdmin )
 admin.site.unregister(Group)  # We don't need this at the moment.
 
 # Customize admin texts.
