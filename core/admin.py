@@ -125,7 +125,7 @@ class VoterAdmin(BaseUserAdmin):
     section.admin_order_field = 'section'
 
     def election(self, obj):
-        return obj.voter_profile.batch.election
+        return obj.voter_profile.batch.election.name
 
     # TODO: Fix error when sorting by batch. This error may also occur when
     #       sorting by section.
