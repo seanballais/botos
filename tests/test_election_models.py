@@ -429,7 +429,7 @@ class CandidateTest(TestCase):
         self.assertEquals(on_delete_policy, models.SET_NULL)
 
     def test_party_fk_null(self):
-        self.assertFalse(self._candidate_party_field.null)
+        self.assertTrue(self._candidate_party_field.null)
 
     def test_party_fk_blank(self):
         self.assertFalse(self._candidate_party_field.blank)
@@ -468,7 +468,7 @@ class CandidateTest(TestCase):
         self.assertEquals(on_delete_policy, models.SET_NULL)
 
     def test_position_fk_null(self):
-        self.assertFalse(self._candidate_position_field.null)
+        self.assertTrue(self._candidate_position_field.null)
 
     def test_position_fk_blank(self):
         self.assertFalse(self._candidate_position_field.blank)

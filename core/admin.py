@@ -191,7 +191,7 @@ class ElectionAdmin(admin.ModelAdmin):
         #     https://github.com/django/django/blob/
         #             958c7b301ead79974db8edd5b9c6588a10a28ae7/
         #             django/contrib/admin/actions.py
-        if request.method == 'POST' and 'post' in request.POST:
+        if request.method == 'POST' and 'clear_elections' in request.POST:
             num_elections = queryset.count()
             for election in queryset:
                 Vote.objects.filter(election=election).delete()

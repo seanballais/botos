@@ -123,6 +123,7 @@ class VoterAdminTest(TestCase):
 
         VoterProfile.objects.create(
             user=_voted_user0,
+            has_voted=True,
             batch=_batch0,
             section=_section0
         )
@@ -152,7 +153,7 @@ class VoterAdminTest(TestCase):
 
         _election1 = Election.objects.create(name='Election 1')
 
-        _batch1 = Batch.objects.create(year=1, election=_election0)
+        _batch1 = Batch.objects.create(year=1, election=_election1)
         _section1 = Section.objects.create(section_name='Section 1')
 
         _voted_user1 = User.objects.create(
@@ -164,6 +165,7 @@ class VoterAdminTest(TestCase):
 
         VoterProfile.objects.create(
             user=_voted_user1,
+            has_voted=True,
             batch=_batch1,
             section=_section1
         )
@@ -194,7 +196,7 @@ class VoterAdminTest(TestCase):
         self.assertEqual(Vote.objects.all().count(), 2)
 
         queryset = Election.objects.filter(name='Election 0')
-        response = self.client.get(
+        response = self.client.post(
             reverse('admin:core_election_changelist'),
             {
                 'action': 'clear_election',
@@ -212,16 +214,23 @@ class VoterAdminTest(TestCase):
             reverse('admin:core_election_changelist'),
             {
                 'action': 'clear_election',
+                'clear_elections': 'yes',
                 ACTION_CHECKBOX_NAME: [ e.pk for e in queryset ]
             },
             follow=True
         )
+
+        _voted_user0.refresh_from_db()
+        _voted_user1.refresh_from_db()
+
+        messages = list(response.context['messages'])
+
         self.assertEqual(Vote.objects.all().count(), 1)
         self.assertFalse(_voted_user0.voter_profile.has_voted)
         self.assertTrue(_voted_user1.voter_profile.has_voted)
         self.assertEqual(
-            get_messages(self._request)[0],
-            '1 elections was successfully cleared.'
+            str(messages[0]),
+            '1 election was successfully cleared.'
         )
 
     def test_clear_election_action_multiple_elections(self):
@@ -248,6 +257,7 @@ class VoterAdminTest(TestCase):
 
         VoterProfile.objects.create(
             user=_voted_user0,
+            has_voted=True,
             batch=_batch0,
             section=_section0
         )
@@ -277,7 +287,7 @@ class VoterAdminTest(TestCase):
 
         _election1 = Election.objects.create(name='Election 1')
 
-        _batch1 = Batch.objects.create(year=1, election=_election0)
+        _batch1 = Batch.objects.create(year=1, election=_election1)
         _section1 = Section.objects.create(section_name='Section 1')
 
         _voted_user1 = User.objects.create(
@@ -289,6 +299,7 @@ class VoterAdminTest(TestCase):
 
         VoterProfile.objects.create(
             user=_voted_user1,
+            has_voted=True,
             batch=_batch1,
             section=_section1
         )
@@ -317,7 +328,7 @@ class VoterAdminTest(TestCase):
         )
 
         queryset = Election.objects.all()
-        response = self.client.get(
+        response = self.client.post(
             reverse('admin:core_election_changelist'),
             {
                 'action': 'clear_election',
@@ -335,15 +346,22 @@ class VoterAdminTest(TestCase):
             reverse('admin:core_election_changelist'),
             {
                 'action': 'clear_election',
+                'clear_elections': 'yes',
                 ACTION_CHECKBOX_NAME: [ e.pk for e in queryset ]
             },
             follow=True
         )
+
+        _voted_user0.refresh_from_db()
+        _voted_user1.refresh_from_db()
+
+        messages = list(response.context['messages'])
+
         self.assertEqual(Vote.objects.all().count(), 0)
         self.assertFalse(_voted_user0.voter_profile.has_voted)
         self.assertFalse(_voted_user1.voter_profile.has_voted)
         self.assertEqual(
-            get_messages(self._request)[0],
+            str(messages[0]),
             '2 elections were successfully cleared.'
         )
 
