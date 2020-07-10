@@ -267,7 +267,7 @@ class CandidateTest(TestCase):
 
     The party must be a foreign key and have the following settings:
         - to = 'CandidateParty'
-        - on_delete = models.PROTECT
+        - on_delete = models.SET_NULL
         - null = False
         - blank = False
         - default = None
@@ -276,7 +276,7 @@ class CandidateTest(TestCase):
 
     The position must be a foreign key and have the following settings:
         - to = 'CandidatePosition'
-        - on_delete = models.PROTECT
+        - on_delete = models.SET_NULL
         - null = False
         - blank = False
         - default = None
@@ -426,7 +426,7 @@ class CandidateTest(TestCase):
             self._candidate_party_field.remote_field,
             'on_delete'
         )
-        self.assertEquals(on_delete_policy, models.PROTECT)
+        self.assertEquals(on_delete_policy, models.SET_NULL)
 
     def test_party_fk_null(self):
         self.assertFalse(self._candidate_party_field.null)
@@ -465,7 +465,7 @@ class CandidateTest(TestCase):
             self._candidate_position_field.remote_field,
             'on_delete'
         )
-        self.assertEquals(on_delete_policy, models.PROTECT)
+        self.assertEquals(on_delete_policy, models.SET_NULL)
 
     def test_position_fk_null(self):
         self.assertFalse(self._candidate_position_field.null)

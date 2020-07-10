@@ -2,9 +2,13 @@ from django import forms
 from django.contrib import (
     admin, messages
 )
+from django.contrib.admin.utils import model_ngettext
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 from django.db.models import F
+from django.shortcuts import redirect
+from django.template.response import TemplateResponse
+from django.urls import reverse
 from django.utils.translation import ngettext
 
 from core.forms.admin import (
@@ -16,6 +20,8 @@ from core.models import (
     User, Batch, Section, VoterProfile, Candidate, CandidateParty,
     CandidatePosition, UserType, Election, Vote
 )
+
+from core.utils import AppSettings
 
 
 class BaseUserAdmin(UserAdmin):
@@ -180,20 +186,48 @@ class CandidatePositionAdmin(admin.ModelAdmin):
 class ElectionAdmin(admin.ModelAdmin):
     actions = [ 'clear_election' ]
 
-    def clear_election(self, request, queryset):
-        num_elections = queryset.count()
-        for election in queryset:
-            Vote.objects.filter(election=election).delete()
-            voter_profiles = VoterProfile.objects.filter(
-                batch__election=election
-            )
-            voter_profiles.update(has_voted=False)
+    def clear_election(self, request, queryset=None):
+        # This is partially based on:
+        #     https://github.com/django/django/blob/
+        #             958c7b301ead79974db8edd5b9c6588a10a28ae7/
+        #             django/contrib/admin/actions.py
+        if request.method == 'POST' and 'post' in request.POST:
+            num_elections = queryset.count()
+            for election in queryset:
+                Vote.objects.filter(election=election).delete()
+                voter_profiles = VoterProfile.objects.filter(
+                    batch__election=election
+                )
+                voter_profiles.update(has_voted=False)
 
-        self.message_user(request, ngettext(
-            '%d election was successfully cleared.',
-            '%d elections were successfully cleared.',
-            num_elections,
-        ) % num_elections, messages.SUCCESS)
+            self.message_user(request, ngettext(
+                '%d election was successfully cleared.',
+                '%d elections were successfully cleared.',
+                num_elections,
+            ) % num_elections, messages.SUCCESS)
+        else:
+            opts = self.model._meta
+            objects_name = model_ngettext(queryset)
+
+            context = {
+                **self.admin_site.each_context(request),
+                'title': 'Are you sure?',
+                'objects_name': str(objects_name),
+                'queryset': queryset,
+                'opts': opts,
+                'action_checkbox_name': admin.helpers.ACTION_CHECKBOX_NAME,
+                'media': self.media,
+            }
+
+            _template_name = AppSettings().get('template', default='default')
+            template_name = '{}/admin/clear_election_action.html'.format(
+                _template_name
+            )
+            return TemplateResponse(
+                request,
+                template_name,
+                context
+            )
 
     clear_election.short_description = "Clear votes in selected elections"
 

@@ -1,5 +1,6 @@
 from django.urls import path
 
+from core.admin import ElectionAdmin
 from core.views.admin.admin import (
     CandidateUserAutoCompleteView,
     CandidatePartyAutoCompleteView,

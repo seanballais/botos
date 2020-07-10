@@ -140,8 +140,8 @@ class Candidate(Base):
     )
     party = models.ForeignKey(
         CandidateParty,
-        on_delete=models.PROTECT,
-        null=False,
+        on_delete=models.SET_NULL,
+        null=True,
         blank=False,
         default=None,
         unique=False,
@@ -149,8 +149,8 @@ class Candidate(Base):
     )
     position = models.ForeignKey(
         CandidatePosition,
-        on_delete=models.PROTECT,
-        null=False,
+        on_delete=models.SET_NULL,
+        null=True,
         blank=False,
         default=None,
         unique=False,
