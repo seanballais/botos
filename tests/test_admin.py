@@ -2,6 +2,8 @@
 #     https://www.argpar.se/posts/programming/testing-django-admin/
 import json
 
+from bs4 import BeautifulSoup
+
 from django import forms
 from django.contrib.admin import ACTION_CHECKBOX_NAME
 from django.contrib.admin.sites import AdminSite
@@ -98,272 +100,6 @@ class VoterAdminTest(TestCase):
         request_factory = RequestFactory()
         cls._request = request_factory.get('/admin')
         cls._request.user = MockSuperUser()
-
-    def test_clear_election_action(self):
-        _admin = User.objects.create(
-            username='admin',
-            type=UserType.ADMIN
-        )
-        _admin.set_password('root')
-        _admin.save()
-
-        self.client.login(username='admin', password='root')
-
-        _election0 = Election.objects.create(name='Election 0')
-
-        _batch0 = Batch.objects.create(year=0, election=_election0)
-        _section0 = Section.objects.create(section_name='Section 0')
-
-        _voted_user0 = User.objects.create(
-            username='pedro',
-            type=UserType.VOTER
-        )
-        _voted_user0.set_password('pendoko')
-        _voted_user0.save()
-
-        VoterProfile.objects.create(
-            user=_voted_user0,
-            has_voted=True,
-            batch=_batch0,
-            section=_section0
-        )
-
-        _party0 = CandidateParty.objects.create(
-            party_name='Awesome Party 0',
-            election=_election0
-        )
-        _position0 = CandidatePosition.objects.create(
-            position_name='Amazing Position 0',
-            position_level=0,
-            max_num_selected_candidates=2,
-            election=_election0
-        )
-        _candidate0 = Candidate.objects.create(
-            user=_voted_user0,
-            party=_party0,
-            position=_position0,
-            election=_election0
-        )
-
-        Vote.objects.create(
-            user=_voted_user0,
-            candidate=_candidate0,
-            election=_election0
-        )
-
-        _election1 = Election.objects.create(name='Election 1')
-
-        _batch1 = Batch.objects.create(year=1, election=_election1)
-        _section1 = Section.objects.create(section_name='Section 1')
-
-        _voted_user1 = User.objects.create(
-            username='pedro1',
-            type=UserType.VOTER
-        )
-        _voted_user1.set_password('pendoko1')
-        _voted_user1.save()
-
-        VoterProfile.objects.create(
-            user=_voted_user1,
-            has_voted=True,
-            batch=_batch1,
-            section=_section1
-        )
-
-        _party1 = CandidateParty.objects.create(
-            party_name='Awesome Party 1',
-            election=_election1
-        )
-        _position1 = CandidatePosition.objects.create(
-            position_name='Amazing Position 1',
-            position_level=1,
-            max_num_selected_candidates=1,
-            election=_election1
-        )
-        _candidate1 = Candidate.objects.create(
-            user=_voted_user1,
-            party=_party1,
-            position=_position1,
-            election=_election1
-        )
-
-        Vote.objects.create(
-            user=_voted_user1,
-            candidate=_candidate1,
-            election=_election1
-        )
-
-        self.assertEqual(Vote.objects.all().count(), 2)
-
-        queryset = Election.objects.filter(name='Election 0')
-        response = self.client.post(
-            reverse('admin:core_election_changelist'),
-            {
-                'action': 'clear_election',
-                ACTION_CHECKBOX_NAME: [ e.pk for e in queryset ]
-            },
-            follow=True
-        )
-        _template_name = AppSettings().get('template', default='default')
-        template_name = '{}/admin/clear_election_action.html'.format(
-            _template_name
-        )
-        self.assertTemplateUsed(response, template_name)
-
-        response = self.client.post(
-            reverse('admin:core_election_changelist'),
-            {
-                'action': 'clear_election',
-                'clear_elections': 'yes',
-                ACTION_CHECKBOX_NAME: [ e.pk for e in queryset ]
-            },
-            follow=True
-        )
-
-        _voted_user0.refresh_from_db()
-        _voted_user1.refresh_from_db()
-
-        messages = list(response.context['messages'])
-
-        self.assertEqual(Vote.objects.all().count(), 1)
-        self.assertFalse(_voted_user0.voter_profile.has_voted)
-        self.assertTrue(_voted_user1.voter_profile.has_voted)
-        self.assertEqual(
-            str(messages[0]),
-            '1 election was successfully cleared.'
-        )
-
-    def test_clear_election_action_multiple_elections(self):
-        _admin = User.objects.create(
-            username='admin',
-            type=UserType.ADMIN
-        )
-        _admin.set_password('root')
-        _admin.save()
-
-        self.client.login(username='admin', password='root')
-
-        _election0 = Election.objects.create(name='Election 0')
-
-        _batch0 = Batch.objects.create(year=0, election=_election0)
-        _section0 = Section.objects.create(section_name='Section 0')
-
-        _voted_user0 = User.objects.create(
-            username='pedro',
-            type=UserType.VOTER
-        )
-        _voted_user0.set_password('pendoko')
-        _voted_user0.save()
-
-        VoterProfile.objects.create(
-            user=_voted_user0,
-            has_voted=True,
-            batch=_batch0,
-            section=_section0
-        )
-
-        _party0 = CandidateParty.objects.create(
-            party_name='Awesome Party 0',
-            election=_election0
-        )
-        _position0 = CandidatePosition.objects.create(
-            position_name='Amazing Position 0',
-            position_level=0,
-            max_num_selected_candidates=2,
-            election=_election0
-        )
-        _candidate0 = Candidate.objects.create(
-            user=_voted_user0,
-            party=_party0,
-            position=_position0,
-            election=_election0
-        )
-
-        Vote.objects.create(
-            user=_voted_user0,
-            candidate=_candidate0,
-            election=_election0
-        )
-
-        _election1 = Election.objects.create(name='Election 1')
-
-        _batch1 = Batch.objects.create(year=1, election=_election1)
-        _section1 = Section.objects.create(section_name='Section 1')
-
-        _voted_user1 = User.objects.create(
-            username='pedro1',
-            type=UserType.VOTER
-        )
-        _voted_user1.set_password('pendoko1')
-        _voted_user1.save()
-
-        VoterProfile.objects.create(
-            user=_voted_user1,
-            has_voted=True,
-            batch=_batch1,
-            section=_section1
-        )
-
-        _party1 = CandidateParty.objects.create(
-            party_name='Awesome Party 1',
-            election=_election1
-        )
-        _position1 = CandidatePosition.objects.create(
-            position_name='Amazing Position 1',
-            position_level=1,
-            max_num_selected_candidates=1,
-            election=_election1
-        )
-        _candidate1 = Candidate.objects.create(
-            user=_voted_user1,
-            party=_party1,
-            position=_position1,
-            election=_election1
-        )
-
-        Vote.objects.create(
-            user=_voted_user1,
-            candidate=_candidate1,
-            election=_election1
-        )
-
-        queryset = Election.objects.all()
-        response = self.client.post(
-            reverse('admin:core_election_changelist'),
-            {
-                'action': 'clear_election',
-                ACTION_CHECKBOX_NAME: [ e.pk for e in queryset ]
-            },
-            follow=True
-        )
-        _template_name = AppSettings().get('template', default='default')
-        template_name = '{}/admin/clear_election_action.html'.format(
-            _template_name
-        )
-        self.assertTemplateUsed(response, template_name)
-
-        response = self.client.post(
-            reverse('admin:core_election_changelist'),
-            {
-                'action': 'clear_election',
-                'clear_elections': 'yes',
-                ACTION_CHECKBOX_NAME: [ e.pk for e in queryset ]
-            },
-            follow=True
-        )
-
-        _voted_user0.refresh_from_db()
-        _voted_user1.refresh_from_db()
-
-        messages = list(response.context['messages'])
-
-        self.assertEqual(Vote.objects.all().count(), 0)
-        self.assertFalse(_voted_user0.voter_profile.has_voted)
-        self.assertFalse(_voted_user1.voter_profile.has_voted)
-        self.assertEqual(
-            str(messages[0]),
-            '2 elections were successfully cleared.'
-        )
 
     def test_queryset_returns_with_voters_only(self):
         User.objects.create(username='admin', type=UserType.ADMIN)
@@ -504,6 +240,442 @@ class VoterAdminTest(TestCase):
 
         admin = VoterAdmin(model=Voter, admin_site=AdminSite())
         self.assertEqual(admin.election(user), 'Election')
+
+
+class ElectionAdminTest(TestCase):
+    """
+    Tests the election admin.
+    """
+    def test_clear_election_action(self):
+        _admin = User.objects.create(
+            username='admin',
+            type=UserType.ADMIN
+        )
+        _admin.set_password('root')
+        _admin.save()
+
+        self.client.login(username='admin', password='root')
+
+        _election0 = Election.objects.create(name='Election 0')
+
+        _batch0 = Batch.objects.create(year=0, election=_election0)
+        _section0 = Section.objects.create(section_name='Section 0')
+
+        _voted_user0 = User.objects.create(
+            username='pedro',
+            type=UserType.VOTER
+        )
+        _voted_user0.set_password('pendoko')
+        _voted_user0.save()
+
+        VoterProfile.objects.create(
+            user=_voted_user0,
+            has_voted=True,
+            batch=_batch0,
+            section=_section0
+        )
+
+        _party0 = CandidateParty.objects.create(
+            party_name='Awesome Party 0',
+            election=_election0
+        )
+        _position0 = CandidatePosition.objects.create(
+            position_name='Amazing Position 0',
+            position_level=0,
+            max_num_selected_candidates=2,
+            election=_election0
+        )
+        _candidate0 = Candidate.objects.create(
+            user=_voted_user0,
+            party=_party0,
+            position=_position0,
+            election=_election0
+        )
+
+        Vote.objects.create(
+            user=_voted_user0,
+            candidate=_candidate0,
+            election=_election0
+        )
+
+        _election1 = Election.objects.create(name='Election 1')
+
+        _batch1 = Batch.objects.create(year=1, election=_election1)
+        _section1 = Section.objects.create(section_name='Section 1')
+
+        _voted_user1 = User.objects.create(
+            username='pedro1',
+            type=UserType.VOTER
+        )
+        _voted_user1.set_password('pendoko1')
+        _voted_user1.save()
+
+        VoterProfile.objects.create(
+            user=_voted_user1,
+            has_voted=True,
+            batch=_batch1,
+            section=_section1
+        )
+
+        _party1 = CandidateParty.objects.create(
+            party_name='Awesome Party 1',
+            election=_election1
+        )
+        _position1 = CandidatePosition.objects.create(
+            position_name='Amazing Position 1',
+            position_level=1,
+            max_num_selected_candidates=1,
+            election=_election1
+        )
+        _candidate1 = Candidate.objects.create(
+            user=_voted_user1,
+            party=_party1,
+            position=_position1,
+            election=_election1
+        )
+
+        Vote.objects.create(
+            user=_voted_user1,
+            candidate=_candidate1,
+            election=_election1
+        )
+
+        self.assertEqual(Vote.objects.all().count(), 2)
+
+        queryset = Election.objects.filter(name='Election 0')
+        response = self.client.post(
+            reverse('admin:core_election_changelist'),
+            {
+                'action': 'clear_election',
+                ACTION_CHECKBOX_NAME: [ e.pk for e in queryset ]
+            },
+            follow=True
+        )
+        _template_name = AppSettings().get('template', default='default')
+        template_name = '{}/admin/clear_election_action.html'.format(
+            _template_name
+        )
+        self.assertTemplateUsed(response, template_name)
+
+        response = self.client.post(
+            reverse('admin:core_election_changelist'),
+            {
+                'action': 'clear_election',
+                'clear_elections': 'yes',
+                ACTION_CHECKBOX_NAME: [ e.pk for e in queryset ]
+            },
+            follow=True
+        )
+
+        _voted_user0.refresh_from_db()
+        _voted_user1.refresh_from_db()
+
+        messages = list(response.context['messages'])
+
+        self.assertEqual(Vote.objects.all().count(), 1)
+        self.assertFalse(_voted_user0.voter_profile.has_voted)
+        self.assertTrue(_voted_user1.voter_profile.has_voted)
+        self.assertEqual(
+            str(messages[0]),
+            '1 election was cleared successfully.'
+        )
+
+    def test_clear_election_action_multiple_elections(self):
+        _admin = User.objects.create(
+            username='admin',
+            type=UserType.ADMIN
+        )
+        _admin.set_password('root')
+        _admin.save()
+
+        self.client.login(username='admin', password='root')
+
+        _election0 = Election.objects.create(name='Election 0')
+
+        _batch0 = Batch.objects.create(year=0, election=_election0)
+        _section0 = Section.objects.create(section_name='Section 0')
+
+        _voted_user0 = User.objects.create(
+            username='pedro',
+            type=UserType.VOTER
+        )
+        _voted_user0.set_password('pendoko')
+        _voted_user0.save()
+
+        VoterProfile.objects.create(
+            user=_voted_user0,
+            has_voted=True,
+            batch=_batch0,
+            section=_section0
+        )
+
+        _party0 = CandidateParty.objects.create(
+            party_name='Awesome Party 0',
+            election=_election0
+        )
+        _position0 = CandidatePosition.objects.create(
+            position_name='Amazing Position 0',
+            position_level=0,
+            max_num_selected_candidates=2,
+            election=_election0
+        )
+        _candidate0 = Candidate.objects.create(
+            user=_voted_user0,
+            party=_party0,
+            position=_position0,
+            election=_election0
+        )
+
+        Vote.objects.create(
+            user=_voted_user0,
+            candidate=_candidate0,
+            election=_election0
+        )
+
+        _election1 = Election.objects.create(name='Election 1')
+
+        _batch1 = Batch.objects.create(year=1, election=_election1)
+        _section1 = Section.objects.create(section_name='Section 1')
+
+        _voted_user1 = User.objects.create(
+            username='pedro1',
+            type=UserType.VOTER
+        )
+        _voted_user1.set_password('pendoko1')
+        _voted_user1.save()
+
+        VoterProfile.objects.create(
+            user=_voted_user1,
+            has_voted=True,
+            batch=_batch1,
+            section=_section1
+        )
+
+        _party1 = CandidateParty.objects.create(
+            party_name='Awesome Party 1',
+            election=_election1
+        )
+        _position1 = CandidatePosition.objects.create(
+            position_name='Amazing Position 1',
+            position_level=1,
+            max_num_selected_candidates=1,
+            election=_election1
+        )
+        _candidate1 = Candidate.objects.create(
+            user=_voted_user1,
+            party=_party1,
+            position=_position1,
+            election=_election1
+        )
+
+        Vote.objects.create(
+            user=_voted_user1,
+            candidate=_candidate1,
+            election=_election1
+        )
+
+        queryset = Election.objects.all()
+        response = self.client.post(
+            reverse('admin:core_election_changelist'),
+            {
+                'action': 'clear_election',
+                ACTION_CHECKBOX_NAME: [ e.pk for e in queryset ]
+            },
+            follow=True
+        )
+        _template_name = AppSettings().get('template', default='default')
+        template_name = '{}/admin/clear_election_action.html'.format(
+            _template_name
+        )
+        self.assertTemplateUsed(response, template_name)
+
+        response = self.client.post(
+            reverse('admin:core_election_changelist'),
+            {
+                'action': 'clear_election',
+                'clear_elections': 'yes',
+                ACTION_CHECKBOX_NAME: [ e.pk for e in queryset ]
+            },
+            follow=True
+        )
+
+        _voted_user0.refresh_from_db()
+        _voted_user1.refresh_from_db()
+
+        messages = list(response.context['messages'])
+
+        self.assertEqual(Vote.objects.all().count(), 0)
+        self.assertFalse(_voted_user0.voter_profile.has_voted)
+        self.assertFalse(_voted_user1.voter_profile.has_voted)
+        self.assertEqual(
+            str(messages[0]),
+            '2 elections were cleared successfully.'
+        )
+
+    def test_election_change_form_not_clear_election_action(self):
+        _election = Election.objects.create(name='Election blep')
+
+        change_url = reverse(
+            'admin:core_election_change',
+            args=(_election.id,)
+        )
+        response = self.client.post(
+            change_url,
+            {
+                "name": 'Election',
+                "_save": 'Save'
+            }
+            follow=True
+        )
+
+        _election.refresh_from_db()
+
+        self.assertEqual(_election.name, 'Election')
+
+    def test_election_change_form_clear_election_action(self):
+        _admin = User.objects.create(
+            username='admin',
+            type=UserType.ADMIN
+        )
+        _admin.set_password('root')
+        _admin.save()
+
+        self.client.login(username='admin', password='root')
+
+        _election0 = Election.objects.create(name='Election 0')
+
+        _batch0 = Batch.objects.create(year=0, election=_election0)
+        _section0 = Section.objects.create(section_name='Section 0')
+
+        _voted_user0 = User.objects.create(
+            username='pedro',
+            type=UserType.VOTER
+        )
+        _voted_user0.set_password('pendoko')
+        _voted_user0.save()
+
+        VoterProfile.objects.create(
+            user=_voted_user0,
+            has_voted=True,
+            batch=_batch0,
+            section=_section0
+        )
+
+        _party0 = CandidateParty.objects.create(
+            party_name='Awesome Party 0',
+            election=_election0
+        )
+        _position0 = CandidatePosition.objects.create(
+            position_name='Amazing Position 0',
+            position_level=0,
+            max_num_selected_candidates=2,
+            election=_election0
+        )
+        _candidate0 = Candidate.objects.create(
+            user=_voted_user0,
+            party=_party0,
+            position=_position0,
+            election=_election0
+        )
+
+        Vote.objects.create(
+            user=_voted_user0,
+            candidate=_candidate0,
+            election=_election0
+        )
+
+        _election1 = Election.objects.create(name='Election 1')
+
+        _batch1 = Batch.objects.create(year=1, election=_election1)
+        _section1 = Section.objects.create(section_name='Section 1')
+
+        _voted_user1 = User.objects.create(
+            username='pedro1',
+            type=UserType.VOTER
+        )
+        _voted_user1.set_password('pendoko1')
+        _voted_user1.save()
+
+        VoterProfile.objects.create(
+            user=_voted_user1,
+            has_voted=True,
+            batch=_batch1,
+            section=_section1
+        )
+
+        _party1 = CandidateParty.objects.create(
+            party_name='Awesome Party 1',
+            election=_election1
+        )
+        _position1 = CandidatePosition.objects.create(
+            position_name='Amazing Position 1',
+            position_level=1,
+            max_num_selected_candidates=1,
+            election=_election1
+        )
+        _candidate1 = Candidate.objects.create(
+            user=_voted_user1,
+            party=_party1,
+            position=_position1,
+            election=_election1
+        )
+
+        Vote.objects.create(
+            user=_voted_user1,
+            candidate=_candidate1,
+            election=_election1
+        )
+
+        self.assertEqual(Vote.objects.all().count(), 2)
+
+        change_url = reverse(
+            'admin:core_election_change',
+            args=(_election.id,)
+        )
+        response = self.client.post(
+            change_url,
+            {
+                'name': 'Election 0',
+                '_clear_election': 'Clear Votes'
+            },
+            follow=True
+        )
+
+        _template_name = AppSettings().get('template', default='default')
+        template_name = '{}/admin/clear_election_action.html'.format(
+            _template_name
+        )
+        self.assertTemplateUsed(response, template_name)
+
+        view_html_soup = BeautifulSoup(str(response.content), 'html.parser')
+        form = view_html_soup.find('form', method='post')
+        redirect_url = form.find('input', name="redirect_url").get('value')
+
+        self.assertEqual(redirect_url, change_url)
+
+        response = self.client.post(
+            reverse('admin:core_election_changelist'),
+            {
+                'action': 'clear_election',
+                'clear_elections': 'yes',
+                ACTION_CHECKBOX_NAME: [ e.pk for e in queryset ]
+            },
+            follow=True
+        )
+
+        _voted_user0.refresh_from_db()
+        _voted_user1.refresh_from_db()
+
+        messages = list(response.context['messages'])
+
+        self.assertEqual(Vote.objects.all().count(), 1)
+        self.assertFalse(_voted_user0.voter_profile.has_voted)
+        self.assertTrue(_voted_user1.voter_profile.has_voted)
+        self.assertRedirects(response, change_url)
+        self.assertEqual(
+            str(messages[0]),
+            'The election "Election 0" was cleared successfully.'
+        )
 
 
 class AdminUserProxyUserTest(TestCase):

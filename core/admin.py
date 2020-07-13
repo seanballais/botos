@@ -1,3 +1,5 @@
+import urllib
+
 from django import forms
 from django.contrib import (
     admin, messages
@@ -183,30 +185,37 @@ class CandidatePositionAdmin(admin.ModelAdmin):
     )
 
 
+def _clear_election(queryset):
+    num_elections = queryset.count()
+    for election in queryset:
+        Vote.objects.filter(election=election).delete()
+        voter_profiles = VoterProfile.objects.filter(
+            batch__election=election
+        )
+        voter_profiles.update(has_voted=False)
+
+
 class ElectionAdmin(admin.ModelAdmin):
     actions = [ 'clear_election' ]
 
-    def clear_election(self, request, queryset=None):
+    def clear_election(self, request, queryset):
         # This is partially based on:
         #     https://github.com/django/django/blob/
         #             958c7b301ead79974db8edd5b9c6588a10a28ae7/
         #             django/contrib/admin/actions.py
         if request.method == 'POST' and 'clear_elections' in request.POST:
-            num_elections = queryset.count()
-            for election in queryset:
-                Vote.objects.filter(election=election).delete()
-                voter_profiles = VoterProfile.objects.filter(
-                    batch__election=election
-                )
-                voter_profiles.update(has_voted=False)
+            _clear_election(queryset, request)
 
-            self.message_user(request, ngettext(
-                '%d election was successfully cleared.',
-                '%d elections were successfully cleared.',
-                num_elections,
-            ) % num_elections, messages.SUCCESS)
+            messages.success(
+                request,
+                ngettext(
+                    '%d election was successfully cleared.',
+                    '%d elections were successfully cleared.',
+                    num_elections
+                ) % num_elections
+            )
         else:
-            opts = self.model._meta
+            opts = Election._meta
             objects_name = model_ngettext(queryset)
 
             context = {
@@ -230,6 +239,19 @@ class ElectionAdmin(admin.ModelAdmin):
             )
 
     clear_election.short_description = "Clear votes in selected elections"
+
+    # TOOD: Create a view just for clearing the votes from an election.
+
+    def render_change_form(self, request, context, *args, **kwargs):
+        print(context)
+        context.update({
+            'show_clear_election': True,
+            'clear_votes_url': urllib.parse.urljoin(
+                reverse('admin:core_election_changelist'),
+                '{}/clear-votes'.format(context['object_id'])
+            )
+        })
+        return super().render_change_form(request, context, *args, **kwargs)
 
 
 admin.site.register(AdminUser, AdminUserAdmin)

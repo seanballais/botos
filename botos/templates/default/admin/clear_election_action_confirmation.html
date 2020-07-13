@@ -1,0 +1,41 @@
+{% extends "admin/base_site.html" %}
+
+{% comment "Credits" %}
+This templates is based on the following:
+    - https://github.com/django/django/blob/be648d1c457a13af27bc310568c95ab6f08610dd/django/contrib/admin/templates/admin/delete_confirmation.html
+    - https://github.com/django/django/blob/be648d1c457a13af27bc310568c95ab6f08610dd/django/contrib/admin/templates/admin/delete_selected_confirmation.html
+{% endcomment %}
+
+{% load i18n admin_urls static %}
+
+{% block extrahead %}
+    {{ block.super }}
+    {{ media }}
+    <script src="{% static 'admin/js/cancel.js' %}" async></script>
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} delete-confirmation{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+&rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+&rsaquo; <a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+&rsaquo; <a href="{% url opts|admin_urlname:'change' obj.pk %}">{{ obj.name|capfirst }}</a>
+&rsaquo; {% trans 'Clear election' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<p>{% blocktrans %}Are you sure you want to clear the selected election, {{ obj.name|capfirst }}? Remember that clearing an election will remove all the votes in the election.{% endblocktrans %}</p>
+<form method="post">{% csrf_token %}
+    <div>
+        <input type="hidden" name="selected_election" value="{{ obj.pk }}">
+        <input type="hidden" name="clear_elections" value="yes">
+        {% if is_popup %}<input type="hidden" name="{{ is_popup_var }}" value="1">{% endif %}
+        {% if to_field %}<input type="hidden" name="{{ to_field_var }}" value="{{ to_field }}">{% endif %}
+        <input type="submit" value="{% trans 'Yes, I’m sure' %}">
+        <a href="#" class="button cancel-link">{% trans "No, take me back" %}</a>
+    </div>
+</form>
+{% endblock %}
