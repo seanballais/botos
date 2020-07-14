@@ -26,7 +26,7 @@ This templates is based on the following:
 {% endblock %}
 
 {% block content %}
-<p>{% blocktrans %}Are you sure you want to clear the selected {{ objects_name }}? Remember that clearing an election will remove all the votes in the election.{% endblocktrans %}</p>
+<p>{% blocktrans %}Are you sure you want to clear votes in the selected {{ objects_name }}? Remember that clearing an election will remove all the votes in the election.{% endblocktrans %}</p>
 <ul>
     {% for obj in queryset %}
     <li>{{ obj }}</li>

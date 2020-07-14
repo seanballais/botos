@@ -10,7 +10,9 @@ from django.contrib.auth.models import Group
 from django.db.models import F
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
-from django.urls import reverse
+from django.urls import (
+    path, reverse
+)
 from django.utils.translation import ngettext
 
 from core.forms.admin import (
@@ -22,8 +24,7 @@ from core.models import (
     User, Batch, Section, VoterProfile, Candidate, CandidateParty,
     CandidatePosition, UserType, Election, Vote
 )
-
-from core.utils import AppSettings
+from core.views.admin.admin import ClearElectionConfirmationView
 
 
 class BaseUserAdmin(UserAdmin):
@@ -185,18 +186,21 @@ class CandidatePositionAdmin(admin.ModelAdmin):
     )
 
 
-def _clear_election(queryset):
-    num_elections = queryset.count()
-    for election in queryset:
-        Vote.objects.filter(election=election).delete()
-        voter_profiles = VoterProfile.objects.filter(
-            batch__election=election
-        )
-        voter_profiles.update(has_voted=False)
-
-
 class ElectionAdmin(admin.ModelAdmin):
     actions = [ 'clear_election' ]
+    change_form_template = 'default/admin/election_change_form.html'
+
+    def get_urls(self):
+        urls = super().get_urls()
+        urls += [
+            path(
+                '<int:election_id>/clear_votes',
+                ClearElectionConfirmationView.as_view(),
+                name="core_election_clear_votes"
+            )
+        ]
+
+        return urls
 
     def clear_election(self, request, queryset):
         # This is partially based on:
@@ -204,13 +208,19 @@ class ElectionAdmin(admin.ModelAdmin):
         #             958c7b301ead79974db8edd5b9c6588a10a28ae7/
         #             django/contrib/admin/actions.py
         if request.method == 'POST' and 'clear_elections' in request.POST:
-            _clear_election(queryset, request)
+            num_elections = queryset.count()
+            for election in queryset:
+                Vote.objects.filter(election=election).delete()
+                voter_profiles = VoterProfile.objects.filter(
+                    batch__election=election
+                )
+                voter_profiles.update(has_voted=False)
 
             messages.success(
                 request,
                 ngettext(
-                    '%d election was successfully cleared.',
-                    '%d elections were successfully cleared.',
+                    'Votes in %d election were cleared successfully.',
+                    'Votes in %d elections were cleared successfully.',
                     num_elections
                 ) % num_elections
             )
@@ -228,10 +238,7 @@ class ElectionAdmin(admin.ModelAdmin):
                 'media': self.media,
             }
 
-            _template_name = AppSettings().get('template', default='default')
-            template_name = '{}/admin/clear_election_action.html'.format(
-                _template_name
-            )
+            template_name = 'default/admin/clear_election_action.html'
             return TemplateResponse(
                 request,
                 template_name,
@@ -240,16 +247,14 @@ class ElectionAdmin(admin.ModelAdmin):
 
     clear_election.short_description = "Clear votes in selected elections"
 
-    # TOOD: Create a view just for clearing the votes from an election.
-
     def render_change_form(self, request, context, *args, **kwargs):
-        print(context)
         context.update({
+            'show_save': True,
+            'show_delete_link': True,
             'show_clear_election': True,
-            'clear_votes_url': urllib.parse.urljoin(
-                reverse('admin:core_election_changelist'),
-                '{}/clear-votes'.format(context['object_id'])
-            )
+            'show_save_and_add_another': True,
+            'show_save_and_continue': True,
+            'election': kwargs['obj']
         })
         return super().render_change_form(request, context, *args, **kwargs)
 

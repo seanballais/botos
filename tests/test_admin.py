@@ -1,5 +1,6 @@
 # This test is partly based from:
 #     https://www.argpar.se/posts/programming/testing-django-admin/
+from urllib.parse import urljoin
 import json
 
 from bs4 import BeautifulSoup
@@ -22,8 +23,6 @@ from core.models import (
     User, Batch, Section, VoterProfile, UserType, Candidate, CandidateParty,
     CandidatePosition, Election, Vote
 )
-
-from core.utils import AppSettings
 
 
 class MockSuperUser:
@@ -246,7 +245,12 @@ class ElectionAdminTest(TestCase):
     """
     Tests the election admin.
     """
-    def test_clear_election_action(self):
+    @classmethod
+    def setUpTestData(cls):
+        request_factory = RequestFactory()
+        cls._request = request_factory.get('/admin')
+        cls._request.user = MockSuperUser()
+
         _admin = User.objects.create(
             username='admin',
             type=UserType.ADMIN
@@ -254,8 +258,10 @@ class ElectionAdminTest(TestCase):
         _admin.set_password('root')
         _admin.save()
 
+    def setUp(self):
         self.client.login(username='admin', password='root')
 
+    def test_clear_election_action(self):
         _election0 = Election.objects.create(name='Election 0')
 
         _batch0 = Batch.objects.create(year=0, election=_election0)
@@ -351,10 +357,7 @@ class ElectionAdminTest(TestCase):
             },
             follow=True
         )
-        _template_name = AppSettings().get('template', default='default')
-        template_name = '{}/admin/clear_election_action.html'.format(
-            _template_name
-        )
+        template_name = 'default/admin/clear_election_action.html'
         self.assertTemplateUsed(response, template_name)
 
         response = self.client.post(
@@ -377,19 +380,10 @@ class ElectionAdminTest(TestCase):
         self.assertTrue(_voted_user1.voter_profile.has_voted)
         self.assertEqual(
             str(messages[0]),
-            '1 election was cleared successfully.'
+            'Votes in 1 election were cleared successfully.'
         )
 
     def test_clear_election_action_multiple_elections(self):
-        _admin = User.objects.create(
-            username='admin',
-            type=UserType.ADMIN
-        )
-        _admin.set_password('root')
-        _admin.save()
-
-        self.client.login(username='admin', password='root')
-
         _election0 = Election.objects.create(name='Election 0')
 
         _batch0 = Batch.objects.create(year=0, election=_election0)
@@ -483,10 +477,7 @@ class ElectionAdminTest(TestCase):
             },
             follow=True
         )
-        _template_name = AppSettings().get('template', default='default')
-        template_name = '{}/admin/clear_election_action.html'.format(
-            _template_name
-        )
+        template_name = 'default/admin/clear_election_action.html'
         self.assertTemplateUsed(response, template_name)
 
         response = self.client.post(
@@ -509,39 +500,152 @@ class ElectionAdminTest(TestCase):
         self.assertFalse(_voted_user1.voter_profile.has_voted)
         self.assertEqual(
             str(messages[0]),
-            '2 elections were cleared successfully.'
+            'Votes in 2 elections were cleared successfully.'
         )
 
-    def test_election_change_form_not_clear_election_action(self):
-        _election = Election.objects.create(name='Election blep')
+    def test_election_clear_election_confirmation_view_rejects_anonymous(self):
+        self.client.logout()
 
-        change_url = reverse(
-            'admin:core_election_change',
-            args=(_election.id,)
-        )
-        response = self.client.post(
-            change_url,
-            {
-                "name": 'Election',
-                "_save": 'Save'
-            }
+        _election = Election.objects.create(name='Election 0')
+
+        response = self.client.get(
+            reverse('admin:core_election_clear_votes', args=(_election.id,)),
             follow=True
         )
 
-        _election.refresh_from_db()
-
-        self.assertEqual(_election.name, 'Election')
-
-    def test_election_change_form_clear_election_action(self):
-        _admin = User.objects.create(
-            username='admin',
-            type=UserType.ADMIN
+        index_url = urljoin(
+            reverse('index'),
+            '?next={}'.format(
+                reverse(
+                    'admin:core_election_clear_votes',
+                    args=(_election.id,)
+                )
+            )
         )
-        _admin.set_password('root')
-        _admin.save()
+        self.assertRedirects(response, index_url)
 
-        self.client.login(username='admin', password='root')
+    def test_election_clear_election_confirmation_view_rejects_voters(self):
+        _election = Election.objects.create(name='Election 0')
 
+        _batch0 = Batch.objects.create(year=0, election=_election)
+        _section0 = Section.objects.create(section_name='Section 0')
+
+        _voted_user0 = User.objects.create(
+            username='pedro',
+            type=UserType.VOTER
+        )
+        _voted_user0.set_password('pendoko')
+        _voted_user0.save()
+
+        VoterProfile.objects.create(
+            user=_voted_user0,
+            has_voted=True,
+            batch=_batch0,
+            section=_section0
+        )
+
+        self.client.login(username='pedro', password='pendoko')
+        response = self.client.get(
+            reverse('admin:core_election_clear_votes', args=(_election.id,)),
+            follow=True
+        )
+        index_url = urljoin(
+            reverse('index'),
+            '?next={}'.format(
+                reverse(
+                    'admin:core_election_clear_votes',
+                    args=(_election.id,)
+                )
+            )
+        )
+        self.assertRedirects(response, index_url)    
+
+    def test_election_clear_election_confirmation_view_get_template(self):
+        _election = Election.objects.create(name='Election 0')
+
+        response = self.client.get(
+            reverse('admin:core_election_clear_votes', args=(_election.id,)),
+            follow=True
+        )
+
+        template_name = 'default/admin/clear_election_action_confirmation.html'
+        self.assertTemplateUsed(response, template_name)
+        self.assertEqual(response.context['election'], _election)
+
+    def test_election_clear_election_confirmation_view_get_invalid_id(self):
+        response = self.client.get(
+            reverse('admin:core_election_clear_votes', args=(1000,)),
+            follow=True
+        )
+
+        messages = list(response.context['messages'])
+        self.assertEqual(
+            str(messages[0]),
+            'Attempted to clear votes in a non-existent election.'
+        )
+        self.assertRedirects(
+            response,
+            reverse('admin:core_election_changelist')
+        )
+
+    def test_election_clear_election_confirmation_post_rejects_anonymous(self):
+        self.client.logout()
+
+        _election = Election.objects.create(name='Election 0')
+
+        response = self.client.post(
+            reverse('admin:core_election_clear_votes', args=(_election.id,)),
+            follow=True
+        )
+
+        index_url = urljoin(
+            reverse('index'),
+            '?next={}'.format(
+                reverse(
+                    'admin:core_election_clear_votes',
+                    args=(_election.id,)
+                )
+            )
+        )
+        self.assertRedirects(response, index_url)
+
+    def test_election_clear_election_confirmation_post_rejects_voters(self):
+        _election = Election.objects.create(name='Election 0')
+
+        _batch0 = Batch.objects.create(year=0, election=_election)
+        _section0 = Section.objects.create(section_name='Section 0')
+
+        _voted_user0 = User.objects.create(
+            username='pedro',
+            type=UserType.VOTER
+        )
+        _voted_user0.set_password('pendoko')
+        _voted_user0.save()
+
+        VoterProfile.objects.create(
+            user=_voted_user0,
+            has_voted=True,
+            batch=_batch0,
+            section=_section0
+        )
+
+        self.client.login(username='pedro', password='pendoko')
+        response = self.client.get(
+            reverse('admin:core_election_clear_votes', args=(_election.id,)),
+            follow=True
+        )
+        index_url = urljoin(
+            reverse('index'),
+            '?next={}'.format(
+                reverse(
+                    'admin:core_election_clear_votes',
+                    args=(_election.id,)
+                )
+            )
+        )
+        self.assertRedirects(response, index_url)      
+
+    def test_election_clear_election_confirmation_view_post_valid_id(self):
         _election0 = Election.objects.create(name='Election 0')
 
         _batch0 = Batch.objects.create(year=0, election=_election0)
@@ -626,56 +730,93 @@ class ElectionAdminTest(TestCase):
             election=_election1
         )
 
-        self.assertEqual(Vote.objects.all().count(), 2)
-
-        change_url = reverse(
-            'admin:core_election_change',
-            args=(_election.id,)
-        )
         response = self.client.post(
-            change_url,
-            {
-                'name': 'Election 0',
-                '_clear_election': 'Clear Votes'
-            },
-            follow=True
-        )
-
-        _template_name = AppSettings().get('template', default='default')
-        template_name = '{}/admin/clear_election_action.html'.format(
-            _template_name
-        )
-        self.assertTemplateUsed(response, template_name)
-
-        view_html_soup = BeautifulSoup(str(response.content), 'html.parser')
-        form = view_html_soup.find('form', method='post')
-        redirect_url = form.find('input', name="redirect_url").get('value')
-
-        self.assertEqual(redirect_url, change_url)
-
-        response = self.client.post(
-            reverse('admin:core_election_changelist'),
-            {
-                'action': 'clear_election',
-                'clear_elections': 'yes',
-                ACTION_CHECKBOX_NAME: [ e.pk for e in queryset ]
-            },
+            reverse('admin:core_election_clear_votes', args=(_election0.id,)),
+            { 'clear_election': 'yes' },
             follow=True
         )
 
         _voted_user0.refresh_from_db()
         _voted_user1.refresh_from_db()
 
-        messages = list(response.context['messages'])
-
         self.assertEqual(Vote.objects.all().count(), 1)
         self.assertFalse(_voted_user0.voter_profile.has_voted)
         self.assertTrue(_voted_user1.voter_profile.has_voted)
-        self.assertRedirects(response, change_url)
+
+        messages = list(response.context['messages'])
         self.assertEqual(
             str(messages[0]),
-            'The election "Election 0" was cleared successfully.'
+            'Votes in \'Election 0\' were cleared successfully.'
         )
+
+        change_url = reverse(
+            'admin:core_election_change',
+            args=(_election0.id,)
+        )
+        self.assertRedirects(response, change_url)
+
+    def test_election_clear_election_confirmation_view_post_invalid_id(self):
+        response = self.client.post(
+            reverse('admin:core_election_clear_votes', args=(10000000,)),
+            { 'clear_election': 'yes' },
+            follow=True
+        )
+
+        messages = list(response.context['messages'])
+        self.assertEqual(
+            str(messages[0]),
+            'Attempted to clear votes in a non-existent election.'
+        )
+        self.assertRedirects(
+            response,
+            reverse('admin:core_election_changelist')
+        )
+
+    def test_election_clear_election_confirmation_view_post_no_yes(self):
+        _election0 = Election.objects.create(name='Election 0')
+
+        response = self.client.post(
+            reverse('admin:core_election_clear_votes', args=(_election0.id,)),
+            follow=True
+        )
+
+        messages = list(response.context['messages'])
+        self.assertEqual(len(messages), 0)
+        change_url = reverse(
+            'admin:core_election_change',
+            args=(_election0.id,)
+        )
+        self.assertRedirects(response, change_url)
+
+    def test_election_admin_render_change_form(self):
+        admin = ElectionAdmin(model=Election, admin_site=AdminSite())
+
+        _election0 = Election.objects.create(name='Election 0')
+
+        class ElectionForm(forms.ModelForm):
+            class Meta:
+                model = Election
+                fields = ( '__all__' )
+
+        class MockElectionForm():
+            form = ElectionForm(initial={ 'name': 'Election 0' })
+
+        mock_form = MockElectionForm()
+
+        response = admin.render_change_form(
+            request=self._request,
+            context={
+                'inline_admin_formsets': [],
+                'adminform': mock_form
+            },
+            obj=_election0
+        )
+        self.assertTrue(response.context_data['show_save'])
+        self.assertTrue(response.context_data['show_delete_link'])
+        self.assertTrue(response.context_data['show_clear_election'])
+        self.assertTrue(response.context_data['show_save_and_add_another'])
+        self.assertTrue(response.context_data['show_save_and_continue'])
+        self.assertEqual(response.context_data['election'], _election0)
 
 
 class AdminUserProxyUserTest(TestCase):

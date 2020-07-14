@@ -1,7 +1,16 @@
+from urllib.parse import urljoin
+
+from django.contrib import messages
 from django.db import models
 from django.db.models.functions import (
     Cast, Concat
 )
+from django.http import HttpResponseRedirect
+from django.template.response import TemplateResponse
+from django.views import View
+from django.views.decorators.csrf import csrf_protect
+from django.urls import reverse
+from django.utils.decorators import method_decorator
 
 from dal import autocomplete
 
@@ -10,7 +19,8 @@ from core.decorators import (
 )
 
 from core.models import (
-    User, Batch, CandidateParty, CandidatePosition, UserType
+    User, Batch, Election, CandidateParty, CandidatePosition,
+    UserType, Vote, VoterProfile
 )
 
 
@@ -103,3 +113,85 @@ class ElectionBatchesAutoCompleteView(autocomplete.Select2QuerySetView):
             qs = qs.filter(year_as_char__istartswith=int(self.q))
 
         return qs
+
+
+@method_decorator(csrf_protect, name='dispatch')
+class ClearElectionConfirmationView(View):
+    def get(self, request, *args, **kwargs):
+        if request.user.is_anonymous or request.user.type == UserType.VOTER:
+            index_url = urljoin(
+                reverse('index'),
+                '?next={}'.format(request.path)
+            )
+            return HttpResponseRedirect(index_url)
+
+        # At this point, we can assume that the election ID parameter will
+        # always be an integer. Django will complain if the user enters a
+        # non-integer value.
+        election_id = int(kwargs['election_id'])
+        try:
+            election = Election.objects.get(id=election_id)
+        except Election.DoesNotExist:
+            messages.error(
+                request,
+                'Attempted to clear votes in a non-existent election.'
+            )
+            return HttpResponseRedirect(
+                reverse('admin:core_election_changelist')
+            )
+
+        opts = Election._meta
+        context = {
+            'site_header': 'Botos Administration',
+            'title': 'Are you sure?',
+            'opts': opts,
+            'election': election
+        }
+
+        template_name = 'default/admin/clear_election_action_confirmation.html'
+        return TemplateResponse(
+            request,
+            template_name,
+            context
+        )
+
+    def post(self, request, *args, **kwargs):
+        if request.user.is_anonymous or request.user.type == UserType.VOTER:
+            index_url = urljoin(
+                reverse('index'),
+                '?next={}'.format(request.path)
+            )
+            return HttpResponseRedirect(index_url)
+
+        # At this point, we can assume that the election ID parameter will
+        # always be an integer. Django will complain if the user enters a
+        # non-integer value.
+        election_id = int(kwargs['election_id'])
+        try:
+            election = Election.objects.get(id=election_id)
+        except Election.DoesNotExist:
+            messages.error(
+                request,
+                'Attempted to clear votes in a non-existent election.'
+            )
+            return HttpResponseRedirect(
+                reverse('admin:core_election_changelist')
+            )
+
+        if 'clear_election' in request.POST:
+            Vote.objects.filter(election=election).delete()
+            voter_profiles = VoterProfile.objects.filter(
+                batch__election=election
+            )
+            voter_profiles.update(has_voted=False)
+
+            messages.success(
+                request,
+                'Votes in \'{}\' were cleared successfully.'.format(
+                    election.name
+                )
+            )
+
+        return HttpResponseRedirect(
+            reverse('admin:core_election_change', args=(election_id,))
+        )
