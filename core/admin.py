@@ -193,6 +193,11 @@ class CandidatePositionAdmin(admin.ModelAdmin):
     )
 
 
+class BatchInline(admin.TabularInline):
+    model = Batch
+    extra = 0
+
+
 class CandidatePartyInline(admin.TabularInline):
     model = CandidateParty
     extra = 0
@@ -207,7 +212,8 @@ class CandidatePositionInline(admin.TabularInline):
 class ElectionAdmin(admin.ModelAdmin):
     actions = [ 'clear_election' ]
     inlines = [
-        CandidatePartyInline, CandidatePositionInline, CandidateInline
+        BatchInline, CandidatePartyInline,
+        CandidatePositionInline, CandidateInline
     ]
     change_form_template = 'default/admin/election_change_form.html'
 
