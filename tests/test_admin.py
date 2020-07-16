@@ -788,7 +788,7 @@ class ElectionAdminTest(TestCase):
         )
         self.assertRedirects(response, change_url)
 
-    def test_election_admin_render_change_form(self):
+    def test_election_admin_render_change_form_update(self):
         admin = ElectionAdmin(model=Election, admin_site=AdminSite())
 
         _election0 = Election.objects.create(name='Election 0')
@@ -809,6 +809,8 @@ class ElectionAdminTest(TestCase):
                 'inline_admin_formsets': [],
                 'adminform': mock_form
             },
+            add=False,
+            change=True,
             obj=_election0
         )
         self.assertTrue(response.context_data['show_save'])
@@ -817,6 +819,37 @@ class ElectionAdminTest(TestCase):
         self.assertTrue(response.context_data['show_save_and_add_another'])
         self.assertTrue(response.context_data['show_save_and_continue'])
         self.assertEqual(response.context_data['election'], _election0)
+
+    def test_election_admin_render_change_form_add(self):
+        admin = ElectionAdmin(model=Election, admin_site=AdminSite())
+
+        _election0 = Election.objects.create(name='Election 0')
+
+        class ElectionForm(forms.ModelForm):
+            class Meta:
+                model = Election
+                fields = ( '__all__' )
+
+        class MockElectionForm():
+            form = ElectionForm(initial={ 'name': 'Election 0' })
+
+        mock_form = MockElectionForm()
+
+        response = admin.render_change_form(
+            request=self._request,
+            context={
+                'inline_admin_formsets': [],
+                'adminform': mock_form,
+            },
+            add=True,
+            change=False
+        )
+        self.assertTrue(response.context_data['show_save'])
+        self.assertTrue(response.context_data['show_delete_link'])
+        self.assertTrue(response.context_data['show_save_and_add_another'])
+        self.assertTrue(response.context_data['show_save_and_continue'])
+        self.assertFalse(response.context_data['show_clear_election'])
+        self.assertIsNone(response.context_data['election'])
 
 
 class AdminUserProxyUserTest(TestCase):

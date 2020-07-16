@@ -186,8 +186,28 @@ class CandidatePositionAdmin(admin.ModelAdmin):
     )
 
 
+class CandidatePartyInline(admin.TabularInline):
+    model = CandidateParty
+    extra = 0
+
+
+class CandidatePositionInline(admin.TabularInline):
+    model = CandidatePosition
+    form = CandidatePositionForm
+    extra = 0
+
+
+class CandidateInline(admin.TabularInline):
+    model = Candidate
+    form = CandidateForm
+    extra = 0
+
+
 class ElectionAdmin(admin.ModelAdmin):
     actions = [ 'clear_election' ]
+    inlines = [
+        CandidatePartyInline, CandidatePositionInline, CandidateInline
+    ]
     change_form_template = 'default/admin/election_change_form.html'
 
     def get_urls(self):
@@ -251,11 +271,17 @@ class ElectionAdmin(admin.ModelAdmin):
         context.update({
             'show_save': True,
             'show_delete_link': True,
-            'show_clear_election': True,
             'show_save_and_add_another': True,
-            'show_save_and_continue': True,
-            'election': kwargs['obj']
+            'show_save_and_continue': True
         })
+
+        if 'add' in kwargs and kwargs['add']:
+            context['show_clear_election'] = False
+            context['election'] = None
+        elif 'change' in kwargs and kwargs['change']:
+            context['show_clear_election'] = True
+            context['election'] = kwargs['obj']
+
         return super().render_change_form(request, context, *args, **kwargs)
 
 

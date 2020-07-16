@@ -2,6 +2,7 @@ import os
 
 from django import forms
 from django.conf import settings
+from django.contrib import admin
 from django.contrib.auth.forms import (
     UserChangeForm, UserCreationForm
 )
@@ -145,6 +146,7 @@ class CandidatePositionForm(forms.ModelForm):
     class Meta:
         model = CandidatePosition
         fields = ( '__all__' )
+
 
 class VoterProfileInlineForm(forms.ModelForm):
     class Meta:
