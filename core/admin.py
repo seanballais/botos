@@ -170,9 +170,16 @@ class CandidateAdmin(admin.ModelAdmin):
     list_filter = ( 'party', 'position', 'election', )
 
 
+class CandidateInline(admin.TabularInline):
+    model = Candidate
+    form = CandidateForm
+    extra = 0
+
+
 class CandidatePartyAdmin(admin.ModelAdmin):
     list_display = ( 'party_name', 'election', )
     list_filter = ( 'election', )
+    inlines = [ CandidateInline ]
 
 
 class CandidatePositionAdmin(admin.ModelAdmin):
@@ -194,12 +201,6 @@ class CandidatePartyInline(admin.TabularInline):
 class CandidatePositionInline(admin.TabularInline):
     model = CandidatePosition
     form = CandidatePositionForm
-    extra = 0
-
-
-class CandidateInline(admin.TabularInline):
-    model = Candidate
-    form = CandidateForm
     extra = 0
 
 
