@@ -63,13 +63,6 @@ class LoginView(View):
                         'Voter account is incompletely configured. Please '
                         'contact the system administrator.'
                     )
-                elif (user.type == UserType.VOTER
-                        and user.voter_profile.batch.election is None):
-                    messages.error(
-                        request,
-                        'Voter account is not configured to vote in any '
-                        'election. Please contact the system administrator.'
-                    )
                 else:
                     # Login success! Yey!
                     login(request, user)

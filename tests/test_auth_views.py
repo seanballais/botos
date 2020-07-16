@@ -47,24 +47,6 @@ class LoginViewTest(TestCase):
             section=_section
         )
 
-        _batch1 = Batch.objects.create(year=0, election=None)
-        _section1 = Section.objects.create(section_name='Section')
-
-        _no_election_user = User.objects.create(
-            username='fritz',
-            first_name='Fritz',
-            last_name='Von Fritz',
-            type=UserType.VOTER
-        )
-        _no_election_user.set_password('fritz')
-        _no_election_user.save()
-
-        VoterProfile.objects.create(
-            user=_no_election_user,
-            batch=_batch1,
-            section=_section1
-        )
-
         _batch2 = Batch.objects.create(year=1, election=_election)
         _section2 = Section.objects.create(section_name='Section 2')
 
@@ -197,24 +179,6 @@ class LoginViewTest(TestCase):
             response,
             '{}?next={}'.format(reverse('index'), reverse('results'))
         )
-
-    def test_post_deny_no_election_voters(self):
-        response = self.client.post(
-            reverse('auth-login'),
-            {
-                'username': 'fritz',
-                'password': 'fritz'
-            },
-            follow=True
-        )
-        messages = list(response.context['messages'])
-        self.assertEqual(len(messages), 1)
-        self.assertEqual(
-            str(messages[0]),
-            'Voter account is not configured to vote in any election. '
-            'Please contact the system administrator.'
-        )
-        self.assertRedirects(response, reverse('index'))
 
     def test_post_deny_no_voter_profile_voters(self):
         response = self.client.post(
