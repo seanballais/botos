@@ -1,0 +1,41 @@
+{% extends "admin/base_site.html" %}
+
+{% comment "Credits" %}
+This templates is based on the following:
+    - https://github.com/django/django/blob/be648d1c457a13af27bc310568c95ab6f08610dd/django/contrib/admin/templates/admin/delete_confirmation.html
+    - https://github.com/django/django/blob/be648d1c457a13af27bc310568c95ab6f08610dd/django/contrib/admin/templates/admin/delete_selected_confirmation.html
+{% endcomment %}
+
+{% load i18n admin_urls static %}
+
+{% block extrahead %}
+    {{ block.super }}
+    {{ media }}
+    <script src="{% static 'admin/js/cancel.js' %}" async></script>
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} delete-confirmation{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+&rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+&rsaquo; <a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+&rsaquo; <a href="{% url opts|admin_urlname:'change' batch.pk %}">{{ election.name|capfirst }}</a>
+&rsaquo; {% trans 'Clear election' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<p>{% blocktrans with batch_year=batch.year election_name=election.name %}Are you sure you want to change the election of batch {{ batch_year }} to {{ election_name }}? Remember that this will <b>delete</b> all candidates that are under the batch. Proceeding with this action will also save any changes you made to the batch.{% endblocktrans %}</p>
+<form method="post">{% csrf_token %}
+    <div>
+        <input type="hidden" name="save_confirmed" value="yes">
+        <input type="hidden" name="year" value="{{ batch.year }}">
+        <input type="hidden" name="election" value="{{ election.id }}">
+        <input type="hidden" name="{{ save_type }}" value="{{ save_type_value }}">
+        <input type="submit" value="{% trans 'Yes, I’m sure' %}">
+        <a href="{% url opts|admin_urlname:'change' batch.pk %}" class="button cancel-link">{% trans "No, take me back" %}</a>
+    </div>
+</form>
+{% endblock %}

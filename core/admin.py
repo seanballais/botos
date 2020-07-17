@@ -163,6 +163,78 @@ class BatchAdmin(admin.ModelAdmin):
     list_display = ( 'year', 'election', )
     list_filter = ( 'election', )
 
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        if request.method == 'POST':
+            try:
+                batch = Batch.objects.get(id=object_id)
+            except Batch.DoesNotExist:
+                messages.error(
+                    request,
+                    'Attempted to modify a non-existent batch.'
+                )
+                return redirect(reverse('admin:core_batch_changelist'))
+
+            election_id = request.POST.get('election', None)
+            year = request.POST.get('year', None)
+
+            if batch.election_id != int(election_id) and election_id:
+                save_confirmed = request.POST.get('save_confirmed', None)
+                if save_confirmed:
+                    Candidate.objects.filter(
+                        user__voter_profile__batch=batch
+                    ).delete()
+                else:
+                    opts = Batch._meta
+                    objects_name = 'Batch'
+
+                    # We're putting all the form values from the change form
+                    # to the confirmation page, so that if the user confirms
+                    # that he/she intends to change the election of the batch,
+                    # we can just let Django do the hard work of saving the
+                    # changes.
+                    save_action = request.POST.get('_save', None)
+                    save_add_action = request.POST.get('_addanother', None)
+                    continue_action = request.POST.get('_continue', None)
+                    if save_action:
+                        save_type = '_save'
+                        save_type_value = save_action
+                    elif save_add_action:
+                        save_type = '_addanother'
+                        save_type_value = save_add_action
+                    else:
+                        save_type = '_continue'
+                        save_type_value = continue_action
+
+                    try:
+                        election = Election.objects.get(id=int(election_id))
+                    except Election.DoesNotExist:
+                        messages.error(
+                            request,
+                            'Attempted to use a non-existent election.'
+                        )
+                        return redirect(
+                            reverse(
+                                'admin:core_batch_change',
+                                args=( object_id, )
+                            )
+                        )
+
+                    context = {
+                        **self.admin_site.each_context(request),
+                        'title': 'Are you sure?',
+                        'opts': opts,
+                        'save_type': save_type,
+                        'save_type_value': save_type_value,
+                        'election': election,
+                        'batch': batch,
+                    }
+
+                    template_name = ('default/admin/'
+                                     'save_batch_confirmation.html')
+                    return TemplateResponse(request, template_name, context)
+
+        return super().change_view(request, object_id, form_url, extra_context)
+
 
 class CandidateAdmin(admin.ModelAdmin):
     form = CandidateForm
@@ -266,11 +338,7 @@ class ElectionAdmin(admin.ModelAdmin):
             }
 
             template_name = 'default/admin/clear_election_action.html'
-            return TemplateResponse(
-                request,
-                template_name,
-                context
-            )
+            return TemplateResponse(request, template_name, context)
 
     clear_election.short_description = "Clear votes in selected elections"
 
