@@ -672,6 +672,549 @@ class VoterAdminTest(TestCase):
         self.assertEqual(admin.election(user), 'Election')
 
 
+class VoterAdminChangeBatchTest(TestCase):
+    """
+    Tests changing the batch of a voter. This test is separated from the
+    voter admin test for cleanliness reasons.
+    """
+    @classmethod
+    def setUpTestData(cls):
+        cls._election0 = Election.objects.create(name='Election 0')
+        cls._election1 = Election.objects.create(name='Election 1')
+
+        cls._batch0 = Batch.objects.create(year=0, election=cls._election0)
+        cls._batch1 = Batch.objects.create(year=1, election=cls._election0)
+        cls._batch2 = Batch.objects.create(year=2, election=cls._election1)
+
+        _section0 = Section.objects.create(section_name='Section 0')
+        _section1 = Section.objects.create(section_name='Section 1')
+
+        cls._user0 = User.objects.create(
+            username='pedro',
+            type=UserType.VOTER
+        )
+        cls._user0.set_password('pendoko')
+        cls._user0.save()
+
+        cls._user1 = User.objects.create(
+            username='pedro1',
+            type=UserType.VOTER
+        )
+        cls._user1.set_password('pendoko1')
+        cls._user1.save()
+
+        cls._user2 = User.objects.create(
+            username='pedro2',
+            type=UserType.VOTER
+        )
+        cls._user2.set_password('pendoko2')
+        cls._user2.save()
+
+        VoterProfile.objects.create(
+            user=cls._user0,
+            has_voted=True,
+            batch=cls._batch0,
+            section=_section0
+        )
+        VoterProfile.objects.create(
+            user=cls._user1,
+            has_voted=True,
+            batch=cls._batch1,
+            section=_section1
+        )
+        VoterProfile.objects.create(
+            user=cls._user2,
+            has_voted=True,
+            batch=cls._batch2,
+            section=_section1
+        )
+
+        _party0 = CandidateParty.objects.create(
+            party_name='Awesome Party 0',
+            election=cls._election0
+        )
+        _party1 = CandidateParty.objects.create(
+            party_name='Awesome Party 1',
+            election=cls._election1
+        )
+
+        _position0 = CandidatePosition.objects.create(
+            position_name='Amazing Position 0',
+            position_level=0,
+            max_num_selected_candidates=2,
+            election=cls._election0
+        )
+        _position1 = CandidatePosition.objects.create(
+            position_name='Amazing Position 1',
+            position_level=1,
+            max_num_selected_candidates=1,
+            election=cls._election1
+        )
+
+        _candidate0 = Candidate.objects.create(
+            user=cls._user0,
+            party=_party0,
+            position=_position0,
+            election=cls._election0
+        )
+        _candidate1 = Candidate.objects.create(
+            user=cls._user1,
+            party=_party0,
+            position=_position0,
+            election=cls._election0
+        )
+        _candidate2 = Candidate.objects.create(
+            user=cls._user2,
+            party=_party1,
+            position=_position1,
+            election=cls._election1
+        )
+
+        admin = User.objects.create(
+            username='admin',
+            type=UserType.ADMIN
+        )
+        admin.set_password('root')
+        admin.save()
+
+    def setUp(self):
+        self.client.login(username='admin', password='root')
+
+        self.post_data = {
+            'username': self._user0.username,
+            'first_name': self._user0.first_name,
+            'last_name': self._user0.last_name,
+            'email': self._user0.email,
+            'voter_profile-0-user': self._user0.voter_profile.user_id,
+            'voter_profile-0-batch': self._user0.voter_profile.batch_id,
+            'voter_profile-0-section': self._user0.voter_profile.section_id,
+            'voter_profile-0-id': self._user0.voter_profile.id,
+            'voter_profile-INITIAL_FORMS': '1',
+            'voter_profile-MAX_NUM_FORMS': '1',
+            'voter_profile-TOTAL_FORMS': '1',
+            'voter_profile-MIN_NUM_FORMS': '0',
+            'voter_profile-__prefix__-id': '',
+            'voter_profile-__prefix__-user': self._user0.voter_profile.user_id,
+            'voter_profile-__prefix__-batch': '',
+            'voter_profile-__prefix__-section': '',
+            # We're adding a CSRF token here, because the change form view
+            # originally includes a CSRF token when performing form actions,
+            # and the confirmation page then removes the included CSRF token.
+            # So, we're including a fake token to reflect the actual behaviour
+            # when a admin changes the batch of a voter to one that is under a
+            # different election in the admin.
+            'csrfmiddlewaretoken': 'random_token'
+        }
+
+        self._user0.refresh_from_db()
+
+    def test_change_view_denies_anonymous_users(self):
+        self.client.logout()
+
+        response = self.client.get(
+            reverse('admin:core_voter_change', args=( self._user0.id, )),
+            follow=True
+        )
+
+        index_url = urljoin(
+            reverse('index'),
+            '?next={}'.format(
+                reverse(
+                    'admin:core_voter_change',
+                    args=(self._user0.id,)
+                )
+            )
+        )
+        self.assertRedirects(response, index_url)
+
+    def test_change_view_denies_voters(self):
+        self.client.login(username='pedro', password='pendoko')
+
+        response = self.client.get(
+            reverse('admin:core_voter_change', args=( self._user0.id, )),
+            follow=True
+        )
+
+        index_url = urljoin(
+            reverse('index'),
+            '?next={}'.format(
+                reverse(
+                    'admin:core_voter_change',
+                    args=(self._user0.id,)
+                )
+            )
+        )
+        self.assertRedirects(response, index_url)
+
+    def test_change_view_post_denies_anonymous_users(self):
+        self.client.logout()
+
+        response = self.client.post(
+            reverse('admin:core_voter_change', args=( self._user0.id, )),
+            follow=True
+        )
+
+        index_url = urljoin(
+            reverse('index'),
+            '?next={}'.format(
+                reverse(
+                    'admin:core_voter_change',
+                    args=(self._user0.id,)
+                )
+            )
+        )
+        self.assertRedirects(response, index_url)
+
+    def test_change_view_post_denies_voters(self):
+        self.client.login(username='pedro', password='pendoko')
+
+        response = self.client.post(
+            reverse('admin:core_voter_change', args=( self._user0.id, )),
+            follow=True
+        )
+
+        index_url = urljoin(
+            reverse('index'),
+            '?next={}'.format(
+                reverse(
+                    'admin:core_voter_change',
+                    args=(self._user0.id,)
+                )
+            )
+        )
+        self.assertRedirects(response, index_url)
+
+    def test_change_view_shows_form(self):
+        response = self.client.get(
+            reverse('admin:core_voter_change', args=( self._user0.id, )),
+            follow=True
+        )
+
+        self.assertTemplateUsed(response, 'admin/change_form.html')
+
+    def test_change_view_voter_saves_no_batch_change(self):
+        self.post_data['_save'] = 'Save'
+        self.post_data['voter_profile-0-batch'] = self._batch0.id
+
+        response = self.client.post(
+            reverse('admin:core_voter_change', args=( self._user0.id, )),
+            self.post_data,
+            follow=True
+        )
+
+        self._user0.refresh_from_db()
+
+        self.assertEqual(self._user0.voter_profile.batch.year, 0)
+        self.assertEqual(
+            self._user0.voter_profile.batch.election.id,
+            self._election0.id
+        )
+        self.assertEqual(Candidate.objects.all().count(), 3)
+        self.assertIsNotNone(self._user0.candidate)
+        self.assertRedirects(response, reverse('admin:core_voter_changelist'))
+
+    def test_change_view_voter_saves_continue_editing_no_batch_change(self):
+        self.post_data['_continue'] = 'Save and continue editing'
+        self.post_data['voter_profile-0-batch'] = self._batch0.id
+
+        response = self.client.post(
+            reverse('admin:core_voter_change', args=( self._user0.id, )),
+            self.post_data,
+            follow=True
+        )
+
+        self._user0.refresh_from_db()
+
+        self.assertEqual(self._user0.voter_profile.batch.year, 0)
+        self.assertEqual(
+            self._user0.voter_profile.batch.election.id,
+            self._election0.id
+        )
+        self.assertEqual(Candidate.objects.all().count(), 3)
+        self.assertIsNotNone(self._user0.candidate)
+        self.assertRedirects(
+            response,
+            reverse('admin:core_voter_change', args=( self._user0.id, ))
+        )
+
+    def test_change_view_voter_saves_add_another_no_batch_change(self):
+        self.post_data['_addanother'] = 'Save and add another'
+        self.post_data['voter_profile-0-batch'] = self._batch0.id
+
+        response = self.client.post(
+            reverse('admin:core_voter_change', args=( self._user0.id, )),
+            self.post_data,
+            follow=True
+        )
+
+        self._user0.refresh_from_db()
+
+        self.assertEqual(self._user0.voter_profile.batch.year, 0)
+        self.assertEqual(
+            self._user0.voter_profile.batch.election.id,
+            self._election0.id
+        )
+        self.assertEqual(Candidate.objects.all().count(), 3)
+        self.assertIsNotNone(self._user0.candidate)
+        self.assertRedirects(response, reverse('admin:core_voter_add'))
+
+    def test_change_view_voter_saves_batch_change(self):
+        # This will save changes as usual. So, no need to check for the
+        # presence of '_save' in 'post_data' of the response context.
+        self.post_data['_save'] = 'Save'
+        self.post_data['voter_profile-0-batch'] = self._batch1.id
+
+        response = self.client.post(
+            reverse('admin:core_voter_change', args=( self._user0.id, )),
+            self.post_data,
+            follow=True
+        )
+
+        self._user0.refresh_from_db()
+
+        self.assertEqual(self._user0.voter_profile.batch.year, 1)
+        self.assertEqual(
+            self._user0.voter_profile.batch.election.id,
+            self._election0.id
+        )
+        self.assertEqual(Candidate.objects.all().count(), 3)
+        self.assertIsNotNone(self._user0.candidate)
+        self.assertRedirects(response, reverse('admin:core_voter_changelist'))
+
+    def test_change_view_voter_saves_continue_editing_batch_change(self):
+        # This will save changes as usual. So, no need to check for the
+        # presence of '_continue' in 'post_data' of the response context.
+        self.post_data['_continue'] = 'Save and continue editing'
+        self.post_data['voter_profile-0-batch'] = self._batch1.id
+
+        response = self.client.post(
+            reverse('admin:core_voter_change', args=( self._user0.id, )),
+            self.post_data,
+            follow=True
+        )
+
+        self._user0.refresh_from_db()
+
+        self.assertEqual(self._user0.voter_profile.batch.year, 1)
+        self.assertEqual(
+            self._user0.voter_profile.batch.election.id,
+            self._election0.id
+        )
+        self.assertEqual(Candidate.objects.all().count(), 3)
+        self.assertIsNotNone(self._user0.candidate)
+        self.assertRedirects(
+            response,
+            reverse('admin:core_voter_change', args=( self._user0.id, ))
+        )
+
+    def test_change_view_voter_saves_add_another_batch_change(self):
+        # This will save changes as usual. So, no need to check for the
+        # presence of '_addanother' in 'post_data' of the response context.
+        self.post_data['_addanother'] = 'Save and add another'
+        self.post_data['voter_profile-0-batch'] = self._batch1.id
+
+        response = self.client.post(
+            reverse('admin:core_voter_change', args=( self._user0.id, )),
+            self.post_data,
+            follow=True
+        )
+
+        self._user0.refresh_from_db()
+
+        self.assertEqual(self._user0.voter_profile.batch.year, 1)
+        self.assertEqual(
+            self._user0.voter_profile.batch.election.id,
+            self._election0.id
+        )
+        self.assertEqual(Candidate.objects.all().count(), 3)
+        self.assertIsNotNone(self._user0.candidate)
+        self.assertRedirects(response, reverse('admin:core_voter_add'))
+
+    def test_change_view_voter_saves_continue_editing_batch_change_elec(self):
+        self.post_data['_continue'] = 'Save and continue editing'
+        self.post_data['voter_profile-0-batch'] = self._batch2.id
+
+        response = self.client.post(
+            reverse('admin:core_voter_change', args=( self._user0.id, )),
+            self.post_data,
+            follow=True
+        )
+
+        self._user0.refresh_from_db()
+
+        self.assertEqual(self._user0.voter_profile.batch.year, 0)
+        self.assertEqual(
+            self._user0.voter_profile.batch.election.id,
+            self._election0.id
+        )
+        self.assertEqual(Candidate.objects.all().count(), 3)
+        self.assertTrue('_continue' in response.context['post_data'])
+        self.assertIsNotNone(self._user0.candidate)
+        self.assertTemplateUsed(
+            response,
+            'default/admin/save_voter_confirmation.html'
+        )
+
+    def test_change_view_voter_saves_add_another_batch_change_elec(self):
+        self.post_data['_addanother'] = 'Save and add another'
+        self.post_data['voter_profile-0-batch'] = self._batch2.id
+
+        response = self.client.post(
+            reverse('admin:core_voter_change', args=( self._user0.id, )),
+            self.post_data,
+            follow=True
+        )
+
+        self._user0.refresh_from_db()
+
+        self.assertEqual(self._user0.voter_profile.batch.year, 0)
+        self.assertEqual(
+            self._user0.voter_profile.batch.election.id,
+            self._election0.id
+        )
+        self.assertEqual(Candidate.objects.all().count(), 3)
+        self.assertTrue('_addanother' in response.context['post_data'])
+        self.assertIsNotNone(self._user0.candidate)
+        self.assertTemplateUsed(
+            response,
+            'default/admin/save_voter_confirmation.html'
+        )
+
+    def test_change_view_confirmed_saves_batch_change_elec(self):
+        self.post_data['save_confirmed'] = 'yes'
+        self.post_data['_save'] = 'Save'
+        self.post_data['voter_profile-0-batch'] = self._batch2.id
+
+        response = self.client.post(
+            reverse('admin:core_voter_change', args=( self._user0.id, )),
+            self.post_data,
+            follow=True
+        )
+
+        self._user0.refresh_from_db()
+
+        self.assertEqual(self._user0.voter_profile.batch.year, 2)
+        self.assertEqual(
+            self._user0.voter_profile.batch.election.id,
+            self._election1.id
+        )
+        self.assertEqual(Candidate.objects.all().count(), 2)
+        self.assertRaises(
+            User.candidate.RelatedObjectDoesNotExist,
+            lambda: self._user0.candidate
+        )
+        self.assertIsNotNone(self._user1.candidate)
+        self.assertIsNotNone(self._user2.candidate)
+        self.assertRedirects(response, reverse('admin:core_voter_changelist'))
+
+    def test_change_view_confirmed_saves_continue_edit_batch_change_elec(self):
+        self.post_data['save_confirmed'] = 'yes'
+        self.post_data['_continue'] = 'Save and continue editing'
+        self.post_data['voter_profile-0-batch'] = self._batch2.id
+
+        response = self.client.post(
+            reverse('admin:core_voter_change', args=( self._user0.id, )),
+            self.post_data,
+            follow=True
+        )
+
+        self._user0.refresh_from_db()
+
+        self.assertEqual(self._user0.voter_profile.batch.year, 2)
+        self.assertEqual(
+            self._user0.voter_profile.batch.election.id,
+            self._election1.id
+        )
+        self.assertEqual(Candidate.objects.all().count(), 2)
+        self.assertRaises(
+            User.candidate.RelatedObjectDoesNotExist,
+            lambda: self._user0.candidate
+        )
+        self.assertIsNotNone(self._user1.candidate)
+        self.assertIsNotNone(self._user2.candidate)
+        self.assertRedirects(
+            response,
+            reverse('admin:core_voter_change', args=( self._user0.id, ))
+        )
+        self.assertTemplateUsed(response, 'admin/change_form.html')     
+
+    def test_change_view_confirmed_saves_add_another_batch_change_elec(self):
+        self.post_data['save_confirmed'] = 'yes'
+        self.post_data['_addanother'] = 'Save and add another'
+        self.post_data['voter_profile-0-batch'] = self._batch2.id
+
+        response = self.client.post(
+            reverse('admin:core_voter_change', args=( self._user0.id, )),
+            self.post_data,
+            follow=True
+        )
+
+        self._user0.refresh_from_db()
+
+        self.assertEqual(self._user0.voter_profile.batch.year, 2)
+        self.assertEqual(
+            self._user0.voter_profile.batch.election.id,
+            self._election1.id
+        )
+        self.assertEqual(Candidate.objects.all().count(), 2)
+        self.assertRaises(
+            User.candidate.RelatedObjectDoesNotExist,
+            lambda: self._user0.candidate
+        )
+        self.assertIsNotNone(self._user1.candidate)
+        self.assertIsNotNone(self._user2.candidate)
+        self.assertRedirects(response, reverse('admin:core_voter_add'))
+
+    def test_change_view_post_non_existent_voter(self):
+        self.post_data['_save'] = 'Save'
+        self.post_data['voter_profile-0-batch'] = self._batch0.id
+        
+        response = self.client.post(
+            reverse(
+                'admin:core_voter_change',
+                args=( 123456789, )  # Some non-existent voter.
+            ),
+            self.post_data,
+            follow=True
+        )
+
+        self.assertEqual(Candidate.objects.all().count(), 3)
+        self.assertRedirects(response, reverse('admin:core_voter_changelist'))
+
+        messages = list(response.context['messages'])
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(
+            str(messages[0]),
+            'Attempted to modify a non-existent voter.'
+        )
+
+    def test_change_view_post_non_existent_batch(self):
+        self.post_data['_save'] = 'Save'
+        self.post_data['voter_profile-0-batch'] = 123456789 # Some non-existent
+                                                            # batch.
+        
+        response = self.client.post(
+            reverse(
+                'admin:core_voter_change',
+                args=( self._user0.id, )  # Some non-existent batch.
+            ),
+            self.post_data,
+            follow=True
+        )
+
+        self.assertEqual(Candidate.objects.all().count(), 3)
+        self.assertRedirects(
+            response,
+            reverse('admin:core_voter_change', args=( self._user0.id, )))
+
+        messages = list(response.context['messages'])
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(
+            str(messages[0]),
+            'Attempted to use a non-existent batch.'
+        )
+
+
 class ElectionAdminTest(TestCase):
     """
     Tests the election admin.

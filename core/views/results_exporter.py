@@ -284,7 +284,10 @@ class ResultsExporterView(View):
                 num_votes = Vote.objects.filter(
                     candidate=candidate,
                     election=election,
-                    user__voter_profile__section=section
+                    user__voter_profile__section=section,
+                    # Temporary fix while a section can be used by different
+                    # students in different batches. :-(
+                    user__voter_profile__batch=batch
                 ).count()
 
                 ws.cell(candidate_row, curr_section_col).value = num_votes

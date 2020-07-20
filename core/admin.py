@@ -151,6 +151,72 @@ class VoterAdmin(BaseUserAdmin):
                             section=F('voter_profile__section')
                           )
 
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        if request.method == 'POST':
+            try:
+                voter = User.objects.get(id=object_id)
+            except User.DoesNotExist:
+                messages.error(
+                    request,
+                    'Attempted to modify a non-existent voter.'
+                )
+                return redirect(reverse('admin:core_voter_changelist'))
+
+            batch_id = request.POST.get('voter_profile-0-batch', None)
+            assert batch_id is not None
+
+            try:
+                new_batch = Batch.objects.get(id=int(batch_id))
+            except Batch.DoesNotExist:
+                messages.error(
+                    request,
+                    'Attempted to use a non-existent batch.'
+                )
+                
+                return redirect(
+                    reverse(
+                        'admin:core_voter_change',
+                        args=( object_id, )
+                    )
+                )
+
+            if (voter.voter_profile.batch_id != int(batch_id)
+                    and new_batch.election
+                        != voter.voter_profile.batch.election):
+                # Since we are depending on Django Admin, we can make sure that
+                # batch_id will not be None. The only time a POST request won't
+                # have a batch_id is when we forget to send in the batch_id in
+                # the confirmation page.
+                save_confirmed = request.POST.get('save_confirmed', None)
+                if save_confirmed:
+                    # Note: Candidate and User have a one-to-one relationship.
+                    Candidate.objects.get(user=voter).delete()
+                else:
+                    opts = Voter._meta
+                    object_name = 'Voter'
+
+                    post_data = dict(request.POST)
+
+                    # Remove the CSRF token from the previous page, since
+                    # Django's gonna give us a new one in the confirmation
+                    # page.
+                    del post_data['csrfmiddlewaretoken']
+
+                    context = {
+                        **self.admin_site.each_context(request),
+                        'title': 'Are you sure?',
+                        'opts': opts,
+                        'post_data': post_data,
+                        'voter': voter,
+                        'new_batch': new_batch
+                    }
+
+                    template_name = ('default/admin/'
+                                     'save_voter_confirmation.html')
+                    return TemplateResponse(request, template_name, context)
+
+        return super().change_view(request, object_id, form_url, extra_context)
+
     def save_model(self, request, obj, form, change):
         obj.type = UserType.VOTER
         obj.is_staff = False
@@ -176,8 +242,13 @@ class BatchAdmin(admin.ModelAdmin):
 
             election_id = request.POST.get('election', None)
             year = request.POST.get('year', None)
+            assert election_id is not None, year is not None
 
-            if batch.election_id != int(election_id) and election_id:
+            if batch.election_id != int(election_id):
+                # Since we are depending on Django Admin, we can make sure that
+                # election_id will not be None. The only time a POST request
+                # won't have an election_id is when we forget to send in the
+                # election_id in the confirmation page.
                 save_confirmed = request.POST.get('save_confirmed', None)
                 if save_confirmed:
                     Candidate.objects.filter(
