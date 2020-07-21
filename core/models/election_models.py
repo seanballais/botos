@@ -170,23 +170,72 @@ class Candidate(Base):
         verbose_name = 'candidate'
         verbose_name_plural = 'candidates'
 
-    def clean(self):
-        user_election = self.user.voter_profile.batch.election
-        party_election = self.party.election
-        position_election = self.position.election
-        candidate_election = self.election
-
-        if not (user_election == party_election
-                == position_election == candidate_election):
-            raise ValidationError(
-                'The candidate\'s batch, party, position, and the candidate '
-                'him/herself are not under the same election.'
-            )
-
-        super().clean()
-
     def __str__(self):
         return '{}, {}'.format(self.user.last_name, self.user.first_name)
+
+    def clean(self, *args, **kwargs):
+        voter_election = self.user.voter_profile.batch.election
+        field_elections = {
+            'election': self.election,
+            'party': self.party.election,
+            'position': self.position.election
+        }
+        problematic_fields = [
+            k for k, v in field_elections.items() if v != voter_election
+        ]
+        assert len(problematic_fields) <= 3
+
+        if len(problematic_fields) != 0:
+            error_message = (
+                'Make sure that the party, position, candidate, and the '
+                'candidate\'s batch are under the same election.'
+            )
+
+            if len(problematic_fields) == 1:
+                field = problematic_fields[0]
+                if field == 'election':
+                    error_message = (
+                        'The selected election is different from that of the '
+                        'candidate\'s batch\'s. '
+                    ) + error_message
+                else:
+                    error_message = (
+                        'The selected {} is under an '
+                        'election different from that of '
+                        'the candidate\'s batch\'s. '
+                    ).format(field) + error_message
+            elif len(problematic_fields) == 2:
+                problematic_fields.sort()
+                if 'election' in problematic_fields:
+                    error_message = (
+                        'The selected election and the '
+                        # The second element will always be either party or
+                        # position.
+                        'selected {}\'s election are different from that of '
+                        'the candidate\'s batch\'s. '
+                    ).format(problematic_fields[1]) + error_message
+                else:
+                    # The only elements here will be 'party' and 'position'.
+                    error_message = (
+                        'The selected party and position are under an '
+                        'election or elections different from that of the '
+                        'candidate\'s batch\'s. '
+                    ) + error_message
+            else:
+                # The length of problematic_fields will be 3.
+                error_message = (
+                    'The selected candidate, party, and position are under '
+                    'an election or elections different from that of the '
+                    'candidate\'s batch\'s. '
+                ) + error_message
+
+            raise ValidationError(error_message)
+
+        super().clean(*args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
 
 
 class Vote(Base):

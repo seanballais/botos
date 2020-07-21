@@ -46,6 +46,12 @@ class IndexViewTest(TestCase):
         cls._user3.save()
 
         VoterProfile.objects.create(
+            user=_user1,
+            batch=cls._batch,
+            section=cls._section
+        )
+
+        VoterProfile.objects.create(
             user=cls._user3,
             batch=cls._batch,
             section=cls._section
@@ -232,6 +238,18 @@ class VotingSubviewTest(TestCase):
         _user6.save()
 
         VoterProfile.objects.create(
+            user=_user1,
+            batch=_batch0,
+            section=_section0
+        )
+
+        VoterProfile.objects.create(
+            user=_user2,
+            batch=_batch1,
+            section=_section1
+        )
+
+        VoterProfile.objects.create(
             user=_user3,
             batch=_batch0,
             section=_section0
@@ -239,6 +257,18 @@ class VotingSubviewTest(TestCase):
 
         VoterProfile.objects.create(
             user=_user4,
+            batch=_batch1,
+            section=_section1
+        )
+
+        VoterProfile.objects.create(
+            user=_user5,
+            batch=_batch0,
+            section=_section0
+        )
+
+        VoterProfile.objects.create(
+            user=_user6,
             batch=_batch1,
             section=_section1
         )
@@ -605,6 +635,12 @@ class VotedSubviewTest(TestCase):
         _user3 = User.objects.create(username='pasta', type=UserType.VOTER)
         _user3.set_password('sample')
         _user3.save()
+
+        VoterProfile.objects.create(
+            user=_user1,
+            batch=_batch,
+            section=_section
+        )
 
         VoterProfile.objects.create(
             user=_user3,
