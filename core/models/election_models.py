@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 
@@ -168,6 +169,21 @@ class Candidate(Base):
         ]
         verbose_name = 'candidate'
         verbose_name_plural = 'candidates'
+
+    def clean(self):
+        user_election = self.user.voter_profile.batch.election
+        party_election = self.party.election
+        position_election = self.position.election
+        candidate_election = self.election
+
+        if not (user_election == party_election
+                == position_election == candidate_election):
+            raise ValidationError(
+                'The candidate\'s batch, party, position, and the candidate '
+                'him/herself are not under the same election.'
+            )
+
+        super().clean()
 
     def __str__(self):
         return '{}, {}'.format(self.user.last_name, self.user.first_name)

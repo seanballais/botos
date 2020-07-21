@@ -22,7 +22,7 @@ from core.forms.admin import (
 )
 from core.models import (
     User, Batch, Section, Candidate, CandidateParty, CandidatePosition, Vote,
-    UserType, Election
+    UserType, Election, VoterProfile
 )
 from core.utils import AppSettings
 
@@ -449,8 +449,27 @@ class CandidateFormTest(TestCase):
     def setUpTestData(cls):
         cls._election0 = Election.objects.create(name='Election 0')
         cls._election1 = Election.objects.create(name='Election 1')
+
+        cls._batch0 = Batch.objects.create(year=0, election=cls._election0)
+        cls._batch1 = Batch.objects.create(year=1, election=cls._election1)
+
+        cls._section0 = Section.objects.create(section_name='Section 0')
+        cls._section1 = Section.objects.create(section_name='Section 1')
+
         cls._user0 = User.objects.create(username='user0')
         cls._user1 = User.objects.create(username='user1')
+
+        VoterProfile.objects.create(
+            user=cls._user0,
+            batch=cls._batch0,
+            section=cls._section0
+        )
+        VoterProfile.objects.create(
+            user=cls._user1,
+            batch=cls._batch1,
+            section=cls._section1
+        )
+
         cls._candidate_party0 = CandidateParty.objects.create(
             party_name='Awesome Party 0',
             election=cls._election0
@@ -483,7 +502,9 @@ class CandidateFormTest(TestCase):
     def test_adding_new_candidate_from_form(self):
         data = {
             'user': self._user0.pk,
-            'election': self._election0.pk
+            'election': self._election0.pk,
+            'party': self._candidate_party0.pk,
+            'position': self._candidate_position0.pk
         }
         form = self._form(data)
 
@@ -510,7 +531,9 @@ class CandidateFormTest(TestCase):
 
         data = {
             'user': self._user0.pk,
-            'election': self._election0.pk
+            'election': self._election0.pk,
+            'party': self._candidate_party0.pk,
+            'position': self._candidate_position0.pk
         }
         form = self._form(data)
 

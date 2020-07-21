@@ -1,13 +1,14 @@
 import json
 
 from django.contrib.postgres import fields as postgres_fields
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.test import TestCase
 
 from core.models import (
     Vote, Candidate, CandidateParty, CandidatePosition, Election,
-    User, Batch, Section, UserType
+    User, Batch, Section, UserType, VoterProfile
 )
 
 
@@ -336,6 +337,18 @@ class CandidateTest(TestCase):
             'election'
         )
 
+        # Test data for validation tests.
+        cls._election0 = Election.objects.create(name='Election 0')
+        cls._election1 = Election.objects.create(name='Election 1')
+        cls._election2 = Election.objects.create(name='Election 2')
+        cls._election3 = Election.objects.create(name='Election 3')
+
+        cls._user0 = User.objects.create(
+            username='juan0',
+            type=UserType.VOTER
+        )
+        cls._section0 = Section.objects.create(section_name='Section 0')
+
     # Test user foreign key.
     def test_user_fk_is_fk(self):
         self.assertTrue(
@@ -556,6 +569,403 @@ class CandidateTest(TestCase):
         self.assertEquals(
             str(self._candidate),
             'Pedro, Juan'
+        )
+
+    def test_model_validate_election_fields_consistent(self):
+        batch = Batch.objects.create(year=0, election=self._election0)
+
+        VoterProfile.objects.create(
+            user=self._user0,
+            batch=batch,
+            section=self._section0
+        )
+
+        party = CandidateParty.objects.create(
+            party_name='Party 0',
+            election=self._election0
+        )
+
+        position = CandidatePosition.objects.create(
+            position_name='Position 0',
+            election=self._election0
+        )
+
+        candidate = Candidate.objects.create(
+            user=self._user0,
+            party=party,
+            position=position,
+            election=self._election0
+        )
+
+        try:
+            candidate.clean()
+        except ValidationError:
+            self.fail(
+                'ValidationError raised despite consistent '
+                'election field values.'
+            )
+
+    def test_model_validate_election_fields_inconsistent_batch(self):
+        batch = Batch.objects.create(year=0, election=self._election1)
+
+        VoterProfile.objects.create(
+            user=self._user0,
+            batch=batch,
+            section=self._section0
+        )
+
+        party = CandidateParty.objects.create(
+            party_name='Party 0',
+            election=self._election0
+        )
+
+        position = CandidatePosition.objects.create(
+            position_name='Position 0',
+            election=self._election0
+        )
+
+        candidate = Candidate.objects.create(
+            user=self._user0,
+            party=party,
+            position=position,
+            election=self._election0
+        )
+
+        self.assertRaisesMessage(
+            ValidationError,
+            'The candidate\'s batch, party, position, and the candidate '
+            'him/herself are not under the same election.',
+            candidate.clean
+        )
+
+    def test_model_validate_election_fields_inconsistent_party(self):
+        batch = Batch.objects.create(year=0, election=self._election0)
+
+        VoterProfile.objects.create(
+            user=self._user0,
+            batch=batch,
+            section=self._section0
+        )
+
+        party = CandidateParty.objects.create(
+            party_name='Party 0',
+            election=self._election1
+        )
+
+        position = CandidatePosition.objects.create(
+            position_name='Position 0',
+            election=self._election0
+        )
+
+        candidate = Candidate.objects.create(
+            user=self._user0,
+            party=party,
+            position=position,
+            election=self._election0
+        )
+
+        self.assertRaisesMessage(
+            ValidationError,
+            'The candidate\'s batch, party, position, and the candidate '
+            'him/herself are not under the same election.',
+            candidate.clean
+        )
+
+    def test_model_validate_election_fields_inconsistent_position(self):
+        batch = Batch.objects.create(year=0, election=self._election0)
+
+        VoterProfile.objects.create(
+            user=self._user0,
+            batch=batch,
+            section=self._section0
+        )
+
+        party = CandidateParty.objects.create(
+            party_name='Party 0',
+            election=self._election0
+        )
+
+        position = CandidatePosition.objects.create(
+            position_name='Position 0',
+            election=self._election1
+        )
+
+        candidate = Candidate.objects.create(
+            user=self._user0,
+            party=party,
+            position=position,
+            election=self._election0
+        )
+
+        self.assertRaisesMessage(
+            ValidationError,
+            'The candidate\'s batch, party, position, and the candidate '
+            'him/herself are not under the same election.',
+            candidate.clean
+        )
+
+    def test_model_validate_election_fields_inconsistent_candidate(self):
+        batch = Batch.objects.create(year=0, election=self._election0)
+
+        VoterProfile.objects.create(
+            user=self._user0,
+            batch=batch,
+            section=self._section0
+        )
+
+        party = CandidateParty.objects.create(
+            party_name='Party 0',
+            election=self._election0
+        )
+
+        position = CandidatePosition.objects.create(
+            position_name='Position 0',
+            election=self._election0
+        )
+
+        candidate = Candidate.objects.create(
+            user=self._user0,
+            party=party,
+            position=position,
+            election=self._election1
+        )
+
+        self.assertRaisesMessage(
+            ValidationError,
+            'The candidate\'s batch, party, position, and the candidate '
+            'him/herself are not under the same election.',
+            candidate.clean
+        )
+
+    def test_model_validate_election_fields_inconsistent_batch_party(self):
+        batch = Batch.objects.create(year=0, election=self._election1)
+
+        VoterProfile.objects.create(
+            user=self._user0,
+            batch=batch,
+            section=self._section0
+        )
+
+        party = CandidateParty.objects.create(
+            party_name='Party 0',
+            election=self._election2
+        )
+
+        position = CandidatePosition.objects.create(
+            position_name='Position 0',
+            election=self._election0
+        )
+
+        candidate = Candidate.objects.create(
+            user=self._user0,
+            party=party,
+            position=position,
+            election=self._election0
+        )
+
+        self.assertRaisesMessage(
+            ValidationError,
+            'The candidate\'s batch, party, position, and the candidate '
+            'him/herself are not under the same election.',
+            candidate.clean
+        )
+
+    def test_model_validate_election_fields_inconsistent_batch_position(self):
+        batch = Batch.objects.create(year=0, election=self._election1)
+
+        VoterProfile.objects.create(
+            user=self._user0,
+            batch=batch,
+            section=self._section0
+        )
+
+        party = CandidateParty.objects.create(
+            party_name='Party 0',
+            election=self._election0
+        )
+
+        position = CandidatePosition.objects.create(
+            position_name='Position 0',
+            election=self._election2
+        )
+
+        candidate = Candidate.objects.create(
+            user=self._user0,
+            party=party,
+            position=position,
+            election=self._election0
+        )
+
+        self.assertRaisesMessage(
+            ValidationError,
+            'The candidate\'s batch, party, position, and the candidate '
+            'him/herself are not under the same election.',
+            candidate.clean
+        )
+
+    def test_model_validate_election_fields_inconsistent_batch_candidate(self):
+        batch = Batch.objects.create(year=0, election=self._election1)
+
+        VoterProfile.objects.create(
+            user=self._user0,
+            batch=batch,
+            section=self._section0
+        )
+
+        party = CandidateParty.objects.create(
+            party_name='Party 0',
+            election=self._election0
+        )
+
+        position = CandidatePosition.objects.create(
+            position_name='Position 0',
+            election=self._election0
+        )
+
+        candidate = Candidate.objects.create(
+            user=self._user0,
+            party=party,
+            position=position,
+            election=self._election2
+        )
+
+        self.assertRaisesMessage(
+            ValidationError,
+            'The candidate\'s batch, party, position, and the candidate '
+            'him/herself are not under the same election.',
+            candidate.clean
+        )
+
+    def test_model_validate_election_fields_inconsistent_party_position(self):
+        batch = Batch.objects.create(year=0, election=self._election0)
+
+        VoterProfile.objects.create(
+            user=self._user0,
+            batch=batch,
+            section=self._section0
+        )
+
+        party = CandidateParty.objects.create(
+            party_name='Party 0',
+            election=self._election1
+        )
+
+        position = CandidatePosition.objects.create(
+            position_name='Position 0',
+            election=self._election2
+        )
+
+        candidate = Candidate.objects.create(
+            user=self._user0,
+            party=party,
+            position=position,
+            election=self._election0
+        )
+
+        self.assertRaisesMessage(
+            ValidationError,
+            'The candidate\'s batch, party, position, and the candidate '
+            'him/herself are not under the same election.',
+            candidate.clean
+        )
+
+    def test_model_validate_election_fields_inconsistent_party_candidate(self):
+        batch = Batch.objects.create(year=0, election=self._election0)
+
+        VoterProfile.objects.create(
+            user=self._user0,
+            batch=batch,
+            section=self._section0
+        )
+
+        party = CandidateParty.objects.create(
+            party_name='Party 0',
+            election=self._election1
+        )
+
+        position = CandidatePosition.objects.create(
+            position_name='Position 0',
+            election=self._election0
+        )
+
+        candidate = Candidate.objects.create(
+            user=self._user0,
+            party=party,
+            position=position,
+            election=self._election2
+        )
+
+        self.assertRaisesMessage(
+            ValidationError,
+            'The candidate\'s batch, party, position, and the candidate '
+            'him/herself are not under the same election.',
+            candidate.clean
+        )
+
+    def test_model_validate_election_fields_inconsistent_pos_candidate(self):
+        batch = Batch.objects.create(year=0, election=self._election0)
+
+        VoterProfile.objects.create(
+            user=self._user0,
+            batch=batch,
+            section=self._section0
+        )
+
+        party = CandidateParty.objects.create(
+            party_name='Party 0',
+            election=self._election0
+        )
+
+        position = CandidatePosition.objects.create(
+            position_name='Position 0',
+            election=self._election1
+        )
+
+        candidate = Candidate.objects.create(
+            user=self._user0,
+            party=party,
+            position=position,
+            election=self._election2
+        )
+
+        self.assertRaisesMessage(
+            ValidationError,
+            'The candidate\'s batch, party, position, and the candidate '
+            'him/herself are not under the same election.',
+            candidate.clean
+        )
+
+    def test_model_validate_election_fields_inconsistent_all(self):
+        batch = Batch.objects.create(year=0, election=self._election0)
+
+        VoterProfile.objects.create(
+            user=self._user0,
+            batch=batch,
+            section=self._section0
+        )
+
+        party = CandidateParty.objects.create(
+            party_name='Party 0',
+            election=self._election1
+        )
+
+        position = CandidatePosition.objects.create(
+            position_name='Position 0',
+            election=self._election2
+        )
+
+        candidate = Candidate.objects.create(
+            user=self._user0,
+            party=party,
+            position=position,
+            election=self._election3
+        )
+
+        self.assertRaisesMessage(
+            ValidationError,
+            'The candidate\'s batch, party, position, and the candidate '
+            'him/herself are not under the same election.',
+            candidate.clean
         )
 
 
