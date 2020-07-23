@@ -1,6 +1,8 @@
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Q
 
 from .base_model import Base
 
@@ -197,6 +199,23 @@ class VoterProfile(Base):
 
     def __str__(self):
         return str(self.user)
+
+    def clean(self, *args, **kwargs):
+        is_section_unavailable = VoterProfile.objects.filter(
+            ~Q(batch=self.batch),
+            section=self.section
+        ).exists()
+        if is_section_unavailable:
+            raise ValidationError(
+                'The selected section is already used by another batch. No '
+                'two batches can have the same section.'
+            )
+
+        super().clean(*args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
 
 
 class Batch(Base):

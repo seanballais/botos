@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.db import models
 from django.test import TestCase
@@ -271,6 +272,30 @@ class VoterProfileModelTest(TestCase):
         cls._section_field = cls._voter_profile._meta.get_field('section')
         cls._has_voted_field = cls._voter_profile._meta.get_field('has_voted')
 
+        # Test data for testing model clean function.
+        cls._batch0 = Batch.objects.create(year=0, election=_election)
+        cls._batch1 = Batch.objects.create(year=1, election=_election)
+
+        cls._section0 = Section.objects.create(section_name='Section 0')
+        cls._section1 = Section.objects.create(section_name='Section 1')
+        cls._section2 = Section.objects.create(section_name='Section 2')
+
+        cls._user0 = User.objects.create(username='user0', type=UserType.VOTER)
+        cls._user1 = User.objects.create(username='user1', type=UserType.VOTER)
+        cls._user2 = User.objects.create(username='user2', type=UserType.VOTER)
+
+        VoterProfile.objects.create(
+            user=cls._user1,
+            batch=cls._batch0,
+            section=cls._section1
+        )
+
+        VoterProfile.objects.create(
+            user=cls._user2,
+            batch=cls._batch1,
+            section=cls._section2
+        )
+
     # Test user foreign key.
     def test_user_fk_is_one_to_one(self):
         self.assertTrue(
@@ -407,6 +432,92 @@ class VoterProfileModelTest(TestCase):
 
     def test_str(self):
         self.assertEquals(str(self._voter_profile), str(self._user))
+
+    def test_creating_voter_profile_available_section(self):
+        voter_profile = VoterProfile(
+            user=self._user0,
+            batch=self._batch0,
+            section=self._section0
+        )
+
+        try:
+            voter_profile.clean()
+        except ValidationError:
+            self.fail(
+                'Voter profile raised a validation error even though it'
+                'should not.'
+            )
+
+    def test_creating_voter_profile_allowed_section(self):
+        voter_profile = VoterProfile(
+            user=self._user0,
+            batch=self._batch0,
+            section=self._section1
+        )
+
+        try:
+            voter_profile.clean()
+        except ValidationError:
+            self.fail(
+                'Voter profile raised a validation error even though it'
+                'should not.'
+            )
+
+    def test_creating_voter_profile_unavailable_section(self):
+        voter_profile = VoterProfile(
+            user=self._user0,
+            batch=self._batch0,
+            section=self._section2
+        )
+        self.assertRaisesMessage(
+            ValidationError,
+            'The selected section is already used by another batch. No two '
+            'batches can have the same section.',
+            voter_profile.clean
+        )
+
+    def test_saving_voter_profile_available_section(self):
+        voter_profile = VoterProfile(
+            user=self._user0,
+            batch=self._batch0,
+            section=self._section0
+        )
+
+        try:
+            voter_profile.save()
+        except ValidationError:
+            self.fail(
+                'Voter profile raised a validation error even though it'
+                'should not.'
+            )
+
+    def test_saving_voter_profile_allowed_section(self):
+        voter_profile = VoterProfile(
+            user=self._user0,
+            batch=self._batch0,
+            section=self._section1
+        )
+
+        try:
+            voter_profile.save()
+        except ValidationError:
+            self.fail(
+                'Voter profile raised a validation error even though it'
+                'should not.'
+            )
+
+    def test_creating_voter_profile_unavailable_section(self):
+        voter_profile = VoterProfile(
+            user=self._user0,
+            batch=self._batch0,
+            section=self._section2
+        )
+        self.assertRaisesMessage(
+            ValidationError,
+            'The selected section is already used by another batch. No two '
+            'batches can have the same section.',
+            voter_profile.save
+        )
 
 
 class BatchModelTest(TestCase):

@@ -27,7 +27,7 @@ This templates is based on the following:
 {% endblock %}
 
 {% block content %}
-<p>{% blocktrans with voter=voter new_batch=new_batch new_batch_election=new_batch.election %}Are you sure you want to change the batch of voter {{ voter }} to batch {{ new_batch }}? Note that the new batch belongs to a different election, which is {{ new_batch_election }}. Continuing with this will result in this voter's candidacy, if he/she is a candidate, to be <b>cancelled</b>. Proceeding with this action will also save any changes you made to the voter.{% endblocktrans %}</p>
+<p>{% blocktrans with voter=voter selected_batch=selected_batch selected_batch_election=selected_batch.election %}Are you sure you want to change the batch of voter {{ voter }} to batch {{ selected_batch }}? Note that the new batch belongs to a different election, which is {{ selected_batch_election }}. Continuing with this will result in this voter's candidacy, if he/she is a candidate, to be <b>cancelled</b>. Proceeding with this action will also save any changes you made to the voter.{% endblocktrans %}</p>
 <form method="post">{% csrf_token %}
     <div>
         <input type="hidden" name="save_confirmed" value="yes">

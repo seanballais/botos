@@ -7,7 +7,9 @@ from django.contrib import (
 from django.contrib.admin.utils import model_ngettext
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
-from django.db.models import F
+from django.db.models import (
+    F, Q
+)
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.urls import (
@@ -166,7 +168,7 @@ class VoterAdmin(BaseUserAdmin):
             assert batch_id is not None
 
             try:
-                new_batch = Batch.objects.get(id=int(batch_id))
+                selected_batch = Batch.objects.get(id=int(batch_id))
             except Batch.DoesNotExist:
                 messages.error(
                     request,
@@ -180,8 +182,43 @@ class VoterAdmin(BaseUserAdmin):
                     )
                 )
 
+            section_id = request.POST.get('voter_profile-0-section', None)
+            assert section_id is not None
+
+            try:
+                selected_section = Section.objects.get(id=int(section_id))
+            except Section.DoesNotExist:
+                messages.error(
+                    request,
+                    'Attempted to use a non-existent section.'
+                )
+                
+                return redirect(
+                    reverse(
+                        'admin:core_voter_change',
+                        args=( object_id, )
+                    )
+                )
+
+            is_section_unavailable = VoterProfile.objects.filter(
+                ~Q(batch=selected_batch),
+                section=selected_section
+            ).exists()
+            if is_section_unavailable:
+                messages.error(
+                    request,
+                    'The selected section is already used by another batch. '
+                    'No two batches can have the same section.'
+                )
+                return redirect(
+                    reverse(
+                        'admin:core_voter_change',
+                        args=( object_id, )
+                    )
+                )
+
             if (voter.voter_profile.batch_id != int(batch_id)
-                    and new_batch.election
+                    and selected_batch.election
                         != voter.voter_profile.batch.election):
                 # Since we are depending on Django Admin, we can make sure that
                 # batch_id will not be None. The only time a POST request won't
@@ -203,12 +240,12 @@ class VoterAdmin(BaseUserAdmin):
                     del post_data['csrfmiddlewaretoken']
 
                     context = {
-                        **self.admin_site.each_context(request),
+                        **self.admin_site.each_context(request),                        
                         'title': 'Are you sure?',
                         'opts': opts,
                         'post_data': post_data,
                         'voter': voter,
-                        'new_batch': new_batch
+                        'selected_batch': selected_batch
                     }
 
                     template_name = ('default/admin/'
