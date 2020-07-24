@@ -39,8 +39,10 @@ $ cd botos
 
 Once you have finishing cloning, perform the following to install the required packages.
 
+````
 $ pipenv shell
 $ pipenv install
+````
 
 Since we're using Pipenv, we have to always run `pipenv shell` before working on Botos. This is because Pipenv provides a virtual environment that isolates dependencies from system-installed dependencies. To learn more virtual environment, you may read [this article](https://realpython.com/python-virtual-environments-a-primer/).
 
