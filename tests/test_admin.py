@@ -1274,6 +1274,32 @@ class VoterAdminChangeBatchTest(TestCase):
             'Attempted to use a non-existent batch.'
         )
 
+    def test_change_view_post_non_existent_section(self):
+        self.post_data['_save'] = 'Save'
+        self.post_data['voter_profile-0-section'] = 12345 # Some non-existent
+                                                          # section.
+        
+        response = self.client.post(
+            reverse(
+                'admin:core_voter_change',
+                args=( self._user0.id, )
+            ),
+            self.post_data,
+            follow=True
+        )
+
+        self.assertEqual(Candidate.objects.all().count(), 3)
+        self.assertRedirects(
+            response,
+            reverse('admin:core_voter_change', args=( self._user0.id, )))
+
+        messages = list(response.context['messages'])
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(
+            str(messages[0]),
+            'Attempted to use a non-existent section.'
+        )
+
     def test_change_view_post_batch_no_section_change(self):
         # The save action type is not specified since we expect that an error
         # will be raised regardless of save action type. It will cause an error
