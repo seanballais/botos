@@ -728,7 +728,7 @@ class VoterAdminChangeBatchTest(TestCase):
         cls._user4.set_password('pendoko4')
         cls._user4.save()
 
-        VoterProfile.objects.create(
+        cls._voter_profile0 = VoterProfile.objects.create(
             user=cls._user0,
             has_voted=True,
             batch=cls._batch0,
@@ -810,6 +810,8 @@ class VoterAdminChangeBatchTest(TestCase):
     def setUp(self):
         self.client.login(username='admin', password='root')
 
+        self._user0.refresh_from_db()
+
         self.post_data = {
             'username': self._user0.username,
             'first_name': self._user0.first_name,
@@ -835,8 +837,6 @@ class VoterAdminChangeBatchTest(TestCase):
             # different election in the admin.
             'csrfmiddlewaretoken': 'random_token'
         }
-
-        self._user0.refresh_from_db()
 
     def test_change_view_denies_anonymous_users(self):
         self.client.logout()
