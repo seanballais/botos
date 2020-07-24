@@ -48,13 +48,13 @@ Since we're using Pipenv, we have to always run `pipenv shell` before working on
 
 Before we can finally run and start working on Botos, we have to set up environment variables for the database. The following environment variables must exist:
 
- * BOTOS_DEBUG - must be either `True`, `1`, `False`, or `0`. This should be set to `True` in development environments.
- * BOTOS_DATABASE_HOST - the PostgreSQL server host (e.g. `localhost`)
- * BOTOS_DATABASE_PORT - the port of the PostgreSQL server (e.g. `5432`)
- * BOTOS_DATABASE_NAME - the name of the database that Botos will use
- * BOTOS_DATABASE_USERNAME - the username of the user to be used for the Botos database
- * BOTOS_DATABASE_PASSWORD - the password of the user to be used for the Botos database
- * BOTOS_TEST_DATABASE_NAME - the name of the test database for Botos
+ * `BOTOS_DEBUG` - must be either `True`, `1`, `False`, or `0`. This should be set to `True` in development environments.
+ * `BOTOS_DATABASE_HOST` - the PostgreSQL server host (e.g. `localhost`)
+ * `BOTOS_DATABASE_PORT` - the port of the PostgreSQL server (e.g. `5432`)
+ * `BOTOS_DATABASE_NAME` - the name of the database that Botos will use
+ * `BOTOS_DATABASE_USERNAME` - the username of the user to be used for the Botos database
+ * `BOTOS_DATABASE_PASSWORD` - the password of the user to be used for the Botos database
+ * `BOTOS_TEST_DATABASE_NAME` - the name of the test database for Botos
 
 It is recommended to set the environment variables in a file, and having the file sourced on start-up. This way, you no longer need to export the environment variables every time you start your development machine. The file can be sourced automatically on start-up by adding the line `source /path/to/environment/file` to the shell environment file (e.g. `.bashrc` in Bash, and `.zshenv` in ZSH). A sample environment file is provided in [`botos/env/botos.env.sample`](botos/env/botos.env.sample).
 
