@@ -70,3 +70,6 @@ botos/media/avatars
 
 # Ignore local configuration.
 botos/env/botos.env
+
+# Ignore files in `botos/static/`,
+botos/static
