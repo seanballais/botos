@@ -9,7 +9,7 @@ freezegun = "*"
 coverage = "*"
 
 [packages]
-django = "~=2.2.10"
+django = "~=2.2.18"
 phe = "*"
 pillow = "~=6.2.2"
 psycopg2 = "*"
