@@ -52,4 +52,4 @@ class AppSettingsTest(TestCase):
 
     def test_non_existent_key_gives_default(self):
         self.assertIsNone(AppSettings().get(69))
-        self.assertEquals(AppSettings().get(143, default=69), 69)
+        self.assertEqual(AppSettings().get(143, default=69), 69)

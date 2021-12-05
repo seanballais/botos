@@ -109,14 +109,14 @@ class VoteTest(TestCase):
             self._vote_user_field.remote_field,
             'model'
         )
-        self.assertEquals(connected_model, User)
+        self.assertEqual(connected_model, User)
 
     def test_user_fk_on_delete(self):
         on_delete_policy = getattr(
             self._vote_user_field.remote_field,
             'on_delete'
         )
-        self.assertEquals(on_delete_policy, models.CASCADE)
+        self.assertEqual(on_delete_policy, models.CASCADE)
 
     def test_user_fk_null(self):
         self.assertFalse(self._vote_user_field.null)
@@ -135,7 +135,7 @@ class VoteTest(TestCase):
             self._vote_user_field.remote_field,
             'related_name'
         )
-        self.assertEquals(related_name, 'votes')
+        self.assertEqual(related_name, 'votes')
 
     # Test candidate foreign key.
     def test_candidate_fk_is_fk(self):
@@ -148,14 +148,14 @@ class VoteTest(TestCase):
             self._vote_candidate_field.remote_field,
             'model'
         )
-        self.assertEquals(connected_model, Candidate)
+        self.assertEqual(connected_model, Candidate)
 
     def test_candidate_fk_on_delete(self):
         on_delete_policy = getattr(
             self._vote_candidate_field.remote_field,
             'on_delete'
         )
-        self.assertEquals(on_delete_policy, models.CASCADE)
+        self.assertEqual(on_delete_policy, models.CASCADE)
 
     def test_candidate_fk_null(self):
         self.assertFalse(self._vote_candidate_field.null)
@@ -171,7 +171,7 @@ class VoteTest(TestCase):
             self._vote_candidate_field.remote_field,
             'related_name'
         )
-        self.assertEquals(related_name, 'votes')
+        self.assertEqual(related_name, 'votes')
 
     # Test election foreign key.
     def test_election_fk_is_fk(self):
@@ -184,14 +184,14 @@ class VoteTest(TestCase):
             self._vote_election_field.remote_field,
             'model'
         )
-        self.assertEquals(connected_model, Election)
+        self.assertEqual(connected_model, Election)
 
     def test_election_fk_on_delete(self):
         on_delete_policy = getattr(
             self._vote_election_field.remote_field,
             'on_delete'
         )
-        self.assertEquals(on_delete_policy, models.CASCADE)
+        self.assertEqual(on_delete_policy, models.CASCADE)
 
     def test_election_fk_null(self):
         self.assertFalse(self._vote_election_field.null)
@@ -207,17 +207,17 @@ class VoteTest(TestCase):
             self._vote_election_field.remote_field,
             'related_name'
         )
-        self.assertEquals(related_name, 'votes')
+        self.assertEqual(related_name, 'votes')
 
     # Test the meta class.
     def test_meta_indexes(self):
         indexes = self._vote._meta.indexes
-        self.assertEquals(len(indexes), 1)
-        self.assertEquals(indexes[0].fields, [ 'user', 'candidate' ])
+        self.assertEqual(len(indexes), 1)
+        self.assertEqual(indexes[0].fields, [ 'user', 'candidate' ])
 
     def test_meta_ordering(self):
         ordering = self._vote._meta.ordering
-        self.assertEquals(
+        self.assertEqual(
             ordering,
             [
                 'candidate__position__position_level',
@@ -226,21 +226,21 @@ class VoteTest(TestCase):
         )
 
     def test_meta_unique_together(self):
-        self.assertEquals(
+        self.assertEqual(
             self._vote._meta.unique_together,
             ( ('user', 'candidate'), )
         )
 
     def test_meta_verbose_name(self):
         verbose_name = self._vote._meta.verbose_name
-        self.assertEquals(verbose_name, 'vote')
+        self.assertEqual(verbose_name, 'vote')
 
     def test_meta_verbose_name_plural(self):
         verbose_name_plural = self._vote._meta.verbose_name_plural
-        self.assertEquals(verbose_name_plural, 'votes')
+        self.assertEqual(verbose_name_plural, 'votes')
 
     def test_str(self):
-        self.assertEquals(str(self._vote), '<Vote for \'juan\' by \'juan\'>')
+        self.assertEqual(str(self._vote), '<Vote for \'juan\' by \'juan\'>')
 
 
 class CandidateTest(TestCase):
@@ -376,14 +376,14 @@ class CandidateTest(TestCase):
             self._candidate_user_field.remote_field,
             'model'
         )
-        self.assertEquals(connected_model, User)
+        self.assertEqual(connected_model, User)
 
     def test_user_fk_on_delete(self):
         on_delete_policy = getattr(
             self._candidate_user_field.remote_field,
             'on_delete'
         )
-        self.assertEquals(on_delete_policy, models.CASCADE)
+        self.assertEqual(on_delete_policy, models.CASCADE)
 
     def test_user_fk_null(self):
         self.assertFalse(self._candidate_user_field.null)
@@ -402,7 +402,7 @@ class CandidateTest(TestCase):
             self._candidate_user_field.remote_field,
             'related_name'
         )
-        self.assertEquals(related_name, 'candidate')
+        self.assertEqual(related_name, 'candidate')
 
     # Test avatar image field.
     def test_avatar_is_image_field(self):
@@ -411,7 +411,7 @@ class CandidateTest(TestCase):
         )
 
     def test_avatar_upload_to(self):
-        self.assertEquals(
+        self.assertEqual(
             self._candidate_avatar_field.upload_to,
             'avatars/'
         )
@@ -423,7 +423,7 @@ class CandidateTest(TestCase):
         self.assertTrue(self._candidate_avatar_field.blank)
 
     def test_avatar_default(self):
-        self.assertEquals(
+        self.assertEqual(
             self._candidate_avatar_field.default,
             'avatars/default.png'
         )
@@ -432,7 +432,7 @@ class CandidateTest(TestCase):
         self.assertFalse(self._candidate_avatar_field.unique)
 
     def tesr_avatar_verbose_name(self):
-        self.assertEquals(
+        self.assertEqual(
             self._candidate_avatar_field.verbose_name,
             'avatar'
         )
@@ -448,14 +448,14 @@ class CandidateTest(TestCase):
             self._candidate_party_field.remote_field,
             'model'
         )
-        self.assertEquals(connected_model, CandidateParty)
+        self.assertEqual(connected_model, CandidateParty)
 
     def test_party_fk_on_delete(self):
         on_delete_policy = getattr(
             self._candidate_party_field.remote_field,
             'on_delete'
         )
-        self.assertEquals(on_delete_policy, models.SET_NULL)
+        self.assertEqual(on_delete_policy, models.SET_NULL)
 
     def test_party_fk_null(self):
         self.assertTrue(self._candidate_party_field.null)
@@ -474,7 +474,7 @@ class CandidateTest(TestCase):
             self._candidate_party_field.remote_field,
             'related_name'
         )
-        self.assertEquals(related_name, 'candidates')
+        self.assertEqual(related_name, 'candidates')
 
     # Test position foreign key.
     def test_position_fk_is_fk(self):
@@ -487,14 +487,14 @@ class CandidateTest(TestCase):
             self._candidate_position_field.remote_field,
             'model'
         )
-        self.assertEquals(connected_model, CandidatePosition)
+        self.assertEqual(connected_model, CandidatePosition)
 
     def test_position_fk_on_delete(self):
         on_delete_policy = getattr(
             self._candidate_position_field.remote_field,
             'on_delete'
         )
-        self.assertEquals(on_delete_policy, models.SET_NULL)
+        self.assertEqual(on_delete_policy, models.SET_NULL)
 
     def test_position_fk_null(self):
         self.assertTrue(self._candidate_position_field.null)
@@ -513,7 +513,7 @@ class CandidateTest(TestCase):
             self._candidate_position_field.remote_field,
             'related_name'
         )
-        self.assertEquals(related_name, 'candidates')
+        self.assertEqual(related_name, 'candidates')
 
     # Test election foreign key.
     def test_election_fk_is_fk(self):
@@ -526,14 +526,14 @@ class CandidateTest(TestCase):
             self._candidate_election_field.remote_field,
             'model'
         )
-        self.assertEquals(connected_model, Election)
+        self.assertEqual(connected_model, Election)
 
     def test_election_fk_on_delete(self):
         on_delete_policy = getattr(
             self._candidate_election_field.remote_field,
             'on_delete'
         )
-        self.assertEquals(on_delete_policy, models.CASCADE)
+        self.assertEqual(on_delete_policy, models.CASCADE)
 
     def test_election_fk_null(self):
         self.assertFalse(self._candidate_election_field.null)
@@ -552,17 +552,17 @@ class CandidateTest(TestCase):
             self._candidate_election_field.remote_field,
             'related_name'
         )
-        self.assertEquals(related_name, 'candidates')
+        self.assertEqual(related_name, 'candidates')
 
     # Test the meta class.
     def test_meta_indexes(self):
         indexes = self._candidate._meta.indexes
-        self.assertEquals(len(indexes), 1)
-        self.assertEquals(indexes[0].fields, [ 'user' ])
+        self.assertEqual(len(indexes), 1)
+        self.assertEqual(indexes[0].fields, [ 'user' ])
 
     def test_meta_ordering(self):
         ordering = self._candidate._meta.ordering
-        self.assertEquals(
+        self.assertEqual(
             ordering,
             [
                 'election',
@@ -575,14 +575,14 @@ class CandidateTest(TestCase):
 
     def test_meta_verbose_name(self):
         verbose_name = self._candidate._meta.verbose_name
-        self.assertEquals(verbose_name, 'candidate')
+        self.assertEqual(verbose_name, 'candidate')
 
     def test_meta_verbose_name_plural(self):
         verbose_name_plural = self._candidate._meta.verbose_name_plural
-        self.assertEquals(verbose_name_plural, 'candidates')
+        self.assertEqual(verbose_name_plural, 'candidates')
 
     def test_str(self):
-        self.assertEquals(
+        self.assertEqual(
             str(self._candidate),
             'Pedro, Juan'
         )
@@ -1008,7 +1008,7 @@ class CandidatePartyTest(TestCase):
         )
 
     def test_party_name_max_length(self):
-        self.assertEquals(self._party_name_field.max_length, 32)
+        self.assertEqual(self._party_name_field.max_length, 32)
 
     def test_party_name_null(self):
         self.assertFalse(self._party_name_field.null)
@@ -1033,14 +1033,14 @@ class CandidatePartyTest(TestCase):
             self._party_election_field.remote_field,
             'model'
         )
-        self.assertEquals(connected_model, Election)
+        self.assertEqual(connected_model, Election)
 
     def test_election_fk_on_delete(self):
         on_delete_policy = getattr(
             self._party_election_field.remote_field,
             'on_delete'
         )
-        self.assertEquals(on_delete_policy, models.CASCADE)
+        self.assertEqual(on_delete_policy, models.CASCADE)
 
     def test_election_fk_null(self):
         self.assertFalse(self._party_election_field.null)
@@ -1059,32 +1059,32 @@ class CandidatePartyTest(TestCase):
             self._party_election_field.remote_field,
             'related_name'
         )
-        self.assertEquals(related_name, 'candidate_parties')
+        self.assertEqual(related_name, 'candidate_parties')
 
     # Test the meta class.
     def test_meta_indexes(self):
         indexes = self._party._meta.indexes
-        self.assertEquals(len(indexes), 1)
-        self.assertEquals(indexes[0].fields, [ 'party_name' ])
+        self.assertEqual(len(indexes), 1)
+        self.assertEqual(indexes[0].fields, [ 'party_name' ])
 
     def test_meta_ordering(self):
-        self.assertEquals(
+        self.assertEqual(
             self._party._meta.ordering, [ 'election', 'party_name' ])
 
     def test_meta_unique_together(self):
-        self.assertEquals(
+        self.assertEqual(
             self._party._meta.unique_together,
             ( ('party_name', 'election'), )
         )
 
     def test_meta_verbose_name(self):
-        self.assertEquals(self._party._meta.verbose_name, 'party')
+        self.assertEqual(self._party._meta.verbose_name, 'party')
 
     def test_meta_verbose_name_plural(self):
-        self.assertEquals(self._party._meta.verbose_name_plural, 'parties')
+        self.assertEqual(self._party._meta.verbose_name_plural, 'parties')
 
     def test_str(self):
-        self.assertEquals(
+        self.assertEqual(
             str(self._party),
             'Awesome Party'
         )
@@ -1185,7 +1185,7 @@ class CandidatePositionTest(TestCase):
         )
 
     def test_position_name_max_length(self):
-        self.assertEquals(self._position_name_field.max_length, 32)
+        self.assertEqual(self._position_name_field.max_length, 32)
 
     def test_position_name_null(self):
         self.assertFalse(self._position_name_field.null)
@@ -1215,7 +1215,7 @@ class CandidatePositionTest(TestCase):
         self.assertFalse(self._position_level_field.blank)
 
     def test_position_level_default(self):
-        self.assertEquals(self._position_level_field.default, 32767)
+        self.assertEqual(self._position_level_field.default, 32767)
 
     def test_position_level_unique(self):
         self.assertFalse(self._position_level_field.unique)
@@ -1236,7 +1236,7 @@ class CandidatePositionTest(TestCase):
         self.assertFalse(self._max_num_selected_candidates.blank)
 
     def test_max_num_selected_candidates_default(self):
-        self.assertEquals(self._max_num_selected_candidates.default, 1)
+        self.assertEqual(self._max_num_selected_candidates.default, 1)
 
     def test_max_num_selected_candidates_unique(self):
         self.assertFalse(self._max_num_selected_candidates.unique)
@@ -1266,14 +1266,14 @@ class CandidatePositionTest(TestCase):
             self._position_election_field.remote_field,
             'model'
         )
-        self.assertEquals(connected_model, Election)
+        self.assertEqual(connected_model, Election)
 
     def test_position_election_fk_on_delete(self):
         on_delete_policy = getattr(
             self._position_election_field.remote_field,
             'on_delete'
         )
-        self.assertEquals(on_delete_policy, models.CASCADE)
+        self.assertEqual(on_delete_policy, models.CASCADE)
 
     def test_position_election_fk_null(self):
         self.assertFalse(self._position_election_field.null)
@@ -1292,7 +1292,7 @@ class CandidatePositionTest(TestCase):
             self._position_election_field.remote_field,
             'related_name'
         )
-        self.assertEquals(related_name, 'candidate_positions')
+        self.assertEqual(related_name, 'candidate_positions')
 
     # Test batches many-to-many field.
     def test_target_batches_field_m2m_is_m2m(self):
@@ -1305,7 +1305,7 @@ class CandidatePositionTest(TestCase):
             self._target_batches_field.remote_field,
             'model'
         )
-        self.assertEquals(connected_model, Batch)
+        self.assertEqual(connected_model, Batch)
 
     def test_target_batches_field_blank(self):
         self.assertTrue(self._target_batches_field.blank)
@@ -1318,40 +1318,40 @@ class CandidatePositionTest(TestCase):
             self._target_batches_field.remote_field,
             'related_name'
         )
-        self.assertEquals(related_name, 'candidate_positions')
+        self.assertEqual(related_name, 'candidate_positions')
 
     # Test the meta class.
     def test_meta_indexes(self):
         indexes = self._position._meta.indexes
-        self.assertEquals(len(indexes), 1)
-        self.assertEquals(indexes[0].fields, [ 'position_name' ])
+        self.assertEqual(len(indexes), 1)
+        self.assertEqual(indexes[0].fields, [ 'position_name' ])
 
     def test_meta_ordering(self):
-        self.assertEquals(
+        self.assertEqual(
             self._position._meta.ordering,
             [ 'election', 'position_level', 'position_name' ]
         )
 
     def test_meta_unique_together(self):
-        self.assertEquals(
+        self.assertEqual(
             self._position._meta.unique_together,
             ( ( 'position_name', 'election', ), )
         )
 
     def test_meta_verbose_name(self):
-        self.assertEquals(
+        self.assertEqual(
             self._position._meta.verbose_name,
             'candidate position'
         )
 
     def test_meta_verbose_name_plural(self):
-        self.assertEquals(
+        self.assertEqual(
             self._position._meta.verbose_name_plural,
             'candidate positions'
         )
 
     def test_str(self):
-        self.assertEquals(
+        self.assertEqual(
             str(self._position),
             'Amazing Position'
         )
@@ -1383,7 +1383,7 @@ class ElectionTest(TestCase):
         )
 
     def test_election_name_field_max_length(self):
-        self.assertEquals(self._election_name_field.max_length, 32)
+        self.assertEqual(self._election_name_field.max_length, 32)
 
     def test_election_name_field_null(self):
         self.assertFalse(self._election_name_field.null)
@@ -1398,7 +1398,7 @@ class ElectionTest(TestCase):
         self.assertTrue(self._election_name_field.unique)
 
     def test_election_name_field_verbose_name(self):
-        self.assertEquals(
+        self.assertEqual(
             self._election_name_field.verbose_name,
             'name'
         )
@@ -1406,20 +1406,20 @@ class ElectionTest(TestCase):
     # Test the meta class.
     def test_meta_indexes(self):
         indexes = self._election._meta.indexes
-        self.assertEquals(len(indexes), 1)
-        self.assertEquals(indexes[0].fields, [ 'name' ])
+        self.assertEqual(len(indexes), 1)
+        self.assertEqual(indexes[0].fields, [ 'name' ])
 
     def test_meta_ordering(self):
         ordering = self._election._meta.ordering
-        self.assertEquals(ordering, [ 'name' ])
+        self.assertEqual(ordering, [ 'name' ])
 
     def test_meta_verbose_name(self):
         verbose_name = self._election._meta.verbose_name
-        self.assertEquals(verbose_name, 'election')
+        self.assertEqual(verbose_name, 'election')
 
     def test_meta_verbose_name_plural(self):
         verbose_name_plural = self._election._meta.verbose_name_plural
-        self.assertEquals(verbose_name_plural, 'elections')
+        self.assertEqual(verbose_name_plural, 'elections')
 
     def test_str(self):
-        self.assertEquals(str(self._election), 'Election')
+        self.assertEqual(str(self._election), 'Election')

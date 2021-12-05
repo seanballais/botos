@@ -84,7 +84,7 @@ class LoginViewTest(TestCase):
         # sure that we log in the correct user.
         response_user = response.context['user']
         self.assertTrue(response_user.is_authenticated)
-        self.assertEquals(response_user.username, 'juan')
+        self.assertEqual(response_user.username, 'juan')
 
     def test_wrong_username_password_combination_login(self):
         response = self.client.post(
@@ -141,7 +141,7 @@ class LoginViewTest(TestCase):
 
         response_user = response.context['user']
         self.assertTrue(response_user.is_authenticated)
-        self.assertEquals(response_user.username, 'admin')
+        self.assertEqual(response_user.username, 'admin')
         self.assertRedirects(response, reverse('results'))
 
     def test_post_successful_login_with_blank_next_url(self):
@@ -157,7 +157,7 @@ class LoginViewTest(TestCase):
 
         response_user = response.context['user']
         self.assertTrue(response_user.is_authenticated)
-        self.assertEquals(response_user.username, 'juan')
+        self.assertEqual(response_user.username, 'juan')
 
     def test_post_unsuccessful_login_with_next_url(self):
         response = self.client.post(
