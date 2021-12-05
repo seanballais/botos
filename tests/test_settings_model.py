@@ -62,7 +62,7 @@ class SettingTest(TestCase):
         )
 
     def test_key_max_length(self):
-        self.assertEquals(self._setting_key_field.max_length, 30)
+        self.assertEqual(self._setting_key_field.max_length, 30)
 
     def test_key_null(self):
         self.assertFalse(self._setting_key_field.null)
@@ -77,7 +77,7 @@ class SettingTest(TestCase):
         self.assertTrue(self._setting_key_field.unique)
 
     def test_key_verbose_name(self):
-        self.assertEquals(
+        self.assertEqual(
             self._setting_key_field.verbose_name,
             'key'
         )
@@ -101,7 +101,7 @@ class SettingTest(TestCase):
         self.assertFalse(self._setting_value_field.unique)
 
     def test_value_verbose_name(self):
-        self.assertEquals(
+        self.assertEqual(
             self._setting_value_field.verbose_name,
             'value'
         )
@@ -109,20 +109,20 @@ class SettingTest(TestCase):
     # Test the meta class.
     def test_meta_indexes(self):
         indexes = self._setting._meta.indexes
-        self.assertEquals(len(indexes), 1)
-        self.assertEquals(indexes[0].fields, [ 'key' ])
+        self.assertEqual(len(indexes), 1)
+        self.assertEqual(indexes[0].fields, [ 'key' ])
 
     def test_meta_ordering(self):
-        self.assertEquals(self._setting._meta.ordering, [ 'key' ])
+        self.assertEqual(self._setting._meta.ordering, [ 'key' ])
 
     def test_meta_verbose_name(self):
-        self.assertEquals(self._setting._meta.verbose_name, 'election setting')
+        self.assertEqual(self._setting._meta.verbose_name, 'election setting')
 
     def test_meta_verbose_name_plural(self):
-        self.assertEquals(
+        self.assertEqual(
             self._setting._meta.verbose_name_plural,
             'election settings'
         )
 
     def test_str(self):
-        self.assertEquals(str(self._setting), 'test_value')
+        self.assertEqual(str(self._setting), 'test_value')

@@ -123,23 +123,23 @@ class UserModelTest(TestCase):
     # Test the meta class.
     def test_meta_indexes(self):
         indexes = self._user._meta.indexes
-        self.assertEquals(len(indexes), 1)
-        self.assertEquals(indexes[0].fields, [ 'username' ])
+        self.assertEqual(len(indexes), 1)
+        self.assertEqual(indexes[0].fields, [ 'username' ])
 
     def test_meta_ordering(self):
         ordering = self._user._meta.ordering
-        self.assertEquals(ordering, [ 'username' ])
+        self.assertEqual(ordering, [ 'username' ])
 
     def test_meta_verbose_name(self):
         verbose_name = self._user._meta.verbose_name
-        self.assertEquals(verbose_name, 'user')
+        self.assertEqual(verbose_name, 'user')
 
     def test_meta_verbose_name_plural(self):
         verbose_name_plural = self._user._meta.verbose_name_plural
-        self.assertEquals(verbose_name_plural, 'users')
+        self.assertEqual(verbose_name_plural, 'users')
 
     def test_str(self):
-        self.assertEquals(str(self._user), 'Pedro, Juan')
+        self.assertEqual(str(self._user), 'Pedro, Juan')
 
     # Test the permissions function.
     def test_has_perm_with_voter(self):
@@ -304,11 +304,11 @@ class VoterProfileModelTest(TestCase):
 
     def test_user_fk_connected_model(self):
         connected_model = getattr(self._user_field.remote_field, 'model')
-        self.assertEquals(connected_model, User)
+        self.assertEqual(connected_model, User)
 
     def test_user_fk_on_delete(self):
         on_delete_policy = getattr(self._user_field.remote_field, 'on_delete')
-        self.assertEquals(on_delete_policy, models.CASCADE)
+        self.assertEqual(on_delete_policy, models.CASCADE)
 
     def test_user_fk_null(self):
         self.assertFalse(self._user_field.null)
@@ -324,7 +324,7 @@ class VoterProfileModelTest(TestCase):
 
     def test_user_fk_related_name(self):
         related_name = getattr(self._user_field.remote_field, 'related_name')
-        self.assertEquals(related_name, 'voter_profile')
+        self.assertEqual(related_name, 'voter_profile')
 
     # Test has_voted field.
     def test_has_voted_field_is_boolean(self):
@@ -353,14 +353,14 @@ class VoterProfileModelTest(TestCase):
             self._batch_field.remote_field,
             'model'
         )
-        self.assertEquals(connected_model, Batch)
+        self.assertEqual(connected_model, Batch)
 
     def test_batch_fk_on_delete(self):
         on_delete_policy = getattr(
             self._batch_field.remote_field,
             'on_delete'
         )
-        self.assertEquals(on_delete_policy, models.CASCADE)
+        self.assertEqual(on_delete_policy, models.CASCADE)
 
     def test_batch_fk_null(self):
         self.assertFalse(self._batch_field.null)
@@ -376,7 +376,7 @@ class VoterProfileModelTest(TestCase):
 
     def test_batch_fk_related_name(self):
         related_name = getattr(self._batch_field.remote_field, 'related_name')
-        self.assertEquals(related_name, 'voter_profiles')
+        self.assertEqual(related_name, 'voter_profiles')
 
     # Test section foreign key.
     def test_section_fk_is_fk(self):
@@ -384,14 +384,14 @@ class VoterProfileModelTest(TestCase):
 
     def test_section_fk_connected_model(self):
         connected_model = getattr(self._section_field.remote_field, 'model')
-        self.assertEquals(connected_model, Section)
+        self.assertEqual(connected_model, Section)
 
     def test_section_fk_on_delete(self):
         on_delete_policy = getattr(
             self._section_field.remote_field,
             'on_delete'
         )
-        self.assertEquals(on_delete_policy, models.CASCADE)
+        self.assertEqual(on_delete_policy, models.CASCADE)
 
     def test_section_fk_null(self):
         self.assertFalse(self._section_field.null)
@@ -410,28 +410,28 @@ class VoterProfileModelTest(TestCase):
             self._section_field.remote_field,
             'related_name'
         )
-        self.assertEquals(related_name, 'voter_profiles')
+        self.assertEqual(related_name, 'voter_profiles')
 
     # Test the meta class.
     def test_meta_indexes(self):
         indexes = self._voter_profile._meta.indexes
-        self.assertEquals(len(indexes), 1)
-        self.assertEquals(indexes[0].fields, [ 'user' ])
+        self.assertEqual(len(indexes), 1)
+        self.assertEqual(indexes[0].fields, [ 'user' ])
 
     def test_meta_ordering(self):
         ordering = self._voter_profile._meta.ordering
-        self.assertEquals(ordering, [ 'user__username' ])
+        self.assertEqual(ordering, [ 'user__username' ])
 
     def test_meta_verbose_name(self):
         verbose_name = self._voter_profile._meta.verbose_name
-        self.assertEquals(verbose_name, 'voter profile')
+        self.assertEqual(verbose_name, 'voter profile')
 
     def test_meta_verbose_name_plural(self):
         verbose_name_plural = self._voter_profile._meta.verbose_name_plural
-        self.assertEquals(verbose_name_plural, 'voter profiles')
+        self.assertEqual(verbose_name_plural, 'voter profiles')
 
     def test_str(self):
-        self.assertEquals(str(self._voter_profile), str(self._user))
+        self.assertEqual(str(self._voter_profile), str(self._user))
 
     def test_creating_voter_profile_available_section(self):
         voter_profile = VoterProfile(
@@ -570,7 +570,7 @@ class BatchModelTest(TestCase):
         self.assertTrue(self._batch_year_field.unique)
 
     def test_year_verbose_name(self):
-        self.assertEquals(self._batch_year_field.verbose_name, 'year')
+        self.assertEqual(self._batch_year_field.verbose_name, 'year')
 
     # Test election foreign key.
     def test_election_fk_is_fk(self):
@@ -583,14 +583,14 @@ class BatchModelTest(TestCase):
             self._batch_election_field.remote_field,
             'model'
         )
-        self.assertEquals(connected_model, Election)
+        self.assertEqual(connected_model, Election)
 
     def test_election_fk_on_delete(self):
         on_delete_policy = getattr(
             self._batch_election_field.remote_field,
             'on_delete'
         )
-        self.assertEquals(on_delete_policy, models.PROTECT)
+        self.assertEqual(on_delete_policy, models.PROTECT)
 
     def test_election_fk_null(self):
         # The election field shouldn't be null since, based on current use
@@ -612,25 +612,25 @@ class BatchModelTest(TestCase):
             self._batch_election_field.remote_field,
             'related_name'
         )
-        self.assertEquals(related_name, 'batches')
+        self.assertEqual(related_name, 'batches')
 
     # Test the meta class.
     def test_meta_indexes(self):
         indexes = self._batch._meta.indexes
-        self.assertEquals(len(indexes), 1)
-        self.assertEquals(indexes[0].fields, [ 'year' ])
+        self.assertEqual(len(indexes), 1)
+        self.assertEqual(indexes[0].fields, [ 'year' ])
 
     def test_meta_ordering(self):
-        self.assertEquals(self._batch._meta.ordering, [ 'year' ])
+        self.assertEqual(self._batch._meta.ordering, [ 'year' ])
 
     def test_meta_verbose_name(self):
-        self.assertEquals(self._batch._meta.verbose_name, 'batch')
+        self.assertEqual(self._batch._meta.verbose_name, 'batch')
 
     def test_meta_verbose_name_plural(self):
-        self.assertEquals(self._batch._meta.verbose_name_plural, 'batches')
+        self.assertEqual(self._batch._meta.verbose_name_plural, 'batches')
 
     def test_str(self):
-        self.assertEquals(str(self._batch), '2019')
+        self.assertEqual(str(self._batch), '2019')
 
 
 class SectionModelTest(TestCase):
@@ -659,7 +659,7 @@ class SectionModelTest(TestCase):
         )
 
     def test_section_name_field_max_length(self):
-        self.assertEquals(self._section_name_field.max_length, 15)
+        self.assertEqual(self._section_name_field.max_length, 15)
 
     def test_section_name_field_null(self):
         self.assertFalse(self._section_name_field.null)
@@ -674,7 +674,7 @@ class SectionModelTest(TestCase):
         self.assertTrue(self._section_name_field.unique)
 
     def test_section_name_field_verbose_name(self):
-        self.assertEquals(
+        self.assertEqual(
             self._section_name_field.verbose_name,
             'section_name'
         )
@@ -682,20 +682,20 @@ class SectionModelTest(TestCase):
     # Test the meta class.
     def test_meta_indexes(self):
         indexes = self._section._meta.indexes
-        self.assertEquals(len(indexes), 1)
-        self.assertEquals(indexes[0].fields, [ 'section_name' ])
+        self.assertEqual(len(indexes), 1)
+        self.assertEqual(indexes[0].fields, [ 'section_name' ])
 
     def test_meta_ordering(self):
         ordering = self._section._meta.ordering
-        self.assertEquals(ordering, [ 'section_name' ])
+        self.assertEqual(ordering, [ 'section_name' ])
 
     def test_meta_verbose_name(self):
         verbose_name = self._section._meta.verbose_name
-        self.assertEquals(verbose_name, 'section')
+        self.assertEqual(verbose_name, 'section')
 
     def test_meta_verbose_name_plural(self):
         verbose_name_plural = self._section._meta.verbose_name_plural
-        self.assertEquals(verbose_name_plural, 'sections')
+        self.assertEqual(verbose_name_plural, 'sections')
 
     def test_str(self):
-        self.assertEquals(str(self._section), 'Section')
+        self.assertEqual(str(self._section), 'Section')

@@ -221,7 +221,7 @@ class VoteProcessingView(TestCase):
             follow=True
         )
         response_messages = list(response.context['messages'])
-        self.assertEquals(
+        self.assertEqual(
             response_messages[0].message,
             'The votes you sent were invalid. Please try voting again, and/or '
             'contact the system administrator.'
@@ -297,7 +297,7 @@ class VoteProcessingView(TestCase):
             follow=True
         )
         response_messages = list(response.context['messages'])
-        self.assertEquals(
+        self.assertEqual(
             response_messages[0].message,
             'You are no longer allowed to vote since you have voted already.'
         )
@@ -314,7 +314,7 @@ class VoteProcessingView(TestCase):
             follow=True
         )
         response_messages = list(response.context['messages'])
-        self.assertEquals(
+        self.assertEqual(
             response_messages[0].message,
             'You are no longer allowed to vote since you have voted already.'
             ' Additionally, the votes you were invalid too.'
@@ -331,7 +331,7 @@ class VoteProcessingView(TestCase):
             follow=True
         )
         response_messages = list(response.context['messages'])
-        self.assertEquals(
+        self.assertEqual(
             response_messages[0].message,
             'The votes you sent were invalid. Please try voting '
             'again, and/or contact the system administrator.'
@@ -372,7 +372,7 @@ class VoteProcessingView(TestCase):
         )
 
         response_messages = list(response.context['messages'])
-        self.assertEquals(
+        self.assertEqual(
             response_messages[0].message,
             'The votes you sent were invalid. Please try voting '
             'again, and/or contact the system administrator.'
@@ -398,7 +398,7 @@ class VoteProcessingView(TestCase):
         )
 
         response_messages = list(response.context['messages'])
-        self.assertEquals(
+        self.assertEqual(
             response_messages[0].message,
             'The votes you sent were invalid. Please try voting '
             'again, and/or contact the system administrator.'

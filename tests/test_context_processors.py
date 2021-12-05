@@ -9,7 +9,7 @@ class TemplateContextProcessorTest(TestCase):
     Tests the context processor that gives the current template's name.
     """
     def test_getting_default_template(self):
-        self.assertEquals(
+        self.assertEqual(
             context_processors.get_template(None),
             { 'template': 'default' }
         )
@@ -18,7 +18,7 @@ class TemplateContextProcessorTest(TestCase):
         # WTF, 2019 Sean? HAHAHAHAHA -2020 Sean
         AppSettings().set('template', 'ye-ye-bonel')
 
-        self.assertEquals(
+        self.assertEqual(
             context_processors.get_template(None),
             { 'template': 'ye-ye-bonel' }
         )

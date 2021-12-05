@@ -83,7 +83,7 @@ class ElectionSettingsCurrentTemplateFormTest(BaseAdminFormTest, TestCase):
         response = self.client.get(reverse('admin-election-index'))
         form_fields = response.context['current_template_form'].fields
         form_template_name = form_fields['template_name']
-        self.assertEquals(
+        self.assertEqual(
             form_template_name.initial,
             'default'
         )
@@ -109,7 +109,7 @@ class ElectionSettingsCurrentTemplateFormTest(BaseAdminFormTest, TestCase):
         response = self.client.get(reverse('admin-election-index'))
         form_fields = response.context['current_template_form'].fields
         form_template_name = form_fields['template_name']
-        self.assertEquals(form_template_name.initial, 'yes-or-yes')
+        self.assertEqual(form_template_name.initial, 'yes-or-yes')
 
         # And, of course, we better clean up the mess we did and delete the
         # 'yes-or-yes' template we created.
@@ -120,7 +120,7 @@ class ElectionSettingsCurrentTemplateFormTest(BaseAdminFormTest, TestCase):
         response = self.client.get(reverse('admin-election-index'))
         form_fields = response.context['current_template_form'].fields
         form_template_name = form_fields['template_name']
-        self.assertEquals(
+        self.assertEqual(
             form_template_name.choices,
             [ ('default', 'default') ]
         )
@@ -153,7 +153,7 @@ class ElectionSettingsCurrentTemplateFormTest(BaseAdminFormTest, TestCase):
             response = self.client.get(reverse('admin-election-index'))
             form_fields = response.context['current_template_form'].fields
             form_template_name = form_fields['template_name']
-            self.assertEquals(
+            self.assertEqual(
                 sorted(form_template_name.choices),
                 [
                     ('default', 'default'),
@@ -207,7 +207,7 @@ class ElectionSettingsCurrentTemplateFormTest(BaseAdminFormTest, TestCase):
             response = self.client.get(reverse('admin-election-index'))
             form_fields = response.context['current_template_form'].fields
             form_template_name = form_fields['template_name']
-            self.assertEquals(
+            self.assertEqual(
                 sorted(form_template_name.choices),
                 [
                     ('default', 'default'),
@@ -263,7 +263,7 @@ class ElectionSettingsCurrentTemplateFormTest(BaseAdminFormTest, TestCase):
             response = self.client.get(reverse('admin-election-index'))
             form_fields = response.context['current_template_form'].fields
             form_template_name = form_fields['template_name']
-            self.assertEquals(
+            self.assertEqual(
                 sorted(form_template_name.choices),
                 [
                     ('default', 'default'),
@@ -330,7 +330,7 @@ class ElectionSettingsElectionStateFormTest(BaseAdminFormTest, TestCase):
         response = self.client.get(reverse('admin-election-index'))
         form_fields = response.context['current_election_state_form'].fields
         form_state = form_fields['state']
-        self.assertEquals(form_state.initial, 'closed')
+        self.assertEqual(form_state.initial, 'closed')
 
     def test_value_of_radio_box_if_state_have_been_set(self):
         AppSettings().set('election_state', 'open')
@@ -339,7 +339,7 @@ class ElectionSettingsElectionStateFormTest(BaseAdminFormTest, TestCase):
         response = self.client.get(reverse('admin-election-index'))
         form_fields = response.context['current_election_state_form'].fields
         form_state = form_fields['state']
-        self.assertEquals(form_state.initial, 'open')
+        self.assertEqual(form_state.initial, 'open')
 
 
 class UserCreationFormTest(TestCase):
