@@ -71,7 +71,7 @@ class ElectionSettingsIndexView(TemplateView):
 @method_decorator(
     login_required(
         login_url='/',
-        next='/admin/election'
+        next='/admin/election/'
     ),
     name='dispatch',
 )
@@ -93,7 +93,7 @@ class CurrentTemplateView(View):
     View URL: `/admin/election/template`
     """
     def get(self, request):
-        return redirect('/admin/election')
+        return redirect('/admin/election/')
 
     def post(self, request):
         # Let's validate the data we got first.
@@ -110,14 +110,14 @@ class CurrentTemplateView(View):
                 'Template field must not be empty nor have invalid data.'
             )
 
-        return redirect('/admin/election')
+        return redirect('/admin/election/')
 
 
 @method_decorator(csrf_protect, name='dispatch')
 @method_decorator(
     login_required(
         login_url='/',
-        next='/admin/election'
+        next='/admin/election/'
     ),
     name='dispatch',
 )
@@ -140,7 +140,7 @@ class ElectionStateView(View):
     View URL: `/admin/election/state`
     """
     def get(self, request):
-        return redirect('/admin/election')
+        return redirect('/admin/election/')
 
     def post(self, request):
         # Let's validate the data we got first.
@@ -157,4 +157,4 @@ class ElectionStateView(View):
                 'You attempted to change the election state with invalid data.'
             )
 
-        return redirect('/admin/election')
+        return redirect('/admin/election/')
