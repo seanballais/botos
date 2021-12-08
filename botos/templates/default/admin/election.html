@@ -19,7 +19,7 @@
 </form>
 
 <h2>Election State</h2>
-<form action="/admin/election/state" method="post">
+<form action="/admin/election/state/" method="post">
     {% csrf_token %}
     {{ current_election_state_form }}
     <input type="submit" value="Save">

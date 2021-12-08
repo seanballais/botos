@@ -113,7 +113,6 @@ MEDIA_ROOT = get_env_var('BOTOS_MEDIA_ROOT',
                          debug=DEBUG,
                          debug_value=os.path.join(BASE_DIR, 'botos/media/'))
 
-APPEND_SLASH=False
 # Allowed hosts setup
 ALLOWED_HOSTS = list(
     map(

@@ -45,7 +45,7 @@ urlpatterns = [
         name='admin-election-template'
     ),
     path(
-        'admin/election/state',
+        'admin/election/state/',
         ElectionStateView.as_view(),
         name='admin-election-state'
     ),
