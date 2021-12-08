@@ -73,3 +73,6 @@ botos/env/botos.env
 
 # Ignore files in `botos/static/`,
 botos/static
+
+# Ignore env files
+botos.env

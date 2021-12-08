@@ -18,6 +18,8 @@ from core.models import (
     User, UserType
 )
 
+from core.utils import AppSettings
+
 
 @method_decorator(csrf_protect, name='dispatch')
 @method_decorator(
@@ -63,6 +65,11 @@ class LoginView(View):
                         'Voter account is incompletely configured. Please '
                         'contact the system administrator.'
                     )
+                elif (user.type == UserType.VOTER
+                      and AppSettings().get('election_state', default='closed') == 'closed'):
+                    messages.error(
+                        request,
+                        'The election is now closed.')
                 else:
                     # Login success! Yey!
                     login(request, user)
