@@ -9,6 +9,8 @@ from core.models import (
     User, Batch, Section, Election, UserType, VoterProfile
 )
 
+from core.utils import AppSettings
+
 
 class LoginViewTest(TestCase):
     """
@@ -100,6 +102,25 @@ class LoginViewTest(TestCase):
         )
         self.assertRedirects(response, reverse('index'))
 
+    def test_post_login_closed_election(self):
+        AppSettings().set('election_state', 'closed')
+        response = self.client.post(
+            reverse('auth-login'),
+            { 'username': 'juan', 'password': 'pepito'},
+            follow=True
+        )
+        messages = list(response.context['messages'])
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(
+            str(messages[0]),
+            'The election is now closed.'
+        )
+
+    def test_post_login_open_election(self):
+        AppSettings().set('election_state', 'open')
+        self.test_successful_login()
+
+
     def test_post_login_no_username(self):
         response = self.client.post(
             reverse('auth-login'),
@@ -127,6 +148,7 @@ class LoginViewTest(TestCase):
             'Invalid data submitted for authentication.'
         )
         self.assertRedirects(response, reverse('index'))
+
 
     def test_post_successful_login_with_next_url(self):
         response = self.client.post(

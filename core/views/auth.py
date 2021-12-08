@@ -69,7 +69,7 @@ class LoginView(View):
                       and AppSettings().get('election_state', default='closed') == 'closed'):
                     messages.error(
                         request,
-                        'The election is now closed. Please contact the system administrator')
+                        'The election is now closed.')
                 else:
                     # Login success! Yey!
                     login(request, user)
