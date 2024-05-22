@@ -8,33 +8,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="94de5c49-841c-48b0-b388-90ddf42a8655" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/botos.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/botos.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Pipfile" beforeDir="false" afterPath="$PROJECT_DIR$/Pipfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Pipfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Pipfile.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/botos.env" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/botos.env.sample" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/botos/settings/regular_settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/botos/settings/regular_settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/management/commands/createsuperuser.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/management/commands/createsuperuser.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/models/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/models/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/views/results.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/views/results.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_admin_forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_admin_forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_admin_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_admin_view.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_auth_views.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_auth_views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_base_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_base_model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_commands.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_commands.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_context_processors.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_context_processors.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_election_models.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_election_models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_index_views.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_index_views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_results_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_results_view.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_settings_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_settings_model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_user_models.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_user_models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_vote_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_vote_view.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -512,15 +487,15 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;upgrade/packages-2024&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/sean/Code/Projects/botos&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;Errors&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "docs/readme-update",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/sean/Code/Projects/botos",
+    "settings.editor.selected.configurable": "Errors"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\sean\Code\Projects\botos\botos\env" />

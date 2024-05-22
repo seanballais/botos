@@ -8,27 +8,32 @@
 Botos is a web-based school election system designed for low-coercion risk elections. It is designed to be used in schools for student elections. It supports running multiple different elections in one installation, and real-time viewing and exporting of election results.
 
 ## Documentation
-Currently, the documentation is a work-in-progress. However, the project itself is already feature-complete. Once the documentation is available, this README will be updated to include the link to the documentation.
+Currently, the documentation is a work-in-progress. However, the project itself is already feature-complete. The repository's [wiki](https://github.com/seanballais/botos/wiki) is where you can find this [project's (incomplete) documentation](https://github.com/seanballais/botos/wiki).
+
+### Deployment
+Instructions on deploying Botos may be accessed [here](https://github.com/seanballais/botos/wiki/Deployment).
 
 ## Bug Reports and Feature Suggestions
 If you would like to report a bug or suggest a feature, please consider filing an [issue](https://github.com/seanballais/botos/issues/new). For bug reports, please describe the bug as much as possible, and include a description on how to recreate it.
 
 ## Development
-Botos is developed using Python 3, and Django. At the moment, the project is using Python 3.5 and Django 2.2. In the future, the project will be moved to a newer version of Python 3 and Django. Aside from the two aforementioned technologies, Botos also uses the following:
+Botos is developed using Python 3, and Django. At the moment, the project is using Python 3.12 and Django 5.0. In the future, the project will be moved to a newer version of Python 3 and Django. Aside from the two aforementioned technologies, Botos also uses the following:
 
- * PostgreSQL 11
+ * PostgreSQL 16
  * Django Autocomplete Light
  * OpenPyXL
  * BeautifulSoup 4 (for development)
  * Coverage (for development)
 
+This section is intended for those seeking to contribute or work on Botos. If you are seeking to deploy Botos in a production, please refer to the [Deployment](#deployment) section.
+
 ### Roadmap
 A roadmap for Botos is available over at [Trello](https://trello.com/b/P6ZOpyy2/botos-tasks). It contains tasks that may be done, features and bug fixes being worked on, and tasks that have been completed. Notes are also provided to help understand why certain development decisions were made.
 
 ### Setting Up For Development
-At the moment, development and deployment is only supported in Linux machines. You may attempt to develop and deploy Botos in Windows and macOS, but there is no documentation available yet. However, macOS users may not need to delve away too much from the set-up process detailed here. This instruction assumes that you intend to contribute to the project.
+At the moment, development and deployment is only supported in Linux machines. Development in Windows has incomplete support, but deployment does not. You may attempt to develop **and** deploy Botos in Windows and macOS, but there is no complete documentation available yet. However, macOS users may not need to delve away too much from the set-up process detailed here.
 
-Fork this project repository before continuing. This will allow you to make changes without worrying about write access. Before cloning the forked repository, make sure you have install PostgreSQL 11, Python 3.5, and Pipenv. It is recommended that you install Python using [`pyenv`](https://github.com/pyenv/pyenv), a Python version manager. The database that Botos will use must already set-up. Please refer to PostgreSQL documentation to know how to set-up a PostgreSQL database.
+Fork this project repository before continuing. This will allow you to make changes without worrying about write access. Before cloning the forked repository, make sure you have install PostgreSQL 16, Python 3.12, and Pipenv. It is recommended that you install Python using [`pyenv`](https://github.com/pyenv/pyenv), a Python version manager. The database that Botos will use must already be set-up. Please refer to PostgreSQL documentation to know how to set-up a PostgreSQL database.
 
 Once the requirements have been installed, you may now clone the fork.
 
@@ -56,7 +61,9 @@ Before we can finally run and start working on Botos, we have to set up environm
  * `BOTOS_DATABASE_PASSWORD` - the password of the user to be used for the Botos database
  * `BOTOS_TEST_DATABASE_NAME` - the name of the test database for Botos
 
-It is recommended to set the environment variables in a file, and having the file sourced on start-up. This way, you no longer need to export the environment variables every time you start your development machine. The file can be sourced automatically on start-up by adding the line `source /path/to/environment/file` to the shell environment file (e.g. `.bashrc` in Bash, and `.zshenv` in ZSH). A sample environment file is provided in [`botos/env/botos.env.sample`](botos/env/botos.env.sample).
+It is recommended to set the environment variables in an environment file and call your shell to source them. Different shells will require different ways of sourcing variables. For those using shells such as Bash and ZSH, you may refer to [`botos/env/botos.env.sample`](botos/env/botos.env.sample). On the other hand, if you are using PowerShell, you may refer to [`botos/env/botos.env.ps1.sample`](botos/env/botos.env.ps1.sample) instead.
+
+Optionally, you may prefer having the file sourced on start-up of a shell session. This way, you no longer need to export the environment variables every time you start your development machine. If you are using shells like Bash and ZSH, the file can be sourced automatically on start-up by adding the line `source /path/to/environment/file` to one of your shell's session startup files (e.g. `.bash_profile` in Bash, and `.zshenv` in ZSH). If you are using PowerShell, the process is similar. The file can be automatically sourced by adding `. \path\to\environment\file` to your PowerShell profile. Your PowerShell profile's path can be found by running `echo $Profile` in a PowerShell instance. Note that the changes will only take effect when you start a new shell session.
 
 Once you have set-up the environment files, you should create an admin user. Just run:
 
