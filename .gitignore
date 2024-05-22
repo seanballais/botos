@@ -62,7 +62,7 @@ target/
 .ipynb_checkpoints
 
 # PyCharm directories and files
-.idea/
+.idea/workspace.xml
 
 # Ignore files in `botos/media/avatar/` except the default avatar image.
 botos/media/avatars

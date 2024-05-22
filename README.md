@@ -122,7 +122,7 @@ Botos used to have a vote encryption feature. However, it was removed because it
 ## Licensing
 Botos is licensed under the GNU General Public License v3. See [`LICENSE`](/LICENSE) for details.
 
-Some parts of this project was based on third-party code. See [`THIRD-PARTY-LICENSES.txt`](/THIRD-PARTY-LICENSES.txt) for details.
+Some parts of this project are based on third-party code. See [`THIRD-PARTY-LICENSES.txt`](/THIRD-PARTY-LICENSES.txt) for details.
 
 ## Contact
 Sean Francis N. Ballais - [@seanballais](https://twitter.com/seanballais) - [sean@seanballais.com](mailto:sean@seanballais.com)
