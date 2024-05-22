@@ -25,9 +25,6 @@ Botos is developed using Python 3, and Django. At the moment, the project is usi
 
 This section is intended for those seeking to contribute or work on Botos. If you are seeking to deploy Botos in a production, please refer to the [Deployment](#deployment) section.
 
-### Roadmap
-A roadmap for Botos is available over at [Trello](https://trello.com/b/P6ZOpyy2/botos-tasks). It contains tasks that may be done, features and bug fixes being worked on, and tasks that have been completed. Notes are also provided to help understand why certain development decisions were made.
-
 ### Setting Up For Development
 At the moment, development and deployment is only supported in Linux machines. Development in Windows has incomplete support, but deployment does not. You may attempt to develop **and** deploy Botos in Windows and macOS, but there is no complete documentation available yet. However, macOS users may not need to delve away too much from the set-up process detailed here.
 
