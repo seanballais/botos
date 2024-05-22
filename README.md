@@ -1,8 +1,6 @@
 # Botos
 > An open source web-based election system for schools.
 
-[![Build Status](https://travis-ci.org/seanballais/botos.svg?branch=master)](https://travis-ci.org/seanballais/botos)
-
 ![A screenshot of the Botos login page.](docs/screenshot.png)
 
 Botos is a web-based school election system designed for low-coercion risk elections. It is designed to be used in schools for student elections. It supports running multiple different elections in one installation, and real-time viewing and exporting of election results.
