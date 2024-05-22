@@ -220,13 +220,13 @@ class ResultsViewTest(TestCase):
         response = self.client.get(reverse('results'))
         results = response.context['results']
 
-        self.assertEquals(results['Amazing Position 0'][0].total_votes, 0)
-        self.assertEquals(results['Amazing Position 0'][1].total_votes, 0)
-        self.assertEquals(results['Amazing Position 0'][2].total_votes, 0)
+        self.assertEqual(results['Amazing Position 0'][0].total_votes, 0)
+        self.assertEqual(results['Amazing Position 0'][1].total_votes, 0)
+        self.assertEqual(results['Amazing Position 0'][2].total_votes, 0)
 
-        self.assertEquals(results['Amazing Position 1'][0].total_votes, 0)
-        self.assertEquals(results['Amazing Position 1'][1].total_votes, 0)
-        self.assertEquals(results['Amazing Position 1'][2].total_votes, 0)
+        self.assertEqual(results['Amazing Position 1'][0].total_votes, 0)
+        self.assertEqual(results['Amazing Position 1'][1].total_votes, 0)
+        self.assertEqual(results['Amazing Position 1'][2].total_votes, 0)
 
     def test_results_vote_count_with_votes(self):
         # For election 0
@@ -283,42 +283,42 @@ class ResultsViewTest(TestCase):
         response = self.client.get(reverse('results'))
         results = response.context['results']
 
-        self.assertEquals(results['Amazing Position 0'][0].total_votes, 0)
-        self.assertEquals(results['Amazing Position 0'][1].total_votes, 1)
-        self.assertEquals(results['Amazing Position 0'][2].total_votes, 2)
+        self.assertEqual(results['Amazing Position 0'][0].total_votes, 0)
+        self.assertEqual(results['Amazing Position 0'][1].total_votes, 1)
+        self.assertEqual(results['Amazing Position 0'][2].total_votes, 2)
 
-        self.assertEquals(results['Amazing Position 1'][0].total_votes, 1)
-        self.assertEquals(results['Amazing Position 1'][1].total_votes, 0)
-        self.assertEquals(results['Amazing Position 1'][2].total_votes, 2)
+        self.assertEqual(results['Amazing Position 1'][0].total_votes, 1)
+        self.assertEqual(results['Amazing Position 1'][1].total_votes, 0)
+        self.assertEqual(results['Amazing Position 1'][2].total_votes, 2)
 
     def test_results_candidate_name_elections_open(self):
         AppSettings().set('election_state', 'open')
         response = self.client.get(reverse('results'))
         results = response.context['results']
 
-        self.assertNotEquals(
+        self.assertNotEqual(
             results['Amazing Position 0'][0].name,
             'Pedro, Emmanuel'
         )
-        self.assertNotEquals(
+        self.assertNotEqual(
             results['Amazing Position 0'][1].name,
             'Pendoko, Pedro'
         )
-        self.assertNotEquals(
+        self.assertNotEqual(
             results['Amazing Position 0'][2].name,
             'Pepito, Juan'
         )
 
         # Just making sure that the other election's candidates appear too.
-        self.assertNotEquals(
+        self.assertNotEqual(
             results['Amazing Position 1'][0].name,
             'Pedro, Emmanuel 1'
         )
-        self.assertNotEquals(
+        self.assertNotEqual(
             results['Amazing Position 1'][1].name,
             'Pendoko, Pedro 1'
         )
-        self.assertNotEquals(
+        self.assertNotEqual(
             results['Amazing Position 1'][2].name,
             'Pepito, Juan 1'
         )
@@ -328,13 +328,13 @@ class ResultsViewTest(TestCase):
         response = self.client.get(reverse('results'))
         results = response.context['results']
 
-        self.assertNotEquals(
+        self.assertNotEqual(
             results['Amazing Position 0'][0].party_name,
             'Awesome Party 0'
         )
 
         # Just making sure that the other election's candidates appear too.
-        self.assertNotEquals(
+        self.assertNotEqual(
             results['Amazing Position 1'][0].party_name,
             'Awesome Party 1'
         )
@@ -344,29 +344,29 @@ class ResultsViewTest(TestCase):
         response = self.client.get(reverse('results'))
         results = response.context['results']
 
-        self.assertEquals(
+        self.assertEqual(
             results['Amazing Position 0'][0].name,
             'Pedro, Emmanuel'
         )
-        self.assertEquals(
+        self.assertEqual(
             results['Amazing Position 0'][1].name,
             'Pendoko, Pedro'
         )
-        self.assertEquals(
+        self.assertEqual(
             results['Amazing Position 0'][2].name,
             'Pepito, Juan'
         )
 
         # Just making sure that the other election's candidates appear too.
-        self.assertEquals(
+        self.assertEqual(
             results['Amazing Position 1'][0].name,
             'Pedro, Emmanuel 1'
         )
-        self.assertEquals(
+        self.assertEqual(
             results['Amazing Position 1'][1].name,
             'Pendoko, Pedro 1'
         )
-        self.assertEquals(
+        self.assertEqual(
             results['Amazing Position 1'][2].name,
             'Pepito, Juan 1'
         )
@@ -376,13 +376,13 @@ class ResultsViewTest(TestCase):
         response = self.client.get(reverse('results'))
         results = response.context['results']
 
-        self.assertEquals(
+        self.assertEqual(
             results['Amazing Position 0'][0].party_name,
             'Awesome Party 0'
         )
 
         # Just making sure that the other election's candidates appear too.
-        self.assertEquals(
+        self.assertEqual(
             results['Amazing Position 1'][0].party_name,
             'Awesome Party 1'
         )

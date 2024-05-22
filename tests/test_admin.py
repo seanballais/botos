@@ -6,18 +6,16 @@ import json
 from bs4 import BeautifulSoup
 
 from django import forms
-from django.contrib.admin import ACTION_CHECKBOX_NAME
+from django.contrib.admin.helpers import ACTION_CHECKBOX_NAME
 from django.contrib.admin.sites import AdminSite
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.messages import get_messages
 from django.test import (
     RequestFactory, TestCase
 )
 from django.urls import reverse
 
 from core.admin import (
-    AdminUserAdmin, ElectionAdmin, VoterAdmin, VoterProfileInline, AdminUser,
-    Voter, AdminCreationForm, VoterCreationForm, CandidateForm,
+    AdminUserAdmin, ElectionAdmin, VoterAdmin,
+    VoterProfileInline, AdminUser, Voter
 )
 from core.models import (
     User, Batch, Section, VoterProfile, UserType, Candidate, CandidateParty,

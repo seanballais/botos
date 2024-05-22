@@ -98,7 +98,7 @@ class BaseModelTest(TestCase):
         self.assertTrue(self._test_base_date_created_field.null)
 
     def test_date_created_verbose_name(self):
-        self.assertEquals(
+        self.assertEqual(
             self._test_base_date_created_field.verbose_name,
             'date_created'
         )
@@ -122,7 +122,7 @@ class BaseModelTest(TestCase):
         self.assertTrue(self._test_base_date_updated_field.null)
 
     def test_date_created_verbose_name(self):
-        self.assertEquals(
+        self.assertEqual(
             self._test_base_date_updated_field.verbose_name,
             'date_updated'
         )

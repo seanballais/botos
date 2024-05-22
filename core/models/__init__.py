@@ -8,7 +8,7 @@ from .user_models import (
 
 
 __all__ = [
-    'User', 'Batch', 'Section', 'VoterProfile'
+    'User', 'Batch', 'Section', 'VoterProfile',
     'Vote', 'Election', 'Candidate', 'CandidateParty', 'CandidatePosition',
     'Setting', 'UserType'
 ]

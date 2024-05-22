@@ -18,9 +18,7 @@ from django.contrib.auth.management import get_default_username
 from django.contrib.auth.password_validation import validate_password
 from django.core import exceptions
 from django.core.management.base import BaseCommand, CommandError
-from django.db import (
-    DEFAULT_DB_ALIAS, IntegrityError, transaction
-)
+from django.db import DEFAULT_DB_ALIAS
 from django.utils.text import capfirst
 
 

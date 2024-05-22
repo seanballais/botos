@@ -2,7 +2,6 @@ from collections import (
     namedtuple, OrderedDict
 )
 import datetime
-import json
 import random
 
 from django.conf import settings
@@ -10,11 +9,10 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
-from django.utils.timezone import utc
 from django.views.generic.base import TemplateView
 
 from core.decorators import (
-    user_passes_test, login_required
+    login_required
 )
 from core.models import (
     User, Candidate, Vote, UserType, Election
@@ -75,10 +73,10 @@ class ResultsView(TemplateView):
             election_id = int(election_id)
 
         context['results'] = self._get_vote_results(election_id)
-        context['current_time'] = datetime    \
-                                    .datetime \
-                                    .utcnow() \
-                                    .replace(tzinfo=utc)
+        context['current_time'] = datetime \
+            .datetime \
+            .now(datetime.UTC) \
+            .replace(tzinfo=datetime.timezone.utc)
         context['total_voters'] = User.objects.count()
         context['election_state'] = AppSettings().get(
             'election_state',
@@ -112,7 +110,7 @@ class ResultsView(TemplateView):
                 party_name = self._get_random_party_name()
                 avatar_url = '{}{}'.format(
                     settings.MEDIA_URL,  # Assumes the URL is prefixed and
-                                         # suffixed with a forward slash.
+                    # suffixed with a forward slash.
                     'avatars/default.png'
                 )
             else:
@@ -126,7 +124,7 @@ class ResultsView(TemplateView):
                 results[position]
             except KeyError:
                 results[position] = list()
-            
+
             results[position].append(
                 CandidateResult(
                     candidate_name,

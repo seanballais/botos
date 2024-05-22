@@ -124,7 +124,7 @@ class LoginSubviewTest(TestCase):
         response = self.client.get('/', { 'next': '/admin/' })
         form = self._get_login_form(str(response.content))
         next_url = form.find('input', { 'id': 'next-url' }).get('value')
-        self.assertEquals(next_url, '/admin/')
+        self.assertEqual(next_url, '/admin/')
 
     def test_login_subview_with_no_next_url_form_has_no_next_URL(self):
         response = self.client.get('/')
@@ -134,12 +134,12 @@ class LoginSubviewTest(TestCase):
     def test_login_subview_form_has_correct_action_URL(self):
         response = self.client.get('/')
         form = self._get_login_form(str(response.content))
-        self.assertEquals(form.get('action'), reverse('auth-login'))
+        self.assertEqual(form.get('action'), reverse('auth-login'))
 
     def test_login_subview_form_has_correct_method(self):
         response = self.client.get('/')
         form = self._get_login_form(str(response.content))
-        self.assertEquals(form.get('method').lower(), 'post')
+        self.assertEqual(form.get('method').lower(), 'post')
 
     def test_index_uses_correct_template(self):
         response = self.client.get('/')
@@ -349,12 +349,12 @@ class VotingSubviewTest(TestCase):
     def test_voting_subview_form_has_correct_action_URL(self):
         response = self.client.get('/')
         form = self._get_voting_form(str(response.content))
-        self.assertEquals(form.get('action'), reverse('vote-processing'))
+        self.assertEqual(form.get('action'), reverse('vote-processing'))
 
     def test_voting_subview_form_has_correct_method(self):
         response = self.client.get('/')
         form = self._get_voting_form(str(response.content))
-        self.assertEquals(form.get('method').lower(), 'post')
+        self.assertEqual(form.get('method').lower(), 'post')
 
     def test_index_uses_correct_template(self):
         response = self.client.get('/')
@@ -367,7 +367,7 @@ class VotingSubviewTest(TestCase):
             'div',
             { 'class': 'candidate' }
         )
-        self.assertEquals(len(candidate_divs), 3)
+        self.assertEqual(len(candidate_divs), 3)
 
     def test_candidate_in_election_0_correct(self):
         response = self.client.get('/', follow=True)

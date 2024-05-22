@@ -1,6 +1,5 @@
 from io import StringIO
 
-from django.contrib.auth.hashers import check_password
 from django.core import exceptions
 from django.core.management import call_command
 from django.core.management.base import CommandError
@@ -90,13 +89,16 @@ class CreateSuperUserTest(TestCase):
             '--password=!(root)@',
             '--email=admin@botos.system'
         ]
-        self.assertRaises(
-            createsuperuser.NotRunningInTTYException,
-            call_command(
-                'createsuperuser', *args,
-                stdout=StringIO(), stdin=MockNoTTYStdin()
-            )
+        mock_stdout = StringIO()
+        call_command('createsuperuser', *args, stdout=mock_stdout, stdin=MockNoTTYStdin())
+
+        stdout_output = mock_stdout.getvalue().strip()
+        expected_output = (
+            'Superuser creation skipped due to not running in a TTY. '
+            'You can run `manage.py createsuperuser` in your project '
+            'to create one manually.'
         )
+        self.assertEqual(stdout_output, expected_output)
 
     def test_non_interactive_call_all_args_valid(self):
         args = [

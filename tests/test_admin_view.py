@@ -123,7 +123,7 @@ class ElectionSettingsViewTest(BaseElectionSettingsViewTest, TestCase):
             reverse('admin-election-index'),
             follow=True
         )
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(
             response,
             'default/admin/election.html'  # Default template is expected
@@ -174,11 +174,11 @@ class ElectionSettingsCurrentTemplateViewTest(
         response = self.client.post(self._view_url, {}, follow=True)
         response_messages = list(response.context['messages'])
 
-        self.assertEquals(
+        self.assertEqual(
             str(response_messages[0]),
             'Template field must not be empty nor have invalid data.'
         )
-        self.assertEquals(AppSettings().get('template'), 'default')
+        self.assertEqual(AppSettings().get('template'), 'default')
 
     def test_view_with_valid_post_requests(self):
         AppSettings().set('template', 'default')
@@ -207,11 +207,11 @@ class ElectionSettingsCurrentTemplateViewTest(
         )
         response_messages = list(response.context['messages'])
 
-        self.assertEquals(
+        self.assertEqual(
             str(response_messages[0]),
             'Current template changed successfully.'
         )
-        self.assertEquals(AppSettings().get('template'), 'my-little-pony')
+        self.assertEqual(AppSettings().get('template'), 'my-little-pony')
 
         # And, of course, we better clean up the mess we did and delete the
         # 'yes-or-yes' template we created.
@@ -257,11 +257,11 @@ class ElectionSettingsElectionsStateViewTest(
         response = self.client.post(self._view_url, {}, follow=True)
         response_messages = list(response.context['messages'])
 
-        self.assertEquals(
+        self.assertEqual(
             str(response_messages[0]),
             'You attempted to change the election state with invalid data.'
         )
-        self.assertEquals(AppSettings().get('election_state'), 'open')
+        self.assertEqual(AppSettings().get('election_state'), 'open')
 
     def test_view_with_valid_post_requests(self):
         AppSettings().set('election_state', 'open')
@@ -275,11 +275,11 @@ class ElectionSettingsElectionsStateViewTest(
         )
         response_messages = list(response.context['messages'])
 
-        self.assertEquals(
+        self.assertEqual(
             str(response_messages[0]),
             'Election state changed successfully.'
         )
-        self.assertEquals(AppSettings().get('election_state'), 'closed')
+        self.assertEqual(AppSettings().get('election_state'), 'closed')
 
 
 class CandidateUserAutoCompleteViewTest(TestCase):
