@@ -118,3 +118,11 @@ Once you have completed your contribution, please a file a [pull request](https:
 
 ### Vote Encryption
 Botos used to have a vote encryption feature. However, it was removed because it wasn't necessary, as the threat model for this system would make this feature overkill and would even add an additional overhead. It was not also used in a production environment. Botos is only expected to be used in elections where there is a low coercion risk, small-scale elections (the size of a high school or elementary school), where the system is run in a local area network, where voting takes place in a voting station, and where skilled malicious attackers are not prevalent nor non-existent. The threat model assumes that the system administration is the highest security risk for the system. The system administrator has the responsibility of ensuring that no data will be leaked nor modified, and the server configuration is robust enough to repel attacks. If the administrator is corrupt, he/she can rig the elections. Even encrypting votes would not provide adequate security as the system administrator still has access to keys to encrypt and decrypt votes. As such, the vote encryption was removed. It is better to focus on introducing or improving other features instead. The feature may be brought back in the server, but only if there is a reasonable demand for it. If you would like to use a more secure election system, I highly recommend checking [Helios](https://github.com/benadida/helios-server).
+
+## Licensing
+Botos is licensed under the GNU General Public License v3. See [`LICENSE`](/LICENSE) for details.
+
+Some parts of this project was based on third-party code. See [`THIRD-PARTY-LICENSES.txt`](/THIRD-PARTY-LICENSES.txt) for details.
+
+## Contact
+Sean Francis N. Ballais - [@seanballais](https://twitter.com/seanballais) - [sean@seanballais.com](mailto:sean@seanballais.com)
